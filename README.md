@@ -1,4 +1,4 @@
-![riboWaltz](https://github.com/LabTranslationalArchitectomics/RiboWaltz/blob/master/vignettes/ribowaltz.png)
+![riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/ribowaltz.png)
 
 # riboWaltz
 
@@ -25,7 +25,7 @@ To install `riboWaltz`, directly from github:
     
     install.packages("devtools")
     library("devtools")
-    install_github("LabTranslationalArchitectomics/RiboWaltz")
+    install_github("LabTranslationalArchitectomics/riboWaltz")
 
 ------------------------------------------------------------------------
 
