@@ -30,5 +30,7 @@ To install `riboWaltz`, directly from github:
 ### Contact
 
 fabio.lauria@gmail.com
+
 t.tebaldi@unitn.it
+
 gabriella.viero@gmail.com

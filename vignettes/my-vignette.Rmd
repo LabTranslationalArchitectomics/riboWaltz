@@ -27,7 +27,7 @@ vignette: >
 
     install.packages("devtools")
     library("devtools")
-    install_github("fabiolauria/riboWaltz")
+    install_github("LabTranslationalArchitectomics/riboWaltz")
 
 
 ## Loading
