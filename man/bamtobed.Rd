@@ -26,4 +26,3 @@ path_bam <- location_of_BAM_files
 path_bed <- location_of_output_directory
 bamtobed(bamfolder = path_bam, bedfolder = path_bed)
 }
-

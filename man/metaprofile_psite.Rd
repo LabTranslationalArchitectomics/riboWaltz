@@ -83,4 +83,3 @@ metaprof_sub <- metaprofile_psite(reads_psite_list, mm81cdna, sample = sample_na
 length_range = 27:29, transcripts = transcript_names)
 metaprof_sub[["plot"]]
 }
-

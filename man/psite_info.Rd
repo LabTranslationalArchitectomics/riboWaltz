@@ -36,4 +36,3 @@ data(mm81cdna)
 
 reads_psite_list <- psite_info(reads_list, psite_offset, seq = NULL)
 }
-

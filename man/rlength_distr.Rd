@@ -37,4 +37,3 @@ lendist_whole[["plot"]]
 lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
 lendist_sub95[["plot"]]
 }
-

@@ -70,4 +70,3 @@ step, plotting the metaprofiles based on the alignment of the read ends, only
 for the middle 95\% of the read length
 psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
 }
-

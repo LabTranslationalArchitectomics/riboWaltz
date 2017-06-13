@@ -51,4 +51,3 @@ frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 region = "cds", cl = 98)
 frame_len_sub[["plot"]]
 }
-

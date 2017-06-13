@@ -42,4 +42,3 @@ path_bed <- location_of_BED_files
 annotation_df <- dataframe_with_transcript_annotation
 bedtolist(bamfolder = path_bed, annotation = annotation_df)
 }
-
