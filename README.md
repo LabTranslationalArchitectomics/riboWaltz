@@ -3,6 +3,8 @@
 R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data
 ------------------------------------------------------------------------
 
+![riboWaltz](https://github.com/LabTranslationalArchitectomics/RiboWaltz/blob/master/vignettes/ribowaltz.png)
+
 ### Overview
 
 Ribosome profiling is a powerful technique used to study translation at the genome-wide level, generating unique information concerning ribosome positions along RNAs. Optimal localization of ribosomes requires the proper identification of the ribosome P-site in each ribosome protected fragment, a crucial step to determine trinucleotide periodicity of translating ribosomes and draw correct conclusions concerning where ribosomes are located. To determine the P-site within ribosome footprints at nucleotide resolution, the precise estimation of its offset with respect to the protected fragment is necessary. 
