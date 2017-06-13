@@ -3,8 +3,8 @@ Type: Package
 Title: Optimization of ribosome P-site positioning in ribosome profiling data
 Version: 0.1.0
 Authors@R: c(
-    person("Fabio", "Lauria", email = "fabio.lauria@unitn.it", role = c("aut", "cre")),
-    person("Toma", "Tebaldi", email = "t.tebaldi@unitn.it", role = "aut"),
+    person("Fabio", "Lauria", email = "fabio.lauria@gmail.com", role = c("aut", "cre")),
+    person("Toma", "Tebaldi", email = "toma.tebaldi@gmail.com", role = "aut"),
     person("Gabriella", "Viero", email = "gabriella.viero@cnr.it", role = "aut"))
 Description: riboWaltz is an R package designed for the analysis of
     ribosome profiling (RiboSeq) data aimed at the identification of the
@@ -27,7 +27,7 @@ Imports:
     dplyr (>= 0.5.0),
     ggplot2 (>= 2.1.0),
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.2.0)
 RoxygenNote: 5.0.1
 Suggests: knitr,
     rmarkdown
