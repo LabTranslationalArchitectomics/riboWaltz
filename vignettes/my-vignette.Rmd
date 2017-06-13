@@ -118,7 +118,6 @@ example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample="Samp1", cl=85,
                                 utr5l = 25, cdsl = 40, utr3l = 25)
 example_ends_heatmap[["plot"]]
 ```
-log = F, colour = "black"
 <br>
 <br>
   The latter plot is particularly useful for understanding which extremity of the reads is the best choice for the computation of the P-site offset. Even if __riboWaltz__ is able to automatically recognize the best read end to use for the P-site identification, in some cases it may be necessary to provide this information. In our example, looking at the reads aligning around the translation initiation site (TIS), it is clearly visible a different trend of the signal coming from the 5' and the 3' extremity. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to TIS), while the 3' end often alignes on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works without any restriction (see below).
