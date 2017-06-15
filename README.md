@@ -70,6 +70,16 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   |  Igf2-001  |  115  |  543  |  3050  |
   |  Apoh-001  |  51  |  1038  |  101  |
   
+<<<<<<< HEAD
+=======
+    For every acquired file it is printed the number of mapping reads and the percentage of reads aligning on both the positive and the negative strand:
+
+    reading Samp1.bed
+    reads: 4.344494 M
+    positive strand: 98.65 %
+    negative strand: 1.35 %
+
+>>>>>>> 4db39a715d5a775b3e51d23cdb10c51e80700450
   Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage, and they will be removed. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a single sample called *Samp1* (a subset of the original data is here provided. Please contact the authors for the whole datset).
 
 #### Overview of the data
@@ -80,7 +90,11 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     example_length_dist_zoom <- rlength_distr(reads_list, sample="Samp1", cl=99)
     example_length_dist_zoom[["plot"]]
+<<<<<<< HEAD
 ![example_length_dist_zoom](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png =250x)
+=======
+    ![example_length_dist_zoom](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png)
+>>>>>>> 4db39a715d5a775b3e51d23cdb10c51e80700450
 
   The second plot consists of 4 metaheatmaps that show the abundance of the 3' the and 5' end of the reads mapping around the start and the stop codons, stratified by their length. Also in this case it is possible to restrict the output to a subset of read lengths specified by a confidence level *cl*.
 
@@ -149,7 +163,11 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
     comparison_df[["subsample_28nt"]] <- subset(reads_psite_list[["Samp1"]], length == 28)
     comparison_df[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 
+<<<<<<< HEAD
 Then the list with the names of the data frames of interest can be defined. Pay attention: here we don't have any replicate, thus each element of *names_list* is a vector with just one string:
+=======
+Then the list with the names of the data frames of interest can be defined. Pay attention: here we don't have any replicate, thus each element of *names_list* is a vector with just one string.
+>>>>>>> 4db39a715d5a775b3e51d23cdb10c51e80700450
 
     names_list <- list("Only_28" = c("subsample_28nt"),
                        "All" = c("whole_sample"))
