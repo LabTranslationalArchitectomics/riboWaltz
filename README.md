@@ -149,7 +149,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
     comparison_df[["subsample_28nt"]] <- subset(reads_psite_list[["Samp1"]], length == 28)
     comparison_df[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 
-Then the list with the names of the data frames of interest can be defined. Pay attention: here we don't have any replicate, thus each element of *names_list* is a vector with just one string.
+Then the list with the names of the data frames of interest can be defined. Pay attention: here we don't have any replicate, thus each element of *names_list* is a vector with just one string:
 
     names_list <- list("Only_28" = c("subsample_28nt"),
                        "All" = c("whole_sample"))
