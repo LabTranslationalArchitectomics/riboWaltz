@@ -80,7 +80,9 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     example_length_dist_zoom <- rlength_distr(reads_list, sample="Samp1", cl=99)
     example_length_dist_zoom[["plot"]]
-![example_length_dist_zoom](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png =250x)
+![example_length_dist_zoom](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png)
+
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png" width="100" />
 
   The second plot consists of 4 metaheatmaps that show the abundance of the 3' the and 5' end of the reads mapping around the start and the stop codons, stratified by their length. Also in this case it is possible to restrict the output to a subset of read lengths specified by a confidence level *cl*.
 
