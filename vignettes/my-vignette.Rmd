@@ -17,7 +17,9 @@ vignette: >
 
 ## Description
 
-  __riboWaltz__ is an R package designed for the analysis of ribosome profiling (RiboSeq) data aimed at the identification of the P-site offset. The P-site offset (PO) is specified by the localization of the P-site of ribosomes within the fragments of the RNA (reads) resulting from RiboSeq assays. It is defined as the distance of the P-site from the two ends of the reads. Determining PO is a crucial step for a variety of RiboSeq-based analyses such as verify the so-called 3-nt periodicity of ribosomes along the coding sequence, derive translation initiation and elongation rates and reveal new translational events in unannotated open reading frames and ncRNAs. __riboWaltz__ performs accurate computation of the PO for all the lengths of reads from single or multiple samples, taking advantage from an original two-step algorithm. Moreover, __riboWaltz__ provides the user a variety of graphical representations, laying the groundwork for further positional analyses and new biological discoveries.
+Ribosome profiling is a powerful technique used to study translation at the genome-wide level, generating unique information concerning ribosome positions along RNAs. Optimal localization of ribosomes requires the proper identification of the ribosome P-site in each ribosome protected fragment, a crucial step to determine trinucleotide periodicity of translating ribosomes and draw correct conclusions concerning where ribosomes are located. To determine the P-site within ribosome footprints at nucleotide resolution, the precise estimation of its offset with respect to the protected fragment is necessary. 
+
+__riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data. Taking advantage of a two-step algorithm where offset information is passed through populations of reads with different length in order to maximize offset coherence, __riboWaltz__ computes with high precision the P-site offset. __riboWaltz__ also provides a variety of graphical representations, laying the foundations for further accurate RiboSeq analyses and better interpretation of positional information.
 
 
 
@@ -115,7 +117,7 @@ example_length_dist_zoom[["plot"]]
 
 ```{r, echo=TRUE, fig.show='hold', fig.width=15, fig.asp=1/3, fig.align='center', out.width='700px', message=FALSE, warning=FALSE}
 example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample="Samp1", cl=85,
-                                utr5l = 25, cdsl = 40, utr3l = 25)
+                                      utr5l = 25, cdsl = 40, utr3l = 25)
 example_ends_heatmap[["plot"]]
 ```
 <br>
@@ -134,7 +136,7 @@ example_ends_heatmap[["plot"]]
 ```{r, echo=TRUE}
 psite_offset <- psite(reads_list, flanking = 6, extremity="auto")
 ```
-The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. The name of the sample is also reported.
+The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. An additional column contains the name of the sample.
 
 ```{r, echo=TRUE}
 head(psite_offset, 10)
@@ -164,7 +166,7 @@ To verify if the identified P-sites (i.e. ribosomes) are in the correct frame al
 
 ```{r, echo=TRUE, fig.show='hold', fig.width=10, fig.asp=1/2.1, fig.align='center', out.width='450px', message=FALSE, warning=FALSE}
 example_frames_stratified <- frame_psite_length(reads_psite_list, sample="Samp1",
-                                                  region="all", cl=90)
+                                                   region="all", cl=90)
 example_frames_stratified[["plot"]]
 ```
 <br>
@@ -185,7 +187,7 @@ The `metaprofile_psite` function generates metaprofiles (sum of single, transcri
 
 ```{r, echo=TRUE, fig.show='hold', fig.width=15, fig.asp=1/3, fig.align='center', out.width='700px', message=FALSE, warning=FALSE}
 example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                           utr5l = 20, cdsl = 40, utr3l = 20)
+                                            utr5l = 20, cdsl = 40, utr3l = 20)
 example_metaprofile[["plot"]]
 ```
 <br>
@@ -194,8 +196,8 @@ The `metaprofile_psite` utility also provides the *length_range* option, which a
 
 ```{r, echo=TRUE, fig.show='hold', fig.width=15, fig.asp=1/3, fig.align='center', out.width='700px', message=FALSE, warning=FALSE}
 example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                              length_range = 28, utr5l = 20, cdsl = 40,
-                                              utr3l = 20)
+                                               length_range = 28, utr5l = 20, cdsl = 40,
+                                               utr3l = 20)
 example_metaprofile_28[["plot"]]
 ```
 <br>
