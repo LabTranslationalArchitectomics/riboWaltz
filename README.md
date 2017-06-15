@@ -81,7 +81,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
     example_length_dist_zoom <- rlength_distr(reads_list, sample="Samp1", cl=99)
     example_length_dist_zoom[["plot"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png" width="325" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png" width="300" />
 </p>
 
   The second plot consists of 4 metaheatmaps that show the abundance of the 3' the and 5' end of the reads mapping around the start and the stop codons, stratified by their length. Also in this case it is possible to restrict the output to a subset of read lengths specified by a confidence level *cl*.
@@ -106,8 +106,8 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   For every read length of each sample a plot of the ribosome occupancy profile for the 5' and the 3’ extremity around the start codon is produced. The optimal offsets (dotted black line) as well as the inferred offsets before (dashed vertical lines) after the correction (continuous vertical lines) are reported. The regions used for their computation (depending on the *flanking* option) are shaded. Here two examples for reads of 28 and 31 nucleotides:
 
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length28.png" width="800" />
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length31.png" width="800" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length28.png" width="750" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length31.png" width="750" />
 </p>
 
   Now the initial dataset must be updated with the new information coming from the identification of the P-site offset such as the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
@@ -120,13 +120,13 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
                                                     region="all", cl=90)
     example_frames_stratified[["plot"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames_stratified.png" width="500" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames_stratified.png" width="550" />
 </p>
 
     example_frames <- frame_psite(reads_psite_list, sample="Samp1", region="all")
     example_frames[["plot"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames.png" width="500" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames.png" width="550" />
 </p>
 
   In both cases it is possible to specified a set of samples of interest, a range of read lengths and to display the results for either all the three regions of the transcript or just one of them. Depending on this choices the box containing the plots are differently arranged, to optimise the organization and the visualization of the data.
