@@ -164,7 +164,7 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
 
         p <- ggplot(final.tab, aes(distance, reads, color = extremity)) +
           geom_line() +
-          geom_vline(xintercept = seq(-round(len/3) * 3, len + 3, 3), linetype = 2, color = "gray90") +
+          geom_vline(xintercept = seq(-round(len/3) * 3, round(len/3) * 3, 3), linetype = 2, color = "gray90") +
           geom_vline(xintercept = 0, color = "gray50") +
           geom_vline(xintercept = - offset.temp[as.character(len), "offset_from_5"], color = "#D55E00", linetype = 2, size = 1.1) +
           geom_vline(xintercept = offset.temp[as.character(len), "offset_from_3"], color = "#56B4E9", linetype = 2, size = 1.1) +
@@ -175,7 +175,8 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
           labs(x = "Distance from start (nt)", y = "Number of read extremities", title = paste(n, " - length=", len, " nts", sep = ""), color="Extremity") +
           theme_bw(base_size = 20) +
           scale_fill_discrete("") +
-          theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+          theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
+          scale_x_continuous(breaks = seq(-floor(len/5) * 5, floor(len/5) * 5, 5))
 
         if(line_plot == "from3"){
           p <- p + geom_vline(xintercept = best.offset, color = "black", linetype = 3, size = 1.1) +

@@ -44,7 +44,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     bamtobed(bamfolder=path_to_bam, bedfolder=path_to_bed)
 
-  The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header is here added for clarity):
+  The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header of the columns are here added for clarity):
 
   |  transcript  |  start  |  end  |  length  |  strand  |
   |:------|:-----:|---------:|:------:|:------:|
