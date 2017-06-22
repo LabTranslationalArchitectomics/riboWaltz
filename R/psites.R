@@ -121,8 +121,8 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
           ifelse(length(adjoff) != 0, as.numeric(as.character(adjoff)), best.offset)
         })))))
         adj_offset_from_5[is.na(adj_offset_from_5)] <- best.offset
-        offset.temp$adj_offset_from_5 <- - adj_offset_from_5
-        offset.temp$adj_offset_from_3 <- offset.temp$adj_offset_from_5 - offset.temp$length + 1
+        offset.temp$adj_offset_from_5 <- - abs(adj_offset_from_5)
+        offset.temp$adj_offset_from_3 <- abs(offset.temp$adj_offset_from_5 - offset.temp$length + 1)
       }
     }
 
