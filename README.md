@@ -112,6 +112,8 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
   Now the initial dataset must be updated with the new information coming from the identification of the P-site offset such as the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
 
+    reads_psite_list <- psite_info(reads_list, psite_offset)
+
 #### 3-nucleotide periodicity
 
   To verify if the identified P-sites (i.e. ribosomes) are in the correct frame along the coding sequence, the functions `frame_psite_length` and`frame_psite` can be exploited. Both of them compute how many ribosomes are in the three frames for the 5' UTR, the CDS and the 3' UTR, with the following difference: the first one divides the results depending on the read length, while the second one works handling the reads all together.
