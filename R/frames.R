@@ -15,7 +15,7 @@
 #' @param length_range Either "all", an integer or an integer vector. In the
 #'   first case all the reads will be used to generate barplot. Otherwise, only
 #'   the reads matching the specified length(s) will be employed.
-#' @return A list containing a ggplot2 plot object and a data frame with the
+#' @return A list containing a ggplot2 object and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_psite_list)
@@ -122,9 +122,9 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #' results are stratified by the length of the reads.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
-#' @param A list of character string vectors specifying the name of the samples
-#'   of interest. Default is NULL, meaning that all the samples will be taken
-#'   into account.
+#' @param sample A character string vector specifying the name of the sample(s)
+#'   of interest. By default this argument is NULL, meaning that all the data
+#'   frames in \code{data} will be considered.
 #' @param region Either "all" or a character string among "5utr", "cds", "3utr"
 #'   specifying which of the three regions of the transcript (5' UTR, CDS or 3'
 #'   UTR, respectively) should be considered. Default is "all", meaning that the
@@ -138,7 +138,7 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #'   first case all the reads will be used to generate barplot. Otherwise, only
 #'   the reads matching the specified length(s) will be employed. If specified,
 #'   this parameter prevails over \code{cl}
-#' @return A list containing a ggplot2 plot object and a data frame with the
+#' @return A list containing a ggplot2 object and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_psite_list)

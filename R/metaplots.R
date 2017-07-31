@@ -6,13 +6,14 @@
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
 #' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least four columns named \emph{transcript},
-#'   \emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-#'   transcripts (the same as in the reference transcriptome), the position of
-#'   the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-#'   UTR}, respectively. No specific order is required.
-#' @param sample A character string vector specifying the name of the sample (or
-#'   of its replicates) of interest.
+#'   It must contain at least five columns named \emph{transcript}, 
+#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
+#'   containing the name of the transcripts (the same as in the reference 
+#'   transcriptome), its transcript type, the position of the first nucleotide 
+#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
+#'   No specific order is required.
+#' @param sample A character string vector specifying the name of the sample (or of its replicates)
+#'   of interest.
 #' @param scale_factors A numeric vector of scale factors to be used for merging
 #'   the replicates of the specified sample (if any). The vector must contain at
 #'   least a set of values named after the strings listed in \code{sample}. No
@@ -26,7 +27,7 @@
 #'   NULL, which implies all the transcripts in \code{data} will be used. Note
 #'   that if either the 5' UTR, the coding sequence or the 3' UTR of a
 #'   transcript is shorther than what is specified by \code{utr5l},
-#'   \eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript will not
+#'   \eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript wont
 #'   be cosidered.
 #' @param utr5l A positive integer specifying the length (in nucleotides) of the
 #'   5' UTR portion that will flank the start codon in the plot. The default
@@ -41,7 +42,7 @@
 #'   When \emph{auto}, the title of the plot is the name of the sample followed
 #'   by the number of transcript and the read lengths employed for generating
 #'   the metaprofile.
-#' @return A list containing a ggplot2 plot object, a data frame with the
+#' @return A list containing a ggplot2 object, a data frame with the
 #'   associated data and the transcripts employed for generating the plot.
 #' @examples
 #' data(reads_psite_list)
@@ -131,7 +132,7 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
   }
 
   plot <- ggplot(final.tab.psitemetaprofile, aes(as.numeric(as.character(distance)), reads)) +
-    geom_line() +
+    geom_line(size=1.05, color="gray40") +
     geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
     labs(x = "", y = "P-site", title = plot_title) +
     theme_bw(base_size = 20) +
@@ -159,11 +160,12 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
 #' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least four columns named \emph{transcript},
-#'   \emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-#'   transcripts (the same as in the reference transcriptome), the position of
-#'   the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-#'   UTR}, respectively. No specific order is required.
+#'   It must contain at least five columns named \emph{transcript}, 
+#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
+#'   containing the name of the transcripts (the same as in the reference 
+#'   transcriptome), its transcript type, the position of the first nucleotide 
+#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
+#'   No specific order is required.
 #' @param sample A list of character string vectors specifying the name of the
 #'   samples of interest. The samples contained in each elements of the list
 #'   will be merged toghether, using the scale factors specified by
@@ -201,7 +203,7 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
 #' @param plot_title Either NULL (the default), "auto" or any character string.
 #'   When \emph{auto}, the title of the plot reports the number of transcript
 #'   and the read lengths employed for generating the heatmap.
-#' @return A list containing a ggplot2 plot object, a data frame with the
+#' @return A list containing a ggplot2 object, a data frame with the
 #'   associated data and the transcripts employed for generating the plot.
 #' @examples
 #' data(reads_psite_list)

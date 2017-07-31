@@ -7,13 +7,21 @@
 #'
 #' @param data A list of data frames from \code{\link{bamtolist}}.
 #' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least four columns named \emph{transcript},
-#'   \emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-#'   transcripts (the same as in the reference transcriptome), the position of
-#'   the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-#'   UTR}, respectively. No specific order is required.
+#'   It must contain at least five columns named \emph{transcript}, 
+#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
+#'   containing the name of the transcripts (the same as in the reference 
+#'   transcriptome), its transcript type, the position of the first nucleotide 
+#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
+#'   No specific order is required.
 #' @param sample A character string specifying the name of the sample of
 #'   interest.
+#' @param transcripts A character string vector specifying the name of the
+#'   transcripts to be included in the metaprofile. By default this argument is
+#'   NULL, which implies all the transcripts in \code{data} will be used. Note
+#'   that if either the 5' UTR, the coding sequence or the 3' UTR of a
+#'   transcript is shorther than what is specified by \code{utr5l},
+#'   \eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript wont
+#'   be cosidered.
 #' @param cl An integer with value in \emph{[1,100]} specifying the read length
 #'   confidence level for restricting the distribution to a chosen range of
 #'   lengths. By default it is set to 99.
@@ -31,7 +39,7 @@
 #'   the highest signal. Default is FALSE.
 #' @param colour A character string specifying the colour to be used for the
 #'   plot.
-#' @return A list containing a ggplot2 plot object, and a data frame with the
+#' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_list)
@@ -47,7 +55,7 @@
 #' heatend_sub95[["plot"]]
 #' @import ggplot2
 #' @export
-rends_heat <- function(data, annotation, sample, cl = 99, utr5l = 50, cdsl = 50, utr3l = 50,
+rends_heat <- function(data, annotation, sample, transcripts = NULL, cl = 99, utr5l = 50, cdsl = 50, utr3l = 50,
                        log = F, colour = "black") {
   df <- data[[sample]]
   df$start.dist.end5 <- df$end5 - df$start_pos
@@ -61,11 +69,17 @@ rends_heat <- function(data, annotation, sample, cl = 99, utr5l = 50, cdsl = 50,
   l.transcripts <- rownames(annotation)[which(annotation$l_utr5 >= utr5l &
                                                 annotation$l_cds >= 2 * (cdsl + 1) &
                                                 annotation$l_utr3 >= utr3l)]
-  c.transcripts <- intersect(unique(df$transcript), l.transcripts)
+  if (length(transcripts) == 0) {
+    c.transcripts <- l.transcripts
+  } else {
+    c.transcripts <- intersect(l.transcripts, transcripts)
+  }
+  
+  df <- subset(df, as.character(transcript) %in% c.transcripts)
   
   # 5' end
-  start.sub <- df[which(df$transcript %in% c.transcripts & df$start.dist.end5 %in% seq(-utr5l, cdsl)), ]
-  stop.sub <- df[which(df$transcript %in% c.transcripts & df$stop.dist.end5 %in% seq(-cdsl, utr3l)), ]
+  start.sub <- df[which(df$start.dist.end5 %in% seq(-utr5l, cdsl)), ]
+  stop.sub <- df[which(df$stop.dist.end5 %in% seq(-cdsl, utr3l)), ]
   start.tab <- aggregate(rep(1, nrow(start.sub)), by = list(x = start.sub$length, y = start.sub$start.dist.end5), sum, drop = F)
   stop.tab <- aggregate(rep(1, nrow(stop.sub)), by = list(x = stop.sub$length, y = stop.sub$stop.dist.end5), sum, drop = F)
   colnames(start.tab) <- colnames(stop.tab) <- c("length", "dist", "count")
@@ -75,8 +89,8 @@ rends_heat <- function(data, annotation, sample, cl = 99, utr5l = 50, cdsl = 50,
   final.tab5$end <- "5end"
   
   # 3' end
-  start.sub <- df[which(df$transcript %in% c.transcripts & df$start.dist.end3 %in% seq(-utr5l, cdsl)), ]
-  stop.sub <- df[which(df$transcript %in% c.transcripts & df$stop.dist.end3 %in% seq(-cdsl, utr3l)), ]
+  start.sub <- df[which(df$start.dist.end3 %in% seq(-utr5l, cdsl)), ]
+  stop.sub <- df[which(df$stop.dist.end3 %in% seq(-cdsl, utr3l)), ]
   start.tab <- aggregate(rep(1, nrow(start.sub)), by = list(x = start.sub$length, y = start.sub$start.dist.end3), sum, drop = F)
   stop.tab <- aggregate(rep(1, nrow(stop.sub)), by = list(x = stop.sub$length, y = stop.sub$stop.dist.end3), sum, drop = F)
   colnames(start.tab) <- colnames(stop.tab) <- c("length", "dist", "count")

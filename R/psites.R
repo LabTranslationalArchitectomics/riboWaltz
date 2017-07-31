@@ -211,21 +211,22 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
 #'
 #' @param data A list of data frames from \code{\link{bamtolist}}
 #' @param offset A data frame from \code{\link{psite}}.
-#' @param sequence A list of character strings containing the nucleotide
-#'   sequence of the transcripts. Both the sequences and their names (i.e. the
-#'   name of the associated transcripts used to identify the elements of the
-#'   list) must be the same as in the reference transcriptome. Use this argument
-#'   to attach to the data frames an additional column containing the three
-#'   nucletotides corresponding to the identified P-sites. Default is NULL.
+#' @param sequence_folder A character string specifying the path to the FASTA 
+#'   file containing the nucleotide sequence of the transcripts. For each mRNA 
+#'   both the the associated transcript name (corresponding to the record
+#'   description line) and the sequences must be the same as in the reference
+#'   transcriptome. Use this argument to attach to the data frames an additional
+#'   column containing the three nucletotides corresponding to the identified
+#'   P-sites. Default is NULL.
 #' @return A list of data frames.
 #' @examples
 #' data(reads_list)
 #' data(psite_offset)
 #' data(mm81cdna)
 #'
-#' reads_psite_list <- psite_info(reads_list, psite_offset, seq = NULL)
+#' reads_psite_list <- psite_info(reads_list, psite_offset)
 #' @export
-psite_info <- function(data, offset, sequence = NULL) {
+psite_info <- function(data, offset, sequence_folder = NULL) {
   names <- names(data)
   for (n in names) {
     cat(sprintf("processing %s\n", n))
@@ -240,16 +241,20 @@ psite_info <- function(data, offset, sequence = NULL) {
     df$psite_from_stop <- df$psite - df$stop_pos
     cat("adding region\n")
     df$psite_region <- ifelse(df$psite_from_start >= 0
-                              & df$psite_from_stop < 0,
+                              & df$psite_from_stop <= 0,
                               "cds",
                               ifelse(df$psite_from_start < 0
                                      & df$psite_from_stop < 0,
                                      "5utr",
                                      "3utr"))
 
-    if(length(sequence) != 0) {
+    if(length(sequence_folder) != 0) {
       cat("adding codon\n\n")
-      df$psite_codon <- substr(sequence[as.character(df$transcript)], df$psite - 1, df$psite + 1)
+      sequences_biost <- Biostrings::readDNAStringSet(sequence_folder, format = "fasta", use.names = TRUE)
+      #names(sequences_biost) <- as.vector(lapply(strsplit(names(sequences_biost), ";"), `[[`, 1))
+      df$psite_codon <- as.character(subseq(sequences_biost[as.character(df$transcript)],
+                                            start = df$psite,
+                                            end = df$psite + 2))
     }
 
     data[[n]] <- df

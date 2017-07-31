@@ -41,11 +41,12 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @param bedfolder A character string indicating the folder where the BED files
 #'   are located.
 #' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least four columns named \emph{transcript},
-#'   \emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-#'   transcripts (the same as in the reference transcriptome), the position of
-#'   the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-#'   UTR}, respectively. No specific order is required.
+#'   It must contain at least five columns named \emph{transcript}, 
+#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
+#'   containing the name of the transcripts (the same as in the reference 
+#'   transcriptome), its transcript type, the position of the first nucleotide 
+#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
+#'   No specific order is required.
 #' @param list_name A character vector specifying the desired names to be 
 #'   assigned to the data frames of the output list. Its length must be equal to
 #'   the number of BED files within \code{bedfolder}. Pay attention to the order

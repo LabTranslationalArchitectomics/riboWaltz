@@ -11,7 +11,7 @@
 #'   confidence level for restricting the distribution to a chosen range of
 #'   lengths. By default it is set to 100, i.e. the whole set of reads lengths
 #'   will be considered.
-#' @return A list containing a ggplot2 plot object, and a data frame with the
+#' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_list)
