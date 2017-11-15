@@ -1,30 +1,25 @@
 #' Plot metaheatmaps of the read ends.
 #'
-#' Plots 4 metaheatmaps that show the abundance of the 5' the and 3' end of the
-#' reads mapping around the start and the stop codons, stratified by their
-#' length. It is possible to visualise the heatmaps for all the reads or to
-#' restrict the graphical output to a sub-range of read lengths.
+#' Plots four metaheatmaps fot a specified sample of the imput list showing the
+#' abundance of the 5' the and 3' end of the reads mapping around the start and
+#' the stop codon of the CDS (if any), stratified by their length. It is
+#' possible to visualise the heatmaps for all the reads or to restrict the
+#' graphical output to a sub-range of read lengths.
 #'
 #' @param data A list of data frames from \code{\link{bamtolist}}.
-#' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least five columns named \emph{transcript}, 
-#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
-#'   containing the name of the transcripts (the same as in the reference 
-#'   transcriptome), its transcript type, the position of the first nucleotide 
-#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
-#'   No specific order is required.
-#' @param sample A character string specifying the name of the sample of
+#' @param annotation A data frame from \code{\link{create_annotation}}.
+#' @param sample A character string specifying the name of the sample of 
 #'   interest.
-#' @param transcripts A character string vector specifying the name of the
-#'   transcripts to be included in the metaprofile. By default this argument is
-#'   NULL, which implies all the transcripts in \code{data} will be used. Note
-#'   that if either the 5' UTR, the coding sequence or the 3' UTR of a
-#'   transcript is shorther than what is specified by \code{utr5l},
-#'   \eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript wont
-#'   be cosidered.
-#' @param cl An integer with value in \emph{[1,100]} specifying the read length
-#'   confidence level for restricting the distribution to a chosen range of
-#'   lengths. By default it is set to 99.
+#' @param transcripts A character string vector specifying the name of the 
+#'   transcripts to be included in the metaprofile. By default this argument is 
+#'   NULL, which implies all the transcripts in \code{data} will be used. Note 
+#'   that if either the 5' UTR, the coding sequence or the 3' UTR of a 
+#'   transcript is shorther than what is specified by \code{utr5l}, 
+#'   \eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript won't be
+#'   cosidered.
+#' @param cl An integer with value in \emph{[1,100]} specifying the read length 
+#'   confidence level for restricting the plot to a chosen range of lengths. By
+#'   default it is set to 99.
 #' @param utr5l A positive integer specifying the length (in nucleotides) of the
 #'   5' UTR portion that will flank the start codon in the plot. The default
 #'   value is 50.
@@ -34,23 +29,24 @@
 #' @param utr3l A positive integer specifying the length (in nucleotides) of the
 #'   3' UTR portion that will flank the stop codon in the plot. The default
 #'   value is 50.
-#' @param log A logical value whether or not to use a logarithmic scale colour
-#'   (it is suggested for data with a strong difference between the lowest and
-#'   the highest signal. Default is FALSE.
+#' @param log A logical value whether or not to use a logarithmic scale colour 
+#'   (strongly suggested in case of large differences in the signal). Default is
+#'   FALSE.
 #' @param colour A character string specifying the colour to be used for the
 #'   plot.
 #' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_list)
+#' data(mm81cdna)
 #'
 #' ## Visualise the heatmap for the whole range of read lengths
-#' heatend_whole <- rends_heat(reads_list, sample = "Samp1", cl = 100)
+#' heatend_whole <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 100)
 #' heatend_whole[["plot"]]
 #'
 #' ## Visualise the heatmap for the middle 95% of the range of read lengths and
 #' reducing the regions flanking the start and the stop codons
-#' heatend_sub95 <- rends_heat(reads_list, sample = "Samp1", cl = 95,
+#' heatend_sub95 <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 95,
 #' utr5l = 30, cdsl = 40, utr3l = 30)
 #' heatend_sub95[["plot"]]
 #' @import ggplot2
@@ -110,7 +106,8 @@ rends_heat <- function(data, annotation, sample, transcripts = NULL, cl = 99, ut
     theme_bw(base_size = 20) +
     theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(), axis.title.x = element_blank()) +
     facet_grid(end ~ region, scales = "free", switch = "x") +
-    theme(strip.background = element_blank()) +
+    theme(strip.background = element_blank(), strip.placement = "outside") +
+    theme(plot.title = element_text(hjust = 0.5)) +
     scale_y_continuous(limits = c(minlen-0.5, maxlen+0.5), breaks = seq(minlen + ((minlen) %% 2), maxlen, by=max(2,floor((maxlen-minlen)/7)))) +
     geom_vline(xintercept = 0, linetype = 2, color = "red")
   
@@ -126,5 +123,4 @@ rends_heat <- function(data, annotation, sample, transcripts = NULL, cl = 99, ut
   output[["plot"]]<-p
   output[["df"]]<-final.tab
   return(output)
-  return(p)
 }

@@ -27,7 +27,7 @@ To install __riboWaltz__, directly from GitHub:
     library("devtools")
     install_github("LabTranslationalArchitectomics/riboWaltz")
   
-To install __riboWaltz__ generating the vignette substitute the latter command with:
+To install __riboWaltz__ and generate the vignette substitute the latter command with:
   
     install_github("LabTranslationalArchitectomics/riboWaltz", build_vignettes=TRUE)
 
@@ -48,29 +48,33 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
   |  transcript  |  start  |  end  |  length  |  strand  |
   |:------|:-----:|---------:|:------:|:------:|
-  |  Gnai3-001  |  21  |  49  |  29  |  +  |
-  |  Gnai3-001  |  26  |  55  |  30  |  +  |
-  |  Gnai3-001  |  30  |  58  |  29  |  +  |
-  |  Gnai3-001  |  76  |  103  |  28  |  +  |
-  |  Gnai3-001  |  85  |  112  |  28  |  +  |
-  |  Gnai3-001  |  87  |  115  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  21  |  49  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  26  |  55  |  30  |  +  |
+  |  ENSMUST00000000001.4  |  30  |  58  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  76  |  103  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  85  |  112  |  28  |  +  |
+  |  ENSMUST00000000001.4 |  87  |  115  |  29  |  +  |
 
    The next step loads and reads the BED files, merging them in a list. The `bedtolist` function only requires the path to the BED files and an annotation file. Moreover, the *list_name* option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.
 
     reads_list <- bedtolist(bedfolder=path_to_bed, annotation=annotation_file)
-
-  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least four columns  reporting the name of the transcripts (the same as in the reference transcriptome uses for the alignment) and the position of the first nucleotide of the 5' UTR, the CDS and the 3' UTR. Here an example:
-  
-  |  transcript  |  l_utr5  |  l_cds  |  l_utr3  |
-  |:------|:-----:|---------:|:------:|
-  |  Gnai3-001  |  141  |  1065  |  2056  |
-  |  Pbsn-001  |  140  |  525  |  237  |
-  |  Hoxb9-001  |  85  |  753  |  1736  |
-  |  Cdc45-001  |  313  |  1701  |  129  |
-  |  Igf2-001  |  115  |  543  |  3050  |
-  |  Apoh-001  |  51  |  1038  |  101  |
-  
+	
   Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage, and they will be removed. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a single sample called *Samp1* (a subset of the original data is here provided. Please contact the authors for the whole datset).
+
+#### Annotation data frame
+  
+  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
+  
+  |  transcript  |  l_tr  |  l_utr5  |  l_cds  |  l_utr3  |
+  |------:|:---------:|:------:|:---------:|:------:|
+  |  ENSMUST00000000001.4  |  3262  |  141  |  1065  |  2056  |
+  |  ENSMUST00000000003.11  |  902  |  140  |  525  |  237  |
+  |  ENSMUST00000000010.8  |  2574  |  85  |  753  |  1736  |
+  |  ENSMUST00000000028.11  |  2143  |  313  |  1701  |  129  |
+  |  ENSMUST00000000033.9  |  3708  |  115  |  543  |  3050  |
+  |  ENSMUST00000000049.5  |  1190  |  51  |  1038  |  101  |
+  
+  The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated.
 
 #### Overview of the data
 

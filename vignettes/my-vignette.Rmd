@@ -55,12 +55,12 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
   |  transcript  |  start  |  end  |  length  |  strand  |
   |:------|:-----:|---------:|:------:|:------:|
-  |  Gnai3-001  |  21  |  49  |  29  |  +  |
-  |  Gnai3-001  |  26  |  55  |  30  |  +  |
-  |  Gnai3-001  |  30  |  58  |  29  |  +  |
-  |  Gnai3-001  |  76  |  103  |  28  |  +  |
-  |  Gnai3-001  |  85  |  112  |  28  |  +  |
-  |  Gnai3-001  |  87  |  115  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  21  |  49  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  26  |  55  |  30  |  +  |
+  |  ENSMUST00000000001.4  |  30  |  58  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  76  |  103  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  85  |  112  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  87  |  115  |  29  |  +  |
 
    The next step loads and reads the BED files, merging them in a list. The `bedtolist` function only requires the path to the BED files and an annotation file. Moreover, the *list_name* option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.
 

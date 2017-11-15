@@ -12,19 +12,19 @@ rlength_distr(data, sample, cl = 100)
 \item{sample}{A character string specifying the name of the sample of
 interest.}
 
-\item{cl}{An integer with value in \emph{[1,100]} specifying the read length
-confidence level for restricting the distribution to a chosen range of
-lengths. By default it is set to 100, i.e. the whole set of reads lengths
-will be considered.}
+\item{cl}{An integer with value in \emph{[1,100]} specifying the read length 
+confidence level for restricting the distribution to a chosen range of 
+lengths. By default it is set to 100, i.e. the whole distribution will be
+displayed.}
 }
 \value{
-A list containing a ggplot2 plot object, and a data frame with the
+A list containing a ggplot2 object, and a data frame with the
   associated data.
 }
 \description{
-Plots the read length distribution for a specified sample of the input list.
-It is possible to look at the length distribution based on the whole set of
-reads or to restrict it to a sub-range of read lengths.
+Plots the read length distribution for a specified sample of the input list. 
+It is possible to visualise the whole length distribution or to restrict it
+to a chosen range of read lengths.
 }
 \examples{
 data(reads_list)
@@ -37,3 +37,4 @@ lendist_whole[["plot"]]
 lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
 lendist_sub95[["plot"]]
 }
+

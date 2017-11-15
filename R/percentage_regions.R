@@ -1,26 +1,20 @@
 #' Plot percentage of P-site per transcript region.
 #' 
-#' For each sample computes the percentage of P-sites falling in the three
-#' regions of the transcripts (5' UTR, CDS and 3'UTR) and generates the
-#' corresponding barplot. The function also calculates the percentage of region
-#' length for the selected transcripts (reported in column "RNAs").
+#' For each sample computes the percentage of P-sites falling in the three 
+#' regions of the transcripts with annotated 5' UTR, CDS and 3'UTR and generates
+#' the corresponding barplot. The function also calculates the percentage of
+#' region length for the selected transcripts (reported in column "RNAs").
 #' 
 #' @param data A list of data frames from \code{\link{psite_info}}.
-#' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least five columns named \emph{transcript}, 
-#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
-#'   containing the name of the transcripts (the same as in the reference 
-#'   transcriptome), its transcript type, the position of the first nucleotide 
-#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
-#'   No specific order is required.
+#' @param annotation A data frame from \code{\link{create_annotation}}.
 #' @param sample A character string vector specifying the name of the sample(s)
 #'   of interest. By default this argument is NULL, meaning that all the data
 #'   frames in \code{data} will be analysed.
 #' @param transcripts A character string vector specifying the name of the 
 #'   transcripts to be considered in the analysis. By default this argument is 
-#'   NULL, which implies all the transcripts in \code{data} will be used. Either
-#'   transcripts with no annotated \emph{5' UTR}, \emph{CDS} and
-#'   \emph{3'UTR} or mRNAs not labeled as protein coding will be removed.
+#'   NULL, which implies all the transcripts in \code{data} will be used.
+#'   Transcripts with no annotated \emph{5' UTR}, \emph{CDS} and \emph{3'UTR}
+#'   will be removed.
 #' @param label A character string vector of the same length of \code{sample}
 #'   specifying the name of the samples to be displaied in the plot. By default
 #'   this argument is NULL i.e. the labels correspond to the sample names.
@@ -30,12 +24,13 @@
 #' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples
-#' data(reads_list)
+#' data(reads_psite_list)
 #' data(mm81cdna)
 #'
-#' reg_psite <- region_psite(reads_list, mm81cdna, sample = "Samp1")
+#' reg_psite <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
 #' reg_psite[["plot"]]
 #' @import ggplot2
+#' @import reshape
 #' @export
 region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
                        label = NULL, colour = c("gray70", "gray40", "gray10")) {
@@ -44,8 +39,7 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
   l.transcripts <- rownames(annotation)[which(annotation$l_utr5 > 0 &
                                                 annotation$l_cds >0 &
                                                 annotation$l_cds %% 3 == 0 &
-                                                annotation$l_utr3 > 0 &
-                                                annotation$transcript_type == "protein_coding")]
+                                                annotation$l_utr3 > 0)]
   if (length(transcripts) == 0) {
     c.transcript <- l.transcripts
   } else {
@@ -70,7 +64,7 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
   }
   
   norm.table <- t(t(barplot.table) / colSums(barplot.table)) * 100
-  melt.table <- reshape::melt(norm.table)
+  melt.table <- melt(norm.table)
   colnames(melt.table) <- c("region","sample","percentage")
   melt.table$class<-"mapped"
   melt.table$sample <- factor(melt.table$sample, levels = sample, labels = label)

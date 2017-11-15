@@ -1,11 +1,11 @@
 #' Identify the ribosome P-site position along the reads.
-#'
-#' Identify the position of the ribosome P-site, determined by the localisation
-#' of its central nucleotide, for each read. The function returns the position
-#' of the P-site specifically inferred for the many read lengths processing the
-#' samples separately. It also allows to plot a collection of occupancy
-#' metaprofiles of the read ends aligning around the start codon, displaying the
-#' identified P-sites offsets.
+#' 
+#' Identifies, within each read, the position of the ribosome P-site, determined
+#' by the localisation of its first nucleotide. The function returns the 
+#' position of the P-site specifically inferred for the many read lengths by 
+#' processing the samples separately. It also allows to plot a collection of
+#' length-specific occupancy metaprofiles of the read ends aligning around the
+#' start codon, displaying the identified P-sites offsets.
 #'
 #' @param data A list of data frames from \code{\link{bamtolist}}.
 #' @param flanking An integer that specifies, for all the reads aligning on the
@@ -20,35 +20,37 @@
 #' @param plotdir A character string specifying the (existing or not) folder
 #'   where the occupancy metaprofiles shuold be saved. This parameter is
 #'   considered only if \code{plot} is TRUE. By default this argument is NULL,
-#'   which implies the folder is set as a subfolder as the working directory,
+#'   which implies the folder is set as a subfolder of the working directory,
 #'   called \emph{offset_plot}.
-#' @param plotformat Either "png" (the default) or "pdf". This parameter is
-#'   considered only if \code{plot} is TRUE, specifying the file format in which
-#'   the occupancy metaprofiles shuold be saved. This
+#' @param plotformat Either "png" (the default) or "pdf". This parameter
+#'   specifies the file format in which the occupancy metaprofiles shuold be
+#'   saved. It is considered only if \code{plot} is TRUE.
 #' @param cl An integer with value in \emph{[1,100]} specifying the read length
 #'   confidence level for restricting the plot of the occupancy metaprofiles to
 #'   a range of lengths. By default it is set to 99. This parameter is
 #'   considered only if \code{plot} is TRUE.
-#' @details This function compute the P-site identification starting from the
-#'   reads that align on the start codon of any transcript, exploiting the
-#'   knowledge that their associated P-sites corresponds to the triplet AUG. The
-#'   P-site identification is then divided in two steps: i) computation of the
-#'   offsets between the extremities of the reads and the start codons based on
-#'   the alignment of 5' and the 3' end around the translation initiation site
-#'   ii) correction of some offsets based on the global results of the previous
-#'   step.
+#' @details This function compute the P-site identification starting from the 
+#'   reads that align on the start codon of any annotated coding sequences,
+#'   exploiting the knowledge that their associated P-sites corresponds to the
+#'   triplet AUG. The P-site identification is then divided in two steps: i)
+#'   computation of the offsets between the extremities of the reads and the
+#'   start codons based on the alignment of 5' and the 3' end around the
+#'   translation initiation site ii) correction of some offsets based on the
+#'   global results of the previous step.
 #' @return A data frame.
 #' @examples
 #' data(reads_list)
 #'
-#' ## Compute the P-site offset automatically not plotting the
-#' metaprofiles based on the alignment of the read ends
+#' ## Compute the P-site offset automatically not plotting the metaprofiles
+#' based on the alignment of the read ends
 #' psite(reads_list, flanking = 6, extremity="auto")
 #'
 #' ## Compute the P-site offset specifying the extremity used for the correction
 #' step, plotting the metaprofiles based on the alignment of the read ends, only
-#' for the middle 95% of the read length
-#' psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
+#' for the middle 95% of the read length. The plots will be placed in the
+#' current working directory.
+#' psite_offset <- psite(reads_list, flanking = 6, extremity="3end",plot = TRUE, cl = 95)
+#' psite_offset
 #' @import ggplot2
 #' @import cowplot
 #' @export
@@ -175,7 +177,8 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
           labs(x = "Distance from start (nt)", y = "Number of read extremities", title = paste(n, " - length=", len, " nts", sep = ""), color="Extremity") +
           theme_bw(base_size = 20) +
           scale_fill_discrete("") +
-          theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
+          theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), strip.placement = "outside") +
+          theme(plot.title = element_text(hjust = 0.5)) +
           scale_x_continuous(breaks = seq(-floor(len/5) * 5, floor(len/5) * 5, 5))
 
         if(line_plot == "from3"){
@@ -201,21 +204,24 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
 }
 
 #' Updates reads information adding features associated to the inferred P-sites.
-#'
-#' Ipdates the data frames of the input list adding information associated to
-#' the P-site positions identfied by \code{\link{psite}}. It attaches to the
-#' data frames 4 columns containing i) the offset between the P-site within the
-#' reads and both the start and the stop codon of the corresponding transcript;
-#' ii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the
-#' P-site; iii) the sequence of the triplet covered by the P-site.
+#' 
+#' Updates the data frames of the input list with the P-site position identfied 
+#' by \code{\link{psite}}. It attaches to the data frames 4 columns containing 
+#' the P-site position with respect to the beginning of the transcript and to 
+#' both its start and stop codon and the region of the transcript (5' UTR, CDS, 
+#' 3' UTR) that includes the P-site. Please note: if a transcript doesn't 
+#' present any annotated CDS then the positions of the P-site from both the 
+#' start and the stop codon will be set to NA. If the FASTA file with the
+#' transcriptome sequences is provided, an additional column containing the
+#' three nucleotides covered by the P-site will be attached.
 #'
 #' @param data A list of data frames from \code{\link{bamtolist}}
 #' @param offset A data frame from \code{\link{psite}}.
-#' @param sequence_folder A character string specifying the path to the FASTA 
-#'   file containing the nucleotide sequence of the transcripts. For each mRNA 
-#'   both the the associated transcript name (corresponding to the record
-#'   description line) and the sequences must be the same as in the reference
-#'   transcriptome. Use this argument to attach to the data frames an additional
+#' @param fastapath A character string specifying the path to the FASTA file
+#'   containing the nucleotide sequence of the transcripts. For each mRNA the 
+#'   the record description line must contain the transcript name as in the 
+#'   reference transcriptome and the sequence must derive from the same relase 
+#'   of the genome. Use this argument to attach to the data frames an additional
 #'   column containing the three nucletotides corresponding to the identified
 #'   P-sites. Default is NULL.
 #' @return A list of data frames.
@@ -226,7 +232,7 @@ psite <- function(data, flanking = 6, extremity="auto", plot = FALSE,
 #'
 #' reads_psite_list <- psite_info(reads_list, psite_offset)
 #' @export
-psite_info <- function(data, offset, sequence_folder = NULL) {
+psite_info <- function(data, offset, fastapath = NULL) {
   names <- names(data)
   for (n in names) {
     cat(sprintf("processing %s\n", n))
@@ -237,21 +243,24 @@ psite_info <- function(data, offset, sequence_folder = NULL) {
     colnames(df)[colnames(df) == "adj_offset_from_3"] <- "psite"
     df$psite <- df$end3 - df$psite
     df <- df[, c("transcript", "end5", "psite", "end3", "length", "start_pos", "stop_pos")]
-    df$psite_from_start <- df$psite - df$start_pos
-    df$psite_from_stop <- df$psite - df$stop_pos
+    df$psite_from_start <- ifelse(df$stop_pos == 0, 0, df$psite - df$start_pos)
+    df$psite_from_stop <- ifelse(df$stop_pos == 0, 0, df$psite - df$stop_pos)
     cat("adding region\n")
-    df$psite_region <- ifelse(df$psite_from_start >= 0
-                              & df$psite_from_stop <= 0,
-                              "cds",
-                              ifelse(df$psite_from_start < 0
-                                     & df$psite_from_stop < 0,
-                                     "5utr",
-                                     "3utr"))
+    df$psite_region <- ifelse(df$stop_pos == 0,
+                              NA,
+                              ifelse(df$psite_from_start >= 0
+                                     & df$psite_from_stop <= 0,
+                                     "cds",
+                                     ifelse(df$psite_from_start < 0
+                                            & df$psite_from_stop < 0,
+                                            "5utr",
+                                            "3utr")))
+                              
+      
 
-    if(length(sequence_folder) != 0) {
+    if(length(fastapath) != 0) {
       cat("adding codon\n\n")
-      sequences_biost <- Biostrings::readDNAStringSet(sequence_folder, format = "fasta", use.names = TRUE)
-      #names(sequences_biost) <- as.vector(lapply(strsplit(names(sequences_biost), ";"), `[[`, 1))
+      sequences_biost <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
       df$psite_codon <- as.character(subseq(sequences_biost[as.character(df$transcript)],
                                             start = df$psite,
                                             end = df$psite + 2))

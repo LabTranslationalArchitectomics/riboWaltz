@@ -4,35 +4,40 @@
 \alias{psite_info}
 \title{Updates reads information adding features associated to the inferred P-sites.}
 \usage{
-psite_info(data, offset, sequence = NULL)
+psite_info(data, offset, fastapath = NULL)
 }
 \arguments{
 \item{data}{A list of data frames from \code{\link{bamtolist}}}
 
 \item{offset}{A data frame from \code{\link{psite}}.}
 
-\item{sequence}{A list of character strings containing the nucleotide
-sequence of the transcripts. Both the sequences and their names (i.e. the
-name of the associated transcripts used to identify the elements of the
-list) must be the same as in the reference transcriptome. Use this argument
-to attach to the data frames an additional column containing the three
-nucletotides corresponding to the identified P-sites. Default is NULL.}
+\item{fastapath}{A character string specifying the path to the FASTA file
+containing the nucleotide sequence of the transcripts. For each mRNA the 
+the record description line must contain the transcript name as in the 
+reference transcriptome and the sequence must derive from the same relase 
+of the genome. Use this argument to attach to the data frames an additional
+column containing the three nucletotides corresponding to the identified
+P-sites. Default is NULL.}
 }
 \value{
 A list of data frames.
 }
 \description{
-Ipdates the data frames of the input list adding information associated to
-the P-site positions identfied by \code{\link{psite}}. It attaches to the
-data frames 4 columns containing i) the offset between the P-site within the
-reads and both the start and the stop codon of the corresponding transcript;
-ii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the
-P-site; iii) the sequence of the triplet covered by the P-site.
+Updates the data frames of the input list with the P-site position identfied 
+by \code{\link{psite}}. It attaches to the data frames 4 columns containing 
+the P-site position with respect to the beginning of the transcript and to 
+both its start and stop codon and the region of the transcript (5' UTR, CDS, 
+3' UTR) that includes the P-site. Please note: if a transcript doesn't 
+present any annotated CDS then the positions of the P-site from both the 
+start and the stop codon will be set to NA. If the FASTA file with the
+transcriptome sequences is provided, an additional column containing the
+three nucleotides covered by the P-site will be attached.
 }
 \examples{
 data(reads_list)
 data(psite_offset)
 data(mm81cdna)
 
-reads_psite_list <- psite_info(reads_list, psite_offset, seq = NULL)
+reads_psite_list <- psite_info(reads_list, psite_offset)
 }
+

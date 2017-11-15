@@ -11,12 +11,7 @@ metaheatmap_psite(data, annotation, sample, scale_factors = NULL,
 \arguments{
 \item{data}{A list of data frames from \code{\link{psite_info}}.}
 
-\item{annotation}{A data frame with a reference annotation of the transripts.
-It must contain at least four columns named \emph{transcript},
-\emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-transcripts (the same as in the reference transcriptome), the position of
-the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-UTR}, respectively. No specific order is required.}
+\item{annotation}{A data frame from \code{\link{create_annotation}}.}
 
 \item{sample}{A list of character string vectors specifying the name of the
 samples of interest. The samples contained in each elements of the list
@@ -66,15 +61,15 @@ When \emph{auto}, the title of the plot reports the number of transcript
 and the read lengths employed for generating the heatmap.}
 }
 \value{
-A list containing a ggplot2 plot object, a data frame with the
+A list containing a ggplot2 object, a data frame with the
   associated data and the transcripts employed for generating the plot.
 }
 \description{
 Plots a heatmap-like metaprofile based on the identified P-site of the reads.
-It is similar to \code{\link{metaprofile_psite}}, but here the intensity of
-the signal along the chosen region is represented by a continuous color scale
-rather than by the height of a line chart. This graphical output is the
-optimal choice in order to compare multiple samples or look at the behaviour
+It is similar to \code{\link{metaprofile_psite}}, but the intensity of the
+signal along the chosen region is represented by a continuous color scale 
+rather than by the height of a line chart. This graphical output is the 
+optimal choice in order to compare multiple samples or look at the behaviour 
 of the data if different populations of reads are considered.
 }
 \examples{
@@ -99,9 +94,10 @@ contains the whole dataset while in the other only reads of 28 nucleotides
 are present
 sample_name <- "Samp1"
 metaheat_df <- list()
-metaheat_df[["subsample_28nt"]] <- subset(reads_psite_info[[sample_name]], length == 28)
-metaheat_df[["whole_sample"]] <- reads_psite_info[[sample_name]]
+metaheat_df[["subsample_28nt"]] <- subset(reads_psite_list[[sample_name]], length == 28)
+metaheat_df[["whole_sample"]] <- reads_psite_list[[sample_name]]
 names_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
 metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = names_list)
 metaheat_comparison[["plot"]]
 }
+

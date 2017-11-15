@@ -10,6 +10,10 @@ frame_psite_length(data, sample = NULL, region = "all", cl = 100,
 \arguments{
 \item{data}{A list of data frames from \code{\link{psite_info}}.}
 
+\item{sample}{A character string vector specifying the name of the sample(s)
+of interest. By default this argument is NULL, meaning that all the data
+frames in \code{data} will be considered.}
+
 \item{region}{Either "all" or a character string among "5utr", "cds", "3utr"
 specifying which of the three regions of the transcript (5' UTR, CDS or 3'
 UTR, respectively) should be considered. Default is "all", meaning that the
@@ -25,18 +29,14 @@ specified.}
 first case all the reads will be used to generate barplot. Otherwise, only
 the reads matching the specified length(s) will be employed. If specified,
 this parameter prevails over \code{cl}}
-
-\item{A}{list of character string vectors specifying the name of the samples
-of interest. Default is NULL, meaning that all the samples will be taken
-into account.}
 }
 \value{
-A list containing a ggplot2 plot object and a data frame with the
+A list containing a ggplot2 object and a data frame with the
   associated data.
 }
 \description{
-Similar to \code{\link{frame_psite}} but in this case the
-results are stratified by the length of the reads.
+Similar to \code{\link{frame_psite}} but the result is stratified by the
+length of the reads.
 }
 \examples{
 data(reads_psite_list)
@@ -46,8 +46,9 @@ frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
 frame_len_whole[["plot"]]
 
 ## Generate the heatmap for the coding sequence and visualize it for the
-middle 98\% of the range of read length
+middle 90\% of the range of read length
 frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
-region = "cds", cl = 98)
+region = "cds", cl = 90)
 frame_len_sub[["plot"]]
 }
+

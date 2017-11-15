@@ -1,8 +1,8 @@
 #' Compute the number of P-sites per frame.
 #'
-#' Generates a barplot reporting the percentage of identified P-sites on the
-#' three reading frames of the transcript. This value is computed for the 5'
-#' UTR, the coding sequence and the 3' UTR, separately.
+#' Generates a barplot reporting the percentage of identified P-sites on the 
+#' three reading frames of the transcript. This value is computed for the
+#' annotated 5' UTRs, coding sequences and 3' UTRs, separately.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
 #' @param sample A list of character string vectors specifying the name of the
@@ -118,8 +118,8 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 
 #' Compute the number of P-sites per frame for each read length.
 #'
-#' Similar to \code{\link{frame_psite}} but in this case the
-#' results are stratified by the length of the reads.
+#' Similar to \code{\link{frame_psite}} but the result is stratified by the
+#' length of the reads.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
 #' @param sample A character string vector specifying the name of the sample(s)
@@ -148,9 +148,9 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #' frame_len_whole[["plot"]]
 #'
 #' ## Generate the heatmap for the coding sequence and visualize it for the
-#' middle 98% of the range of read length
+#' middle 90% of the range of read length
 #' frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
-#' region = "cds", cl = 98)
+#' region = "cds", cl = 90)
 #' frame_len_sub[["plot"]]
 #' @import ggplot2
 #' @export

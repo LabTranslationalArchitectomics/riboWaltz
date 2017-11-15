@@ -1,19 +1,13 @@
 #' Plot ribosome occupancy metaprofiles at single-nucleotide resolution.
 #'
-#' Builds a metaprofile based on the identified P-site of the reads. It sums up
-#' the number of P-sites per nucleotide for the chosen region, starting from one
-#' ore more replicates of a sample.
+#' Builds a metaprofile based on the identified P-site of the reads. It sums up 
+#' the number of P-sites per nucleotide for the chosen portion of the
+#' transcript, starting from one ore more replicates of a sample.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
-#' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least five columns named \emph{transcript}, 
-#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
-#'   containing the name of the transcripts (the same as in the reference 
-#'   transcriptome), its transcript type, the position of the first nucleotide 
-#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
-#'   No specific order is required.
-#' @param sample A character string vector specifying the name of the sample (or of its replicates)
-#'   of interest.
+#' @param annotation A data frame from \code{\link{create_annotation}}.
+#' @param sample A character string vector specifying the name of the sample (or
+#'   of its replicates) of interest.
 #' @param scale_factors A numeric vector of scale factors to be used for merging
 #'   the replicates of the specified sample (if any). The vector must contain at
 #'   least a set of values named after the strings listed in \code{sample}. No
@@ -138,7 +132,8 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
     theme_bw(base_size = 20) +
     theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
     facet_grid(. ~ reg, scales = "free", switch = "x") +
-    theme(strip.background = element_blank()) +
+    theme(strip.background = element_blank(), strip.placement = "outside") +
+    theme(plot.title = element_text(hjust = 0.5)) +
     geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
   plot
 
@@ -152,20 +147,14 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
 #' Plot ribosome occupancy metaheatmap at single-nucleotide resolution.
 #'
 #' Plots a heatmap-like metaprofile based on the identified P-site of the reads.
-#' It is similar to \code{\link{metaprofile_psite}}, but here the intensity of
-#' the signal along the chosen region is represented by a continuous color scale
-#' rather than by the height of a line chart. This graphical output is the
-#' optimal choice in order to compare multiple samples or look at the behaviour
+#' It is similar to \code{\link{metaprofile_psite}}, but the intensity of the
+#' signal along the chosen region is represented by a continuous color scale 
+#' rather than by the height of a line chart. This graphical output is the 
+#' optimal choice in order to compare multiple samples or look at the behaviour 
 #' of the data if different populations of reads are considered.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
-#' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least five columns named \emph{transcript}, 
-#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
-#'   containing the name of the transcripts (the same as in the reference 
-#'   transcriptome), its transcript type, the position of the first nucleotide 
-#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
-#'   No specific order is required.
+#' @param annotation A data frame from \code{\link{create_annotation}}.
 #' @param sample A list of character string vectors specifying the name of the
 #'   samples of interest. The samples contained in each elements of the list
 #'   will be merged toghether, using the scale factors specified by
@@ -227,8 +216,8 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
 #' are present
 #' sample_name <- "Samp1"
 #' metaheat_df <- list()
-#' metaheat_df[["subsample_28nt"]] <- subset(reads_psite_info[[sample_name]], length == 28)
-#' metaheat_df[["whole_sample"]] <- reads_psite_info[[sample_name]]
+#' metaheat_df[["subsample_28nt"]] <- subset(reads_psite_list[[sample_name]], length == 28)
+#' metaheat_df[["whole_sample"]] <- reads_psite_list[[sample_name]]
 #' names_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
 #' metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = names_list)
 #' metaheat_comparison[["plot"]]
@@ -339,8 +328,9 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
     geom_tile(aes(fill = reads), height = 0.7) +
     labs(x = "", y = "", title = plot_title) +
     theme_bw(base_size = 20) +
-    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), strip.placement = "outside") +
     facet_grid(. ~ reg, scales = "free", switch = "x") +
+    theme(plot.title = element_text(hjust = 0.5)) +
     theme(strip.background = element_blank())
 
   if (log == F) {

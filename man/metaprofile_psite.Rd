@@ -11,12 +11,7 @@ metaprofile_psite(data, annotation, sample, scale_factors = NULL,
 \arguments{
 \item{data}{A list of data frames from \code{\link{psite_info}}.}
 
-\item{annotation}{A data frame with a reference annotation of the transripts.
-It must contain at least four columns named \emph{transcript},
-\emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-transcripts (the same as in the reference transcriptome), the position of
-the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-UTR}, respectively. No specific order is required.}
+\item{annotation}{A data frame from \code{\link{create_annotation}}.}
 
 \item{sample}{A character string vector specifying the name of the sample (or
 of its replicates) of interest.}
@@ -36,7 +31,7 @@ transcripts to be included in the metaprofile. By default this argument is
 NULL, which implies all the transcripts in \code{data} will be used. Note
 that if either the 5' UTR, the coding sequence or the 3' UTR of a
 transcript is shorther than what is specified by \code{utr5l},
-\eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript will not
+\eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript wont
 be cosidered.}
 
 \item{utr5l}{A positive integer specifying the length (in nucleotides) of the
@@ -57,13 +52,13 @@ by the number of transcript and the read lengths employed for generating
 the metaprofile.}
 }
 \value{
-A list containing a ggplot2 plot object, a data frame with the
+A list containing a ggplot2 object, a data frame with the
   associated data and the transcripts employed for generating the plot.
 }
 \description{
-Builds a metaprofile based on the identified P-site of the reads. It sums up
-the number of P-sites per nucleotide for the chosen region, starting from one
-ore more replicates of a sample.
+Builds a metaprofile based on the identified P-site of the reads. It sums up 
+the number of P-sites per nucleotide for the chosen portion of the
+transcript, starting from one ore more replicates of a sample.
 }
 \examples{
 data(reads_psite_list)
@@ -83,3 +78,4 @@ metaprof_sub <- metaprofile_psite(reads_psite_list, mm81cdna, sample = sample_na
 length_range = 27:29, transcripts = transcript_names)
 metaprof_sub[["plot"]]
 }
+

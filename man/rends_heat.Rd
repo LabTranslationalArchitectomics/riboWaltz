@@ -4,25 +4,28 @@
 \alias{rends_heat}
 \title{Plot metaheatmaps of the read ends.}
 \usage{
-rends_heat(data, annotation, sample, cl = 99, utr5l = 50, cdsl = 50,
-  utr3l = 50, log = F, colour = "black")
+rends_heat(data, annotation, sample, transcripts = NULL, cl = 99,
+  utr5l = 50, cdsl = 50, utr3l = 50, log = F, colour = "black")
 }
 \arguments{
 \item{data}{A list of data frames from \code{\link{bamtolist}}.}
 
-\item{annotation}{A data frame with a reference annotation of the transripts.
-It must contain at least four columns named \emph{transcript},
-\emph{l_utr5}, \emph{l_cds}, \emph{l_utr3} containing the name of the
-transcripts (the same as in the reference transcriptome), the position of
-the first nucleotide of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3'
-UTR}, respectively. No specific order is required.}
+\item{annotation}{A data frame from \code{\link{create_annotation}}.}
 
-\item{sample}{A character string specifying the name of the sample of
+\item{sample}{A character string specifying the name of the sample of 
 interest.}
 
-\item{cl}{An integer with value in \emph{[1,100]} specifying the read length
-confidence level for restricting the distribution to a chosen range of
-lengths. By default it is set to 99.}
+\item{transcripts}{A character string vector specifying the name of the 
+transcripts to be included in the metaprofile. By default this argument is 
+NULL, which implies all the transcripts in \code{data} will be used. Note 
+that if either the 5' UTR, the coding sequence or the 3' UTR of a 
+transcript is shorther than what is specified by \code{utr5l}, 
+\eqn{2*}\code{cdsl} and \code{utr3l} respectively, the transcript won't be
+cosidered.}
+
+\item{cl}{An integer with value in \emph{[1,100]} specifying the read length 
+confidence level for restricting the plot to a chosen range of lengths. By
+default it is set to 99.}
 
 \item{utr5l}{A positive integer specifying the length (in nucleotides) of the
 5' UTR portion that will flank the start codon in the plot. The default
@@ -36,33 +39,36 @@ in the plot. The default value is 50.}
 3' UTR portion that will flank the stop codon in the plot. The default
 value is 50.}
 
-\item{log}{A logical value whether or not to use a logarithmic scale colour
-(it is suggested for data with a strong difference between the lowest and
-the highest signal. Default is FALSE.}
+\item{log}{A logical value whether or not to use a logarithmic scale colour 
+(strongly suggested in case of large differences in the signal). Default is
+FALSE.}
 
 \item{colour}{A character string specifying the colour to be used for the
 plot.}
 }
 \value{
-A list containing a ggplot2 plot object, and a data frame with the
+A list containing a ggplot2 object, and a data frame with the
   associated data.
 }
 \description{
-Plots 4 metaheatmaps that show the abundance of the 5' the and 3' end of the
-reads mapping around the start and the stop codons, stratified by their
-length. It is possible to visualise the heatmaps for all the reads or to
-restrict the graphical output to a sub-range of read lengths.
+Plots four metaheatmaps fot a specified sample of the imput list showing the
+abundance of the 5' the and 3' end of the reads mapping around the start and
+the stop codon of the CDS (if any), stratified by their length. It is
+possible to visualise the heatmaps for all the reads or to restrict the
+graphical output to a sub-range of read lengths.
 }
 \examples{
 data(reads_list)
+data(mm81cdna)
 
 ## Visualise the heatmap for the whole range of read lengths
-heatend_whole <- rends_heat(reads_list, sample = "Samp1", cl = 100)
+heatend_whole <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 100)
 heatend_whole[["plot"]]
 
 ## Visualise the heatmap for the middle 95\% of the range of read lengths and
 reducing the regions flanking the start and the stop codons
-heatend_sub95 <- rends_heat(reads_list, sample = "Samp1", cl = 95,
+heatend_sub95 <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 95,
 utr5l = 30, cdsl = 40, utr3l = 30)
 heatend_sub95[["plot"]]
 }
+

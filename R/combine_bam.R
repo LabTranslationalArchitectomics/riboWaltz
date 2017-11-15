@@ -29,31 +29,29 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 }
 
 #' Convert a list of BED files into a list of data frames.
-#'
-#' Reads a list of BED files, converts each file into a data frame and combines
+#' 
+#' Reads a list of BED files, converts each file into a data frame and combines 
 #' them into a list, so that each data frame in the list correspond to a sample.
-#' Two additional columns are attached to the data frames, containing the
-#' position of the start and the stop codons with respect to the beginning of
-#' the transcript. Since the original BAM files come from an alingment on
-#' transcripts, the reads associated to the negative strand should be present in
-#' a low percentage, and they will be removed
+#' Two additional columns are attached to the data frames, containing the 
+#' position of the start and the stop codon of the CDS with respect to the 1st
+#' nuclotide of the transcript. Please note: if a transcript doesn't present any
+#' annotated CDS then the positions of both the start and the stop codon will be
+#' set to 0. Since the original BAM files come from a transcriptome alingment,
+#' the reads aligned to the negative strand should be present in a low
+#' percentage, and they will be removed.
 #'
-#' @param bedfolder A character string indicating the folder where the BED files
-#'   are located.
-#' @param annotation A data frame with a reference annotation of the transripts.
-#'   It must contain at least five columns named \emph{transcript}, 
-#'   \emph{transcript_type}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} 
-#'   containing the name of the transcripts (the same as in the reference 
-#'   transcriptome), its transcript type, the position of the first nucleotide 
-#'   of the \emph{5' UTR}, the \emph{CDS} and the  \emph{3' UTR}, respectively. 
-#'   No specific order is required.
+#' @param bedfolder A character string indicating the path to the folder where
+#'   the BED files are located.
+#' @param annotation A data frame from \code{\link{create_annotation}}. Please
+#'   note that the transcript names in the annotation data frame should coincide
+#'   with those in the alignment file.
 #' @param list_name A character vector specifying the desired names to be 
-#'   assigned to the data frames of the output list. Its length must be equal to
+#'   assigned to the data frames in the output list. Its length must be equal to
 #'   the number of BED files within \code{bedfolder}. Pay attention to the order
-#'   in which their are provided: the first string will be assigned to the first
+#'   their are provided: the first string will be assigned to the first
 #'   file, the second string to the second one and so on. By default this 
-#'   argument is NULL, which implies the data frames will be named as the BED 
-#'   files, leaving their path and extension out.
+#'   argument is NULL, which implies the data frames will be named after the BED 
+#'   paths, leaving their path and extension out.
 #' @return A list of data frames.
 #' @examples
 #' path_bed <- location_of_BED_files
@@ -85,14 +83,16 @@ bedtolist <- function(bedfolder, annotation, list_name = NULL) {
     df <- read.table(filename, header = FALSE, sep = "\t")
     colnames(df) <- c("transcript", "end5", "end3", "length", "strand")
     nreads <- nrow(df)
-    cat(sprintf("reads: %f M\n", (nreads / 1e+06)))
+    cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
+    df <- subset(df, as.character(transcript) %in% rownames(annotation))
+    cat(sprintf("reads (kept): %f M\n", (nreads / 1e+06)))
     df <- subset(df, strand == "+")
     cat(sprintf("positive strand: %s %%\n", format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
     cat(sprintf("negative strand: %s %%\n\n", format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
     df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
     df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + annotation[as.character(df$transcript), "l_cds"]
     df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
-    sample.reads.list[[sampname]] <- df[ , !(names(df) %in% "strand")]
+    sample_reads_list[[sampname]] <- df[ , !(names(df) %in% "strand")]
   }
-  return(sample.reads.list)
+  return(sample_reads_list)
 }

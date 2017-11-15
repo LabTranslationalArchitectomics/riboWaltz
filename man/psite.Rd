@@ -25,12 +25,12 @@ for the computation of the offsets. Default is FALSE.}
 \item{plotdir}{A character string specifying the (existing or not) folder
 where the occupancy metaprofiles shuold be saved. This parameter is
 considered only if \code{plot} is TRUE. By default this argument is NULL,
-which implies the folder is set as a subfolder as the working directory,
+which implies the folder is set as a subfolder of the working directory,
 called \emph{offset_plot}.}
 
-\item{plotformat}{Either "png" (the default) or "pdf". This parameter is
-considered only if \code{plot} is TRUE, specifying the file format in which
-the occupancy metaprofiles shuold be saved. This}
+\item{plotformat}{Either "png" (the default) or "pdf". This parameter
+specifies the file format in which the occupancy metaprofiles shuold be
+saved. It is considered only if \code{plot} is TRUE.}
 
 \item{cl}{An integer with value in \emph{[1,100]} specifying the read length
 confidence level for restricting the plot of the occupancy metaprofiles to
@@ -41,32 +41,35 @@ considered only if \code{plot} is TRUE.}
 A data frame.
 }
 \description{
-Identify the position of the ribosome P-site, determined by the localisation
-of its central nucleotide, for each read. The function returns the position
-of the P-site specifically inferred for the many read lengths processing the
-samples separately. It also allows to plot a collection of occupancy
-metaprofiles of the read ends aligning around the start codon, displaying the
-identified P-sites offsets.
+Identifies, within each read, the position of the ribosome P-site, determined
+by the localisation of its first nucleotide. The function returns the 
+position of the P-site specifically inferred for the many read lengths by 
+processing the samples separately. It also allows to plot a collection of
+length-specific occupancy metaprofiles of the read ends aligning around the
+start codon, displaying the identified P-sites offsets.
 }
 \details{
-This function compute the P-site identification starting from the
-  reads that align on the start codon of any transcript, exploiting the
-  knowledge that their associated P-sites corresponds to the triplet AUG. The
-  P-site identification is then divided in two steps: i) computation of the
-  offsets between the extremities of the reads and the start codons based on
-  the alignment of 5' and the 3' end around the translation initiation site
-  ii) correction of some offsets based on the global results of the previous
-  step.
+This function compute the P-site identification starting from the 
+  reads that align on the start codon of any annotated coding sequences,
+  exploiting the knowledge that their associated P-sites corresponds to the
+  triplet AUG. The P-site identification is then divided in two steps: i)
+  computation of the offsets between the extremities of the reads and the
+  start codons based on the alignment of 5' and the 3' end around the
+  translation initiation site ii) correction of some offsets based on the
+  global results of the previous step.
 }
 \examples{
 data(reads_list)
 
-## Compute the P-site offset automatically not plotting the
-metaprofiles based on the alignment of the read ends
+## Compute the P-site offset automatically not plotting the metaprofiles
+based on the alignment of the read ends
 psite(reads_list, flanking = 6, extremity="auto")
 
 ## Compute the P-site offset specifying the extremity used for the correction
 step, plotting the metaprofiles based on the alignment of the read ends, only
-for the middle 95\% of the read length
-psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
+for the middle 95\% of the read length. The plots will be placed in the
+current working directory.
+psite_offset <- psite(reads_list, flanking = 6, extremity="3end",plot = TRUE, cl = 95)
+psite_offset
 }
+

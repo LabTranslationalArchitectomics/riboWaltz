@@ -1,16 +1,16 @@
 #' Plot read length distributions.
 #'
-#' Plots the read length distribution for a specified sample of the input list.
-#' It is possible to look at the length distribution based on the whole set of
-#' reads or to restrict it to a sub-range of read lengths.
+#' Plots the read length distribution for a specified sample of the input list. 
+#' It is possible to visualise the whole length distribution or to restrict it
+#' to a chosen range of read lengths.
 #'
 #' @param data A list of data frames from \code{\link{bamtolist}}.
 #' @param sample A character string specifying the name of the sample of
 #'   interest.
-#' @param cl An integer with value in \emph{[1,100]} specifying the read length
-#'   confidence level for restricting the distribution to a chosen range of
-#'   lengths. By default it is set to 100, i.e. the whole set of reads lengths
-#'   will be considered.
+#' @param cl An integer with value in \emph{[1,100]} specifying the read length 
+#'   confidence level for restricting the distribution to a chosen range of 
+#'   lengths. By default it is set to 100, i.e. the whole distribution will be
+#'   displayed.
 #' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples
@@ -37,6 +37,7 @@ rlength_distr <- function(data, sample, cl = 100) {
     geom_bar(stat = "identity", fill = "gray80") +
     labs(title = sample, x = "Read length", y = "Count (%)") +
     theme_bw(base_size = 18) +
+    theme(plot.title = element_text(hjust = 0.5)) +
     scale_x_continuous(limits = c(xmin-0.5, xmax+0.5), breaks = seq(xmin + ((xmin) %% 2), xmax, by=floor((xmax-xmin)/7)))
 
   output<-list()

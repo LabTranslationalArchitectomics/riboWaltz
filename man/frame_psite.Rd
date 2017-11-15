@@ -23,13 +23,13 @@ first case all the reads will be used to generate barplot. Otherwise, only
 the reads matching the specified length(s) will be employed.}
 }
 \value{
-A list containing a ggplot2 plot object and a data frame with the
+A list containing a ggplot2 object and a data frame with the
   associated data.
 }
 \description{
-Generates a barplot reporting the percentage of identified P-sites on the
-three reading frames of the transcript. This value is computed for the 5'
-UTR, the coding sequence and the 3' UTR, separately.
+Generates a barplot reporting the percentage of identified P-sites on the 
+three reading frames of the transcript. This value is computed for the
+annotated 5' UTRs, coding sequences and 3' UTRs, separately.
 }
 \examples{
 data(reads_psite_list)
@@ -44,3 +44,4 @@ frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 length_range=28)
 frame_sub[["plot"]]
 }
+
