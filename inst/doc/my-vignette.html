@@ -154,15 +154,6 @@ install_github(&quot;LabTranslationalArchitectomics/riboWaltz&quot;)</code></pre
 </table>
 <p>The next step loads and reads the BED files, merging them in a list. The <code>bedtolist</code> function only requires the path to the BED files and an annotation file. Moreover, the <em>list_name</em> option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.</p>
 <pre><code>reads_list &lt;- bedtolist(bedfolder=path_to_bed, annotation=annotation_file)</code></pre>
-<p>A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least four columns reporting the name of the transcripts (the same as in the reference transcriptome uses for the alignment) and the position of the first nucleotide of the 5’ UTR, the CDS and the 3’ UTR. Here an example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(mm81cdna)</code></pre></div>
-<pre><code>##              transcript l_tr l_utr5 l_cds l_utr3
-## 1  ENSMUST00000000001.4 3262    141  1065   2056
-## 2 ENSMUST00000000003.11  902    140   525    237
-## 3  ENSMUST00000000010.8 2574     85   753   1736
-## 4 ENSMUST00000000028.11 2143    313  1701    129
-## 5  ENSMUST00000000033.9 3708    115   543   3050
-## 6  ENSMUST00000000049.5 1190     51  1038    101</code></pre>
 <p>For every acquired file it is printed the number of mapping reads and the percentage of reads aligning on both the positive and the negative strand:</p>
 <pre><code># reading Samp1.bed
 # reads: 4.344494 M
@@ -177,6 +168,19 @@ install_github(&quot;LabTranslationalArchitectomics/riboWaltz&quot;)</code></pre
 ## 4 ENSMUST00000000001.4  132  158     27       142     1206
 ## 5 ENSMUST00000000001.4  140  167     28       142     1206
 ## 6 ENSMUST00000000001.4  142  170     29       142     1206</code></pre>
+<div id="annotation-data-frame" class="section level4">
+<h4>Annotation data frame</h4>
+<p>A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5’ UTR, the CDS and the 3’ UTR. Here an example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(mm81cdna)</code></pre></div>
+<pre><code>##              transcript l_tr l_utr5 l_cds l_utr3
+## 1  ENSMUST00000000001.4 3262    141  1065   2056
+## 2 ENSMUST00000000003.11  902    140   525    237
+## 3  ENSMUST00000000010.8 2574     85   753   1736
+## 4 ENSMUST00000000028.11 2143    313  1701    129
+## 5  ENSMUST00000000033.9 3708    115   543   3050
+## 6  ENSMUST00000000049.5 1190     51  1038    101</code></pre>
+<p>The annotation file can be either provided by the user or generated starting from a GTF file by using the <code>create_annotation</code> function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated.</p>
+</div>
 </div>
 <div id="overview-of-the-data" class="section level3">
 <h3>Overview of the data</h3>

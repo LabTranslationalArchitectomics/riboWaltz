@@ -1,15 +1,15 @@
 ## ---- eval=TRUE, warning=FALSE-------------------------------------------
 library(riboWaltz)
 
+## ------------------------------------------------------------------------
+head(reads_list[["Samp1"]])
+
 ## ---- eval=TRUE, echo=FALSE----------------------------------------------
 data(reads_list)
 data(mm81cdna)
 
 ## ------------------------------------------------------------------------
 head(mm81cdna)
-
-## ------------------------------------------------------------------------
-head(reads_list[["Samp1"]])
 
 ## ---- echo=TRUE, fig.show='hold', fig.width=4, fig.asp=1, fig.align='center', out.width='250px'----
 example_length_dist <- rlength_distr(reads_list, sample="Samp1")

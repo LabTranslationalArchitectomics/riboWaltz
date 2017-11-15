@@ -66,16 +66,6 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     reads_list <- bedtolist(bedfolder=path_to_bed, annotation=annotation_file)
 
-  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least four columns  reporting the name of the transcripts (the same as in the reference transcriptome uses for the alignment) and the position of the first nucleotide of the 5' UTR, the CDS and the 3' UTR. Here an example: 
-  
-```{r, eval=TRUE, echo=FALSE}
-data(reads_list)
-data(mm81cdna)
-```
-```{r}
-head(mm81cdna)
-```
-
   For every acquired file it is printed the number of mapping reads and the percentage of reads aligning on both the positive and the negative strand:
 
 ```
@@ -91,6 +81,22 @@ head(mm81cdna)
 head(reads_list[["Samp1"]])
 ```
 
+
+
+  
+### Annotation data frame
+  
+  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
+
+```{r, eval=TRUE, echo=FALSE}
+data(reads_list)
+data(mm81cdna)
+```
+```{r}
+head(mm81cdna)
+```
+  The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated.
+  
 
 
 
