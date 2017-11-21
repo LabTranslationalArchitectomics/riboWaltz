@@ -22,7 +22,6 @@ Ribosome profiling is a powerful technique used to study translation at the geno
 __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data. Taking advantage of a two-step algorithm where offset information is passed through populations of reads with different length in order to maximize offset coherence, __riboWaltz__ computes with high precision the P-site offset. __riboWaltz__ also provides a variety of graphical representations, laying the foundations for further accurate RiboSeq analyses and better interpretation of positional information.
 
 
-
 ## Installation
 
   To install __riboWaltz__ directly from GitHub run
@@ -30,6 +29,7 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
     install.packages("devtools")
     library("devtools")
     install_github("LabTranslationalArchitectomics/riboWaltz")
+
 
 
 ## Loading
@@ -54,13 +54,13 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header is here added for clarity):
 
   |  transcript  |  start  |  end  |  length  |  strand  |
-  |:------|:-----:|---------:|:------:|:------:|
-  |  ENSMUST00000000001.4  |  21  |  49  |  29  |  +  |
-  |  ENSMUST00000000001.4  |  26  |  55  |  30  |  +  |
-  |  ENSMUST00000000001.4  |  30  |  58  |  29  |  +  |
-  |  ENSMUST00000000001.4  |  76  |  103  |  28  |  +  |
-  |  ENSMUST00000000001.4  |  85  |  112  |  28  |  +  |
-  |  ENSMUST00000000001.4  |  87  |  115  |  29  |  +  |
+  |:------:|:-----:|:---------:|:------:|:------:|
+  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  131  |  159  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  132  |  158  |  27  |  +  |
+  |  ENSMUST00000000001.4  |  140  |  167  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  142  |  170  |  29  |  +  |
 
    The next step loads and reads the BED files, merging them in a list. The `bedtolist` function only requires the path to the BED files and an annotation file. Moreover, the *list_name* option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.
 
@@ -142,13 +142,13 @@ example_ends_heatmap[["plot"]]
 ```{r, echo=TRUE}
 psite_offset <- psite(reads_list, flanking = 6, extremity="auto")
 ```
-The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. An additional column contains the name of the sample.
+  The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. An additional column contains the name of the sample.
 
 ```{r, echo=TRUE}
 head(psite_offset, 10)
 ```
 <br>
-For every read length of each sample a plot of the ribosome occupancy profile for the 5' and the 3’ extremity around the start codon is produced. The optimal offsets (dotted black line) as well as the inferred offsets before (dashed vertical lines) after the correction (continuous vertical lines) are reported. The regions used for their computation (depending on the *flanking* option) are shaded. Here two examples for reads of 28 and 31 nucleotides:
+  For every read length of each sample a plot of the ribosome occupancy profile for the 5' and the 3’ extremity around the start codon is produced. The optimal offsets (dotted black line) as well as the inferred offsets before (dashed vertical lines) after the correction (continuous vertical lines) are reported. The regions used for their computation (depending on the *flanking* option) are shaded. Here two examples for reads of 28 and 31 nucleotides:
 
 ```{r, out.width = '700px', fig.retina = NULL, echo =FALSE}
 knitr::include_graphics("meta_psite_length28.png")
@@ -156,11 +156,20 @@ knitr::include_graphics("meta_psite_length31.png")
 ```
 <br>
 <br>
-Now the initial dataset must be updated with the new information coming from the identification of the P-site offset such as the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
+  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the exsisting data frames the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
 
 ```{r, echo=TRUE}
 reads_psite_list <- psite_info(reads_list, psite_offset)
 head(reads_psite_list[["Samp1"]])
+```
+<br>
+  The updated dataset can be used as input to `psite_per_cds` for generating a list of data frames containing, for each transcript, the number of ribosome protected fragments with in-frame P-site mapping on the CDS. This data frame can be used to estimate transcript-specific translation levels and perform differential analysis comparing multiple conditions.
+
+```{r, echo=TRUE}
+psite_cds_list <- psite_per_cds(reads_psite_list, mm81cdna)
+```
+```{r, echo=TRUE}
+head(psite_cds_list[["Samp1"]])
 ```
 
 

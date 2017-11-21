@@ -47,13 +47,13 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header of the columns are here added for clarity):
 
   |  transcript  |  start  |  end  |  length  |  strand  |
-  |:------|:-----:|---------:|:------:|:------:|
-  |  ENSMUST00000000001.4  |  21  |  49  |  29  |  +  |
-  |  ENSMUST00000000001.4  |  26  |  55  |  30  |  +  |
-  |  ENSMUST00000000001.4  |  30  |  58  |  29  |  +  |
-  |  ENSMUST00000000001.4  |  76  |  103  |  28  |  +  |
-  |  ENSMUST00000000001.4  |  85  |  112  |  28  |  +  |
-  |  ENSMUST00000000001.4 |  87  |  115  |  29  |  +  |
+  |:------:|:-----:|:------:|:------:|:------:|
+  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  131  |  159  |  29  |  +  |
+  |  ENSMUST00000000001.4  |  132  |  158  |  27  |  +  |
+  |  ENSMUST00000000001.4  |  140  |  167  |  28  |  +  |
+  |  ENSMUST00000000001.4  |  142  |  170  |  29  |  +  |
 
    The next step loads and reads the BED files, merging them in a list. The `bedtolist` function only requires the path to the BED files and an annotation file. Moreover, the *list_name* option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.
 
@@ -66,7 +66,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
   
   |  transcript  |  l_tr  |  l_utr5  |  l_cds  |  l_utr3  |
-  |------:|:---------:|:------:|:---------:|:------:|
+  |:------:|:---------:|:------:|:---------:|:------:|
   |  ENSMUST00000000001.4  |  3262  |  141  |  1065  |  2056  |
   |  ENSMUST00000000003.11  |  902  |  140  |  525  |  237  |
   |  ENSMUST00000000010.8  |  2574  |  85  |  753  |  1736  |
@@ -114,13 +114,39 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length31.png" width="750" />
 </p>
 
-  Now the initial dataset must be updated with the new information coming from the identification of the P-site offset such as the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
+  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the exsisting data frames the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
 
     reads_psite_list <- psite_info(reads_list, psite_offset)
+	
+  Here an example of the resulting data frame for one sample:
+  
+  |  transcript  |  end5  |  psite  |  end3 |  length  |  start_pos  |  stop_pos  |  psite_from_start  |  psite_from_stop  |  psite_region  |
+  |:------:|:-----:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
+  |  ENSMUST00000000001.4  |  92  |  103  |  119  |  28  |  142  |  1206  |  -39  |  -1103  |  5utr  |
+  |  ENSMUST00000000001.4  |  94  |  106  |  122  |  29  |  142  |  1206  |  -36  |  -1100  |  5utr  |
+  |  ENSMUST00000000001.4  |  131  |  143  |  159  |  29  |  142  |  1206  |  1  |  -1063  |  cds  |
+  |  ENSMUST00000000001.4  |  132  |  142  |  158  |  27  |  142  |  1206  |  0  |  -1064  |  cds  |
+  |  ENSMUST00000000001.4  |  140  |  151  |  167  |  28  |  142  |  1206  |  9  |  -1055  |  cds  |
+  |  ENSMUST00000000001.4  |  142  |  154  |  170  |  29  |  142  |  1206  |  12  |  -1052  |  cds  |
+
+  The updated dataset can be used as input to `psite_per_cds` for generating a list of data frames containing, for each transcript, the number of ribosome protected fragments with in-frame P-site mapping on the CDS. This data frame can be used to estimate transcript-specific translation levels and perform differential analysis comparing multiple conditions.
+	
+	psite_cds_list <- psite_per_cds(reads_psite_list, mm81cdna)
+	
+  The result is a data frame as the following one
+  
+  |  transcript  |  l_region  |  psite_count  |
+  |:------:|:------:|:------:|
+  |  ENSMUST00000000001.4  |  3262  |  31  |
+  |  ENSMUST00000000003.11  |  525  |  0  |
+  |  ENSMUST00000000010.8  |  753  |  0  |
+  |  ENSMUST00000000028.11  |  1701  |  2  |
+  |  ENSMUST00000000033.9  |  543  |  26  |
+  |  ENSMUST00000000049.5  |  1038  |  0  |
 
 #### 3-nucleotide periodicity
 
-  To verify if the identified P-sites (i.e. ribosomes) are in the correct frame along the coding sequence, the functions `frame_psite_length` and`frame_psite` can be exploited. Both of them compute how many ribosomes are in the three frames for the 5' UTR, the CDS and the 3' UTR, with the following difference: the first one divides the results depending on the read length, while the second one works handling the reads all together.
+  To verify if the identified P-sites (i.e. ribosomes) are in the correct frame along the coding sequence, the functions `frame_psite_length` and `frame_psite` can be exploited. Both of them compute how many ribosomes are in the three frames for the 5' UTR, the CDS and the 3' UTR, with the following difference: the first one divides the results depending on the read length, while the second one works handling the reads all together.
 
     example_frames_stratified <- frame_psite_length(reads_psite_list, sample="Samp1",
                                                     region="all", cl=90)
