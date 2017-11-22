@@ -56,7 +56,7 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @examples
 #' path_bed <- location_of_BED_files
 #' annotation_df <- dataframe_with_transcript_annotation
-#' bedtolist(bamfolder = path_bed, annotation = annotation_df)
+#' bedtolist(bedfolder = path_bed, annotation = annotation_df)
 #' @export
 bedtolist <- function(bedfolder, annotation, list_name = NULL) {
   names <- list.files(path = bedfolder, pattern = ".bed")
@@ -73,7 +73,7 @@ bedtolist <- function(bedfolder, annotation, list_name = NULL) {
     }
   }
   rownames(annotation) <- as.character(annotation$transcript)
-  sample.reads.list <- list()
+  sample_reads_list <- list()
   i <- 0
   for (n in names) {
     i <- i + 1
