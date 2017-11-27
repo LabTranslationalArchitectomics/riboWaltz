@@ -76,7 +76,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
   The annotation file can be either provided by the user, or generated starting from a GTF file by using the `create_annotation` function.
   
-  Optionally, a third file containing transcript sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis
+  Optionally, a third file containing transcript sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis.
 
 #### Overview of the data
 
