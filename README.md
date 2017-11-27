@@ -27,7 +27,7 @@ To install __riboWaltz__, directly from GitHub:
     library("devtools")
     install_github("LabTranslationalArchitectomics/riboWaltz")
   
-To install __riboWaltz__ and generate the vignette substitute the latter command with:
+To install __riboWaltz__ and generate the vignette, substitute the latter command with:
   
     install_github("LabTranslationalArchitectomics/riboWaltz", build_vignettes=TRUE)
 
@@ -44,7 +44,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     bamtobed(bamfolder=path_to_bam, bedfolder=path_to_bed)
 
-  The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header of the columns are here added for clarity):
+  This worked example is base on BAM files aligned to a GENCODE transcriptome reference. The resulting files will contain, for each read, the name of the aligned transcript, the start and end coordinate, its length and the associated strand. The BED files will appear like the following (the header of the columns are here included for clarity):
 
   |  transcript  |  start  |  end  |  length  |  strand  |
   |:------:|:-----:|:------:|:------:|:------:|
@@ -59,7 +59,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     reads_list <- bedtolist(bedfolder=path_to_bed, annotation=annotation_file)
 	
-  Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage, and they will be removed. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a single sample called *Samp1* (a subset of the original data is here provided. Please contact the authors for the whole datset).
+  In case the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage, and they will be removed. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a single sample called *Samp1* (a subset of the original data is here provided. Please contact the authors for the whole datset).
 
 #### Annotation data frame
   
