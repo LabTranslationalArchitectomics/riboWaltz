@@ -73,8 +73,10 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   |  ENSMUST00000000028.11  |  2143  |  313  |  1701  |  129  |
   |  ENSMUST00000000033.9  |  3708  |  115  |  543  |  3050  |
   |  ENSMUST00000000049.5  |  1190  |  51  |  1038  |  101  |
+
+  The annotation file can be either provided by the user, or generated starting from a GTF file by using the `create_annotation` function.
   
-  The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated.
+  Optionally, a third file containing transcript sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis
 
 #### Overview of the data
 
@@ -95,11 +97,11 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
     example_ends_heatmap[["plot"]]
 ![example_ends_heatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_ends_heatmap.png)
 
-  The latter plot is particularly useful for understanding which extremity of the reads is the best choice for the computation of the P-site offset. Even if __riboWaltz__ is able to automatically recognize the best read end to use for the P-site identification, in some cases it may be necessary to provide this information. In our example, looking at the reads aligning around the translation initiation site (TIS), it is clearly visible a different trend of the signal coming from the 5' and the 3' extremity. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to TIS), while the 3' end often alignes on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works without any restriction (see below).
+  The latter plot is particularly useful for understanding which extremity of the reads is the best choice for the computation of the P-site offset. Even if __riboWaltz__ is able to automatically recognize the best read end to use for the P-site identification, in some cases it might be useful to provide directly this information. In our example, looking at the reads aligning around the translation initiation site (TIS), a different trend of the signal coming from the 5' and the 3' extremity is clearly visible. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to the TIS), while the 3' end often alignes on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works by default (see below).
   
 #### P-site offset
 
-  Starting from the list produced by `bedtolist` the P-site offsets can be computed using the function `psite`. This function compute the P-site identification starting from the reads that align on the start codon of any transcript, exploiting the knowledge that their associated P-sites corresponds to the translation start site. However, it is possible to remove reads which extremities are too close to the start codon by specifying the *flanking* option.
+  Starting from the list produced by `bedtolist` the P-site offsets can be computed using the function `psite`. This function computes the P-site starting from the reads that align on the start codon of any transcript, exploiting the knowledge that their associated P-sites correspond to the translation start site. However, it is possible to remove reads whose extremities are too close to the start codon by specifying the *flanking* option.
   
   `psite` processes one sample at a time, printing on the screen the extremity chosen for the computation of the P-site offsets and the value upon which the correction is based.
 
@@ -107,14 +109,14 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
   The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. An additional column contains the name of the sample.
 
-  For every read length of each sample a plot of the ribosome occupancy profile for the 5' and the 3’ extremity around the start codon is produced. The optimal offsets (dotted black line) as well as the inferred offsets before (dashed vertical lines) after the correction (continuous vertical lines) are reported. The regions used for their computation (depending on the *flanking* option) are shaded. Here two examples for reads of 28 and 31 nucleotides:
+  For every read length of each sample a plot of the ribosome occupancy profile for the 5' and the 3’ extremity around the start codon is produced. The optimal offsets (dotted black line) as well as the inferred offsets before (dashed vertical lines) and after the correction (continuous vertical lines) are reported. The regions used for their computation (depending on the *flanking* option) are shaded. Here two examples for reads of 28 and 31 nucleotides:
 
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length28.png" width="750" />
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length31.png" width="750" />
 </p>
 
-  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the exsisting data frames the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
+  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` attaches to the exsisting data frames the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
 
     reads_psite_list <- psite_info(reads_list, psite_offset)
 	
@@ -133,7 +135,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 	
 	psite_cds_list <- psite_per_cds(reads_psite_list, mm81cdna)
 	
-  The result is a data frame as the following one
+  The result is a data frame as the following:
   
   |  transcript  |  l_region  |  psite_count  |
   |:------:|:------:|:------:|
@@ -161,11 +163,11 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames.png" width="550" />
 </p>
 
-  In both cases it is possible to specified a set of samples of interest, a range of read lengths and to display the results for either all the three regions of the transcript or just one of them. Depending on this choices the box containing the plots are differently arranged, to optimise the organization and the visualization of the data.
+  In both cases it is possible to specify a set of samples of interest, a range of read lengths and to display the results for either all the three regions of the transcript or just one of them. Depending on this choices the box containing the plots are differently arranged, to optimise the organization and the visualization of the data.
 
 #### Metaplots
 
-  The `metaprofile_psite` function generates metaprofiles (sum of single, transcript-specific profiles) based on the P-sites previously identified. This plots are useful to verify the so-called 3-nt periodicity of ribosomes along transcripts at genome-wide scale. The contribution from many replicates can be combined in a single plot, taking into account possible scale factors coming from any normalization of the data chosen by the user. It is possible to use the whole transcriptome (as in the example below), restrict the analysis to a subset of transcripts and even look at single RNAs.
+  The `metaprofile_psite` function generates metaprofiles (sum of single, transcript-specific profiles) based on the P-sites previously identified. These plots are useful to verify the so-called 3-nt periodicity of ribosomes along transcripts at genome-wide scale. The contribution from many replicates can be combined in a single plot, taking into account possible scale factors coming from any normalization of the data chosen by the user. It is possible to use the whole transcriptome (as in the example below), restrict the analysis to a subset of transcripts and even look at single RNAs.
 
     example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                              utr5l = 20, cdsl = 40, utr3l = 20)
@@ -180,9 +182,9 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
     example_metaprofile_28[["plot"]]
 ![example_metaprofile_28](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
 
-  Another way to visualize the previous data is a metahaetmap where the intensity of the colour depends on the abundance of P-sites in a specific position (corresponding to the height of the line for the metaprofiles). This representation is the optimal choice in order to compare multiple samples or look at the behavior of the data if different populations of reads are considered. The `metaheatmap_psite` function provides a collection of metaheatmaps generated using the same set of transcripts while the reads are associated to either a variety of biological conditions or subsets of the same dataset.
+  Another way to visualize the previous data is a heatmap where the intensity of the colour depends on the abundance of P-sites in a specific position (corresponding to the height of the line for the meta-profiles). This representation is the optimal choice in order to compare multiple samples or look at the behavior of the data if different populations of reads are considered. The `metaheatmap_psite` function provides a collection of heatmaps generated using the same set of transcripts while the reads are associated to either a variety of biological conditions or subsets of the same dataset.
 
-  To show how it works, let's suppose we want to check how the reads of 28 nucleotdes (the most frequent in our example) behave with respect to the whole dataset. In principle it would be sufficient to compare the two metaprofiles displayed above, but in order to have a better view of the data we will exploit the `metaheatmap_psite` function. The first step is to create a list of data frames containing the data of interest:
+  To show how the function works, let's suppose we want to check how the reads of 28 nucleotdes (the most frequent length in our example) behave with respect to the whole dataset. In principle it would be sufficient to compare the two metaprofiles displayed above, but in order to have a better view of the data we will exploit the `metaheatmap_psite` function. The first step is to create a list of data frames containing the data of interest:
 
     comparison_df <- list()
     comparison_df[["subsample_28nt"]] <- subset(reads_psite_list[["Samp1"]], length == 28)
