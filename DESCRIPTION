@@ -11,7 +11,7 @@ Description: riboWaltz is an R package designed for the analysis of
     P-site offset. The P-site offset (PO) is specified by the localization of
     the P-site of ribosomes within the fragments of the RNA (reads) resulting
     from RiboSeq assays. It is defined as the distance of the P-site from the
-    two ends of the reads. Determining PO is a crucial step for a variety of
+    two ends of the reads. Determining the PO is a crucial step for a variety of
     RiboSeq-based analyses such as verify the so-called 3-nt periodicity of
     ribosomes along the coding sequence, derive translation initiation and
     elongation rates and reveal new translational events in unannotated open
