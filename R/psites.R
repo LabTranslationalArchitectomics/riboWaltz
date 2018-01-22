@@ -255,9 +255,6 @@ psite_info <- function(data, offset, fastapath = NULL) {
                                             & df$psite_from_stop < 0,
                                             "5utr",
                                             "3utr")))
-                              
-      
-
     if(length(fastapath) != 0) {
       cat("adding codon\n\n")
       sequences_biost <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)

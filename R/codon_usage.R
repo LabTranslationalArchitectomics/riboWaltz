@@ -1,10 +1,10 @@
 #' Compute and plot the usage of the codons.
 #' 
-#' For a specified sample computes a codon usage index. The codon usage index is
-#' define as the number of in-frame P-sites along the annotated coding sequence
-#' associated to the 64 triplets, normalized for the frequency of the triplets.
-#' This function also allows to compare the codon usage of the selected sample
-#' with a set of values provided by the user.
+#' For a specified sample computes the empirical codon usage i.e. the frequency 
+#' of in-frame P-sites along the coding sequence codon by codon, normalized for 
+#' the frequency in sequences of each codon. This function also allows to
+#' compare the empirical codon usage of the specified sample with a set of
+#' values provided by the user.
 #' 
 #' @param data A list of data frames from \code{\link{psite_info}} that may or 
 #'   may not include a column \emph{psite_codon}, reporting the nucleotide
@@ -66,6 +66,7 @@ codon_usage_psite <- function(data, annotation, sample, fastapath,
   cod_aa <- data.frame(codon=c("GCC", "GCG", "GCU", "GCA", "AGA", "CGG", "AGG", "CGA", "CGC", "CGU", "AAC", "AAU", "GAC", "GAU", "UGC", "UGU", "CAA", "CAG", "GAG", "GAA", "GGC", "GGU", "GGA", "GGG", "CAC", "CAU", "AUA", "AUC", "AUU", "CUG", "CUA", "UUA", "CUU", "UUG", "CUC", "AAA", "AAG", "AUG", "UUC", "UUU", "CCG", "CCC", "CCU", "CCA", "AGC", "UCG", "UCU", "UCA", "UCC", "AGU", "UAG", "UAA", "UGA", "ACA", "ACC", "ACG", "ACU", "UGG", "UAU", "UAC", "GUA", "GUG", "GUU", "GUC"),
                        aa=c("A", "A", "A", "A", "R", "R", "R", "R", "R", "R", "N", "N", "D", "D", "C", "C", "Q", "Q", "E", "E", "G", "G", "G", "G", "H", "H", "I", "I", "I", "L", "L", "L", "L", "L", "L", "K", "K", "M", "F", "F", "P", "P", "P", "P", "S", "S", "S", "S", "S", "S", "*", "*", "*", "T", "T", "T", "T", "W", "Y", "Y", "V", "V", "V", "V"))
   rownames(cod_aa) <- as.character(cod_aa$codon)
+  cod_lev <- gsub("U", "T", cod_aa$codon)
   
   if (length(transcripts) == 0) {
     c.transcript <- l.transcripts
@@ -94,7 +95,7 @@ codon_usage_psite <- function(data, annotation, sample, fastapath,
   names(seq_freq) <- gsub("T", "U", names(seq_freq))
   
   df <- subset(data[[sample]], as.character(transcript) %in% c.transcript & psite_region == "cds" & psite_from_start %% 3 == 0)
-  temp_table <- as.data.frame(table(df$psite_codon))
+  temp_table <- as.data.frame(table(factor(df$psite_codon, levels=cod_lev)))
   temp_table$Var1 <- gsub("T", "U", temp_table$Var1)
   norm.table <- temp_table[match(cu_level, temp_table$Var1),]
   colnames(norm.table) <- c("codon", "count")
@@ -150,14 +151,15 @@ codon_usage_psite <- function(data, annotation, sample, fastapath,
     
     bs <- 30
     pcomp <- ggplot(norm.table,aes(x = usage_index, y = comp_values, colour = class)) +
-      geom_smooth(method = "lm", se=T, color="gray80", fill="gray80", linetype = 1, formula = y ~ x) +
+      geom_smooth(method = "lm", se=T, color="gray80", fill="gray80", linetype = 1, formula = y ~ x, level = 0.99,  fullrange = TRUE) +
       geom_point(alpha = 0.9, size=bs*0.9) +
       ggrepel::geom_text_repel(aes(usage_index, comp_values, label = codon), show.legend = F) +
       scale_colour_manual(name = "", breaks=c("Start codon ","Stop codon"), values = c("#104ec1", "gray40", "darkred")) +
       theme_bw(base_size = bs) +
       theme(legend.position = "top") +
-      scale_x_continuous("Codon usage index", limits=c(0,1), breaks=c(0,0.25,0.5,0.75,1)) +
-      scale_y_continuous("Codon usage", limits=c(0,1), breaks=c(0,0.25,0.5,0.75,1)) +
+      scale_x_continuous("Codon usage index", limits=c(-0.3,1.3), breaks=c(0,0.25,0.5,0.75,1), expand=c(0,0)) +
+      scale_y_continuous("Codon usage", limits=c(-0.3,1.3), breaks=c(0,0.25,0.5,0.75,1), expand=c(0,0)) +
+      coord_cartesian(xlim=c(-0.05,1.05), ylim=c(-0.05,1.05)) +
       geom_text(aes(x=1, y=0), label = paste0("R=",correlation), vjust=-0.2, size = bs*0.2, hjust = 1, color = "black")
     pcomp
     
@@ -170,11 +172,6 @@ codon_usage_psite <- function(data, annotation, sample, fastapath,
           ggrepel::geom_text_repel(aes(usage_index, comp_values, label = as.character(aa)), show.legend = F)
       }
     }
-     
-     
-    
-    
-    
     
     output[["plot_comparison"]] <- pcomp
   }

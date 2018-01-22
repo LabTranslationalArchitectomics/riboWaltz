@@ -44,7 +44,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     bamtobed(bamfolder=path_to_bam, bedfolder=path_to_bed)
 
-  The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header of the columns are here added for clarity):
+  The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header of the columns is here added for clarity):
 
   |  transcript  |  start  |  end  |  length  |  strand  |
   |:------:|:-----:|:------:|:------:|:------:|
@@ -55,7 +55,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   |  ENSMUST00000000001.4  |  140  |  167  |  28  |  +  |
   |  ENSMUST00000000001.4  |  142  |  170  |  29  |  +  |
 
-   The next step loads and reads the BED files, merging them in a list. The `bedtolist` function only requires the path to the BED files and an annotation file. Moreover, the *list_name* option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.
+   The next step loads and reads the BED files, merging them in a list. The `bedtolist` function only requires the path to the BED files and an annotation file. Moreover, the *list_name* option allows to assign the desired name to the samples. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on. An annotation file (see next chapter for more information) is also required.
 
     reads_list <- bedtolist(bedfolder=path_to_bed, annotation=annotation_file)
 	
@@ -63,7 +63,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
 #### Annotation data frame
   
-  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
+  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript, two crucial information for localizing the reads within the three region of the transcrips (5' UTR, the CDS and the 3' UTR) and computing the P-site offsets. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
   
   |  transcript  |  l_tr  |  l_utr5  |  l_cds  |  l_utr3  |
   |:------:|:---------:|:------:|:---------:|:------:|
@@ -78,7 +78,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
 #### Overview of the data
 
-  Two graphical outputs can be produced before the identification of the P-site offset, in order to have an overview of the whole read sets. The first plot shows the distribution of the length of the reads for a specified sample, provided by `rlength_distr`. This function, as all the other contained in __riboWaltz__ producing a graphical output, returns a list containing both the data to generate the plot and the plot itself.
+  Two graphical outputs can be produced before the identification of the P-site offset, in order to have an overview of the whole read sets. The first plot shows the distribution of the length of the reads for a specified sample and can be exploited to identify one or more populaton of reads i.e. one or more conformation of the ribosomes bound to the mRNAs. This plot is provided by `rlength_distr`. This function, as all the other contained in __riboWaltz__ producing a graphical output, returns a list containing both the data to generate the plot and the plot itself. For more details about the data frames for generating the plot and for an example of their structure please refer to the vignette of the package and to the documentation of its fucntions.
   
   Note that a wide range of read lengths can make hard to read the plot. This issue can be easily solved specifying by the *cl* option a confidence level that restricts the distribution to a more narrow range of lengths.
 
@@ -88,14 +88,16 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png" width="300" />
 </p>
 
-  The second plot consists of 4 metaheatmaps that show the abundance of the 3' the and 5' end of the reads mapping around the start and the stop codons, stratified by their length. Also in this case it is possible to restrict the output to a subset of read lengths specified by a confidence level *cl*.
+  The second plot consists of 4 metaheatmaps that show the abundance of the 3' the and 5' end of the reads mapping around the start and the stop codons, stratified by their length. This plot is particularly useful for understanding which extremity of the reads is the best choice for the computation of the P-site offset. Even if __riboWaltz__ is able to automatically recognize the best read end to use for the P-site identification, in some cases it may be necessary to provide this information.
+  
+  Also in this case it is possible to restrict the output to a subset of read lengths specified by a confidence level *cl*.
 
     example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample="Samp1", cl=85,
                                        utr5l = 25, cdsl = 40, utr3l = 25)
     example_ends_heatmap[["plot"]]
 ![example_ends_heatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_ends_heatmap.png)
 
-  The latter plot is particularly useful for understanding which extremity of the reads is the best choice for the computation of the P-site offset. Even if __riboWaltz__ is able to automatically recognize the best read end to use for the P-site identification, in some cases it may be necessary to provide this information. In our example, looking at the reads aligning around the translation initiation site (TIS), it is clearly visible a different trend of the signal coming from the 5' and the 3' extremity. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to TIS), while the 3' end often alignes on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works without any restriction (see below).
+  In our example, looking at the reads aligning around the translation initiation site (TIS) it is clearly visible a different trend of the signal coming from the 5' and the 3' extremity. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to TIS), while the 3' end often alignes on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works without any restriction (see below).
   
 #### P-site offset
 
@@ -105,8 +107,17 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 
     psite_offset <- psite(reads_list, flanking = 6, extremity="auto")
 
-  The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. An additional column contains the name of the sample.
+  The result is a data frame containing for all the read lengths of each sample the percentage of reads in the whole dataset and the percentage of reads aligning on the start codon (if any; used for the computation of the P-site offsets as described above). The data frame also reports the distance of the P-site from the two extremities of the reads before and after the correction step. An additional column contains the name of the sample. Here an example:
 
+  |  length  |  total_percentage  |  start_percentage  |  around_start  |  offset_from_5  |  offset_from_3  |  adj_offset_from_5  |  adj_offset_from_3  |  sample  |
+  |:------:|:---------:|:------:|:---------:|:------:|:------:|:------:|:------:|:------:|
+  |  19  |  0.715  |  0.110  |  T  |  12  |  6  |  8  |  10  |  Samp1  |
+  |  20  |  0.811  |  0.194  |  T  |  12  |  7  |  7  |  12  |  Samp1  |
+  |  21  |  0.992  |  0.223  |  T  |  15  |  5  |  7  |  13  |  Samp1  |
+  |  22  |  0.921  |  0.364  |  T  |  6  |  15  |  10  |  11  |  Samp1  |
+  |  23  |  1.112  |  0.974  |  T  |  6  |  16  |  12  |  10  |  Samp1  |
+  |  24  |  1.892  |  1.722  |  T  |  7  |  16  |  7  |  16  |  Samp1  |
+    
   For every read length of each sample a plot of the ribosome occupancy profile for the 5' and the 3’ extremity around the start codon is produced. The optimal offsets (dotted black line) as well as the inferred offsets before (dashed vertical lines) after the correction (continuous vertical lines) are reported. The regions used for their computation (depending on the *flanking* option) are shaded. Here two examples for reads of 28 and 31 nucleotides:
 
 <p align="center">
@@ -114,7 +125,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length31.png" width="750" />
 </p>
 
-  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the exsisting data frames the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added for facilitating further analyses.
+  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the exsisting data frames the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added. All these information are required for facilitating further analyses and in particular to verify the trinucleotide periodicity of the reads along the coding sequence and generating metplots, as discussed below.
 
     reads_psite_list <- psite_info(reads_list, psite_offset)
 	
@@ -129,7 +140,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   |  ENSMUST00000000001.4  |  140  |  151  |  167  |  28  |  142  |  1206  |  9  |  -1055  |  cds  |
   |  ENSMUST00000000001.4  |  142  |  154  |  170  |  29  |  142  |  1206  |  12  |  -1052  |  cds  |
 
-  The updated dataset can be used as input to `psite_per_cds` for generating a list of data frames containing, for each transcript, the number of ribosome protected fragments with in-frame P-site mapping on the CDS. This data frame can be used to estimate transcript-specific translation levels and perform differential analysis comparing multiple conditions.
+  The updated dataset can be also used as input to `psite_per_cds` for generating a list of data frames containing, for each transcript, the number of ribosome protected fragments with in-frame P-site mapping on the CDS. This data frame can be used to estimate transcript-specific translation levels and perform differential analysis comparing multiple conditions.
 	
 	psite_cds_list <- psite_per_cds(reads_psite_list, mm81cdna)
 	
@@ -199,6 +210,33 @@ At this point it is sufficient to run `metaheatmap_psite` using the data frames 
                                              utr5l = 20, cdsl = 40, utr3l = 20, log=F)
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
+
+#### Codon usage
+
+  To understand what codons display higher or lower ribosome density, __riboWaltz__ provides the user with the analysis of the empirical codon usage, i.e. the frequency of in-frame P-sites along the coding sequence codon by codon, normalized for the frequency in sequences of each codon. The empirical condon usage is provided by the `codon_usage_psite` function which also returns a bar plot reporting the computed values, highlighting the start and the stop codon and labeling each bar with the corresponding amino acid. To this aim, the path to the fasta file employed during the the alignment step must be provided by the user through the *fastapath* option. The syntax for generating the bar plot is the following (note that due to its dimension, the fasta file used by the author is not included among the example data of the package).
+  
+   	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+											fastapath=path_to_fasta)
+![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
+  
+  To unravel possible defects in ribosome elongation at specific codons or aa-tRNAs use is it possible to exploit `codon_usage_psite` to compare empirical usage from two conditions or organisms or to asses potenial differences between the empirical codon usage and the more diffused codon usage bias based on codon frequencies. To this aim a set of 64 values can be passed to the function by the user through the option *codon_usage*. The structure of the required data frame is as follow (reporting the codon usage bias in mouse downloaded from http://www.kazusa.or.jp/codon)
+
+  |  codon  |  usage_index  |
+  |:------:|:------:|
+  |  UUU  |  17.2  |
+  |  UCU  |  16.2  |
+  |  UAU  |  12.2  |
+  |  UGU  |  11.4  |
+  |  UUC  |  21.8  |
+  |  UCC  |  18.1  |
+  
+  If such a data frame is provided, `codon_usage_psite` returns a second graphical output: a scatter plot where each codon is represented by a dot. The following image shows the comparison between the empirical codon usage reported in the previous figure and the codon usage bias in mouse contained in a data frame called *cub_mouse* (as for the fasta file, cub_mouse is not included among the example data of the package):
+  
+  codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+											fastapath=path_to_fasta, codon_usage = cub_mouse)
+<p align="center">
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_scatter.png" width="300" />
+</p>
 
 ------------------------------------------------------------------------
 

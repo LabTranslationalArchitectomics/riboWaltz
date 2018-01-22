@@ -92,7 +92,7 @@ bedtolist <- function(bedfolder, annotation, list_name = NULL) {
     df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
     df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + annotation[as.character(df$transcript), "l_cds"]
     df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
-    sample_reads_list[[sampname]] <- df[ , !(names(df) %in% "strand")]
+    sample_reads_list[[sampname]] <- df[, !(names(df) %in% "strand")]
   }
   return(sample_reads_list)
 }

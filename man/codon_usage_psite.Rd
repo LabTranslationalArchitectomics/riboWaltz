@@ -64,10 +64,10 @@ A list containing a ggplot2 object (named "plot"), and a data frame
   specyfied.
 }
 \description{
-For a specified sample computes a codon usage index. The codon usage index is
-define as the number of in-frame P-sites along the annotated coding sequence
-associated to the 64 triplets, normalized for the frequency of the triplets.
-This function also allows to compare the codon usage of the selected sample
-with a set of values provided by the user.
+For a specified sample computes the empirical codon usage i.e. the frequency 
+of in-frame P-sites along the coding sequence codon by codon, normalized for 
+the frequency in sequences of each codon. This function also allows to
+compare the empirical codon usage of the specified sample with a set of
+values provided by the user.
 }
 
