@@ -28,10 +28,11 @@ Imports:
     ggplot2 (>= 2.2.1),
     cowplot (>= 0.6.2),
     GenomicFeatures (>= 1.24.5),
+	GenomicRanges(>= 1.24.3),
     ggrepel (>= 0.6.5)
 Depends:
     R (>= 3.3.0)
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests:
     knitr,
     rmarkdown

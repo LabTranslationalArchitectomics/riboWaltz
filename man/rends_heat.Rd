@@ -71,4 +71,3 @@ heatend_sub95 <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 95,
 utr5l = 30, cdsl = 40, utr3l = 30)
 heatend_sub95[["plot"]]
 }
-

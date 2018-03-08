@@ -44,4 +44,3 @@ frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 length_range=28)
 frame_sub[["plot"]]
 }
-

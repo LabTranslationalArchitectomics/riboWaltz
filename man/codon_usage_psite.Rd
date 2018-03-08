@@ -70,4 +70,3 @@ the frequency in sequences of each codon. This function also allows to
 compare the empirical codon usage of the specified sample with a set of
 values provided by the user.
 }
-

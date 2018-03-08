@@ -4,12 +4,17 @@
 \alias{psite_info}
 \title{Updates reads information adding features associated to the inferred P-sites.}
 \usage{
-psite_info(data, offset, fastapath = NULL)
+psite_info(data, offset, granges = FALSE, fastapath = NULL)
 }
 \arguments{
 \item{data}{A list of data frames from \code{\link{bamtolist}}}
 
 \item{offset}{A data frame from \code{\link{psite}}.}
+
+\item{granges}{A logical value whether or not to return a GRangesList 
+object. Default is FALSE, meaning that a list of data frames (the required
+input for the downstream analyses and graphical outputs provided by
+riboWaltz) will be returned.}
 
 \item{fastapath}{A character string specifying the path to the FASTA file
 containing the nucleotide sequence of the transcripts. For each mRNA the 
@@ -20,7 +25,8 @@ column containing the three nucletotides corresponding to the identified
 P-sites. Default is NULL.}
 }
 \value{
-A list of data frames.
+A list of data frames or a GRangesList object if
+  \code{granges} == TRUE.
 }
 \description{
 Updates the data frames of the input list with the P-site position identfied 
@@ -40,4 +46,3 @@ data(mm81cdna)
 
 reads_psite_list <- psite_info(reads_list, psite_offset)
 }
-

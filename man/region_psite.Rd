@@ -47,4 +47,3 @@ data(mm81cdna)
 reg_psite <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
 reg_psite[["plot"]]
 }
-

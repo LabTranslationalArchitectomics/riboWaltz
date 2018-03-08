@@ -38,4 +38,3 @@ gtf_file <- location_of_GTF_file
 path_bed <- location_of_output_directory
 bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
 }
-

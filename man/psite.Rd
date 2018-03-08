@@ -4,8 +4,8 @@
 \alias{psite}
 \title{Identify the ribosome P-site position along the reads.}
 \usage{
-psite(data, flanking = 6, extremity = "auto", plot = FALSE,
-  plotdir = NULL, plotformat = "png", cl = 99)
+psite(data, flanking = 6, start = TRUE, extremity = "auto",
+  plot = FALSE, plotdir = NULL, plotformat = "png", cl = 99)
 }
 \arguments{
 \item{data}{A list of data frames from \code{\link{bamtolist}}.}
@@ -36,6 +36,11 @@ saved. It is considered only if \code{plot} is TRUE.}
 confidence level for restricting the plot of the occupancy metaprofiles to
 a range of lengths. By default it is set to 99. This parameter is
 considered only if \code{plot} is TRUE.}
+
+\item{Mode}{A character string specifing the set of reads that should be used
+to compute the P-site offsets. It can be either "start" or "stop" for the 
+reads aligning on the translation initiation site or mapping on the last
+triplet before the stop codon, respectively. Default is "start".}
 }
 \value{
 A data frame.
@@ -69,7 +74,6 @@ psite(reads_list, flanking = 6, extremity="auto")
 step, plotting the metaprofiles based on the alignment of the read ends, only
 for the middle 95\% of the read length. The plots will be placed in the
 current working directory.
-psite_offset <- psite(reads_list, flanking = 6, extremity="3end",plot = TRUE, cl = 95)
+psite_offset <- psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
 psite_offset
 }
-

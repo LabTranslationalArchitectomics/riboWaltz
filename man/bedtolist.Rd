@@ -4,7 +4,8 @@
 \alias{bedtolist}
 \title{Convert a list of BED files into a list of data frames.}
 \usage{
-bedtolist(bedfolder, annotation, list_name = NULL)
+bedtolist(bedfolder, annotation, filter = "none", custom_range = NULL,
+  periodicity_th = 50, list_name = NULL, granges = F)
 }
 \arguments{
 \item{bedfolder}{A character string indicating the path to the folder where
@@ -13,6 +14,25 @@ the BED files are located.}
 \item{annotation}{A data frame from \code{\link{create_annotation}}. Please
 note that the transcript names in the annotation data frame should coincide
 with those in the alignment file.}
+
+\item{filter}{Either "none" (the default), "custom" or "periodicity". It
+indicates if and what filter must be applied to the data sets, i.e. which
+reads must be discharged. "none": all the reads are kept; "custom": the
+user specifies the read length or a range of read lengths to be kept
+(see \code{custom_range}); "periodicity": all the read lengths associated
+to a trinucleotide periodicity of either the 3' end or 5' end of the reads
+in any frame of the sequence are kept. It is possible to chose the
+threshold that "defines" the periodicity (see \code{periodicity_th}).}
+
+\item{custom_range}{An integer or an integer vector specifying the read 
+length or a range of read lengths to be kept, respectively. This parameter
+is considered only if \code{filter} == "custom".}
+
+\item{periodicity_th}{An integer in \emph{[10, 90]} used to detremine the
+existence of periodicity for any read length. Only the read lengths at
+which the percentage of read extremities falling in one frame is above the
+threshold are kept. This parameter is considered only if \code{filter} == 
+"periodicity". Default is 50.}
 
 \item{list_name}{A character vector specifying the desired names to be 
 assigned to the data frames in the output list. Its length must be equal to
@@ -23,22 +43,23 @@ argument is NULL, which implies the data frames will be named after the BED
 paths, leaving their path and extension out.}
 }
 \value{
-A list of data frames.
+A list of data frames or a GRangesList object if \code{granges}
+  == TRUE.
 }
 \description{
 Reads a list of BED files, converts each file into a data frame and combines 
 them into a list, so that each data frame in the list correspond to a sample.
 Two additional columns are attached to the data frames, containing the 
-position of the start and the stop codon of the CDS with respect to the 1st
+position of the start and the stop codon of the CDS with respect to the 1st 
 nuclotide of the transcript. Please note: if a transcript doesn't present any
 annotated CDS then the positions of both the start and the stop codon will be
-set to 0. Since the original BAM files come from a transcriptome alingment,
-the reads aligned to the negative strand should be present in a low
-percentage, and they will be removed.
+set to 0. Since the original BAM files come from a transcriptome alingment, 
+the reads aligned to the negative strand should be present in a low 
+percentage, and they will be removed. Additional filter based on the length
+of the reads can be chosen by the user.
 }
 \examples{
 path_bed <- location_of_BED_files
 annotation_df <- dataframe_with_transcript_annotation
 bedtolist(bedfolder = path_bed, annotation = annotation_df)
 }
-

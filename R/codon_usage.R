@@ -166,10 +166,10 @@ codon_usage_psite <- function(data, annotation, sample, fastapath,
     if (scatter_label == T) {
       if (aminoacid == T) {
         pcomp <- pcomp +
-          ggrepel::geom_text_repel(aes(usage_index, comp_values, label = as.character(codon)), show.legend = F)
+          ggrepel::geom_text_repel(aes(usage_index, comp_values, label = as.character(aa)), show.legend = F)
       } else {
         pcomp <- pcomp +
-          ggrepel::geom_text_repel(aes(usage_index, comp_values, label = as.character(aa)), show.legend = F)
+          ggrepel::geom_text_repel(aes(usage_index, comp_values, label = as.character(codon)), show.legend = F)
       }
     }
     

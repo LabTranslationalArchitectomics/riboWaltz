@@ -100,4 +100,3 @@ names_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
 metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = names_list)
 metaheat_comparison[["plot"]]
 }
-

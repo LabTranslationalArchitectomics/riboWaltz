@@ -216,7 +216,7 @@ At this point it is sufficient to run `metaheatmap_psite` using the data frames 
   To understand what codons display higher or lower ribosome density, __riboWaltz__ provides the user with the analysis of the empirical codon usage, i.e. the frequency of in-frame P-sites along the coding sequence codon by codon, normalized for the frequency in sequences of each codon. The empirical condon usage is provided by the `codon_usage_psite` function which also returns a bar plot reporting the computed values, highlighting the start and the stop codon and labeling each bar with the corresponding amino acid. To this aim, the path to the fasta file employed during the the alignment step must be provided by the user through the *fastapath* option. The syntax for generating the bar plot is the following (note that due to its dimension, the fasta file used by the author is not included among the example data of the package).
   
    	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-											fastapath=path_to_fasta)
+											fastapath = path_to_fasta)
 ![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
   
   To unravel possible defects in ribosome elongation at specific codons or aa-tRNAs use is it possible to exploit `codon_usage_psite` to compare empirical usage from two conditions or organisms or to asses potenial differences between the empirical codon usage and the more diffused codon usage bias based on codon frequencies. To this aim a set of 64 values can be passed to the function by the user through the option *codon_usage*. The structure of the required data frame is as follow (reporting the codon usage bias in mouse downloaded from http://www.kazusa.or.jp/codon)
@@ -233,7 +233,7 @@ At this point it is sufficient to run `metaheatmap_psite` using the data frames 
   If such a data frame is provided, `codon_usage_psite` returns a second graphical output: a scatter plot where each codon is represented by a dot. The following image shows the comparison between the empirical codon usage reported in the previous figure and the codon usage bias in mouse contained in a data frame called *cub_mouse* (as for the fasta file, cub_mouse is not included among the example data of the package):
   
   codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-											fastapath=path_to_fasta, codon_usage = cub_mouse)
+										  fastapath = path_to_fasta, codon_usage = cub_mouse)
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_scatter.png" width="300" />
 </p>
