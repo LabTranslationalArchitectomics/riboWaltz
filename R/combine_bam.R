@@ -122,6 +122,10 @@ bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NUL
     cat(sprintf("negative strand: %s %%\n\n", 
                 format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
     
+    df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
+    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + annotation[as.character(df$transcript), "l_cds"]
+    df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
+    
     if (identical(filter, "custom")) {
       df <- subset(df, as.numeric(as.character(length)) %in% custom_range)
       cat(sprintf("%s (%s %%) reads have been removed\n\n", 
@@ -129,22 +133,27 @@ bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NUL
                   format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
     } else {
       if(identical(filter, "periodicity")){
-        t_temp <- df %>% 
-          mutate(end5_frame = end5 %% 3, end3_frame = end3 %% 3) %>%
-          mutate(end5_frame = factor(end5_frame, levels = c("0", "1", "2"))) %>% 
-          mutate(end3_frame = factor(end3_frame, levels = c("0", "1", "2"))) 
-        t_end5 <- t_temp %>% 
+        subdf5 <- subset(df, start_pos!=0 & end5 - start_pos >=0 & stop_pos - end5 >=0)
+        t_temp5 <- subdf5 %>% 
+          mutate(end5_frame = (end5 - start_pos) %% 3) %>%
+          mutate(end5_frame = factor(end5_frame, levels = c("0", "1", "2")))
+        t_end5 <- t_temp5 %>% 
           group_by(length, end5_frame) %>%
           summarise(end5_count = n()) %>%
           mutate(end5_perc = (end5_count / sum (end5_count)) * 100) %>%
           data.frame
-        t_end3 <- t_temp %>% 
+        keep_length5 <- unique(subset(t_end5, end5_perc >= periodicity_th)$length)
+        subdf3 <- subset(df, start_pos!=0 & end3 - start_pos >=0 & stop_pos - end3 >=0)
+        t_temp3 <- subdf3 %>% 
+          mutate(end3_frame = (end3 - start_pos) %% 3) %>%
+          mutate(end3_frame = factor(end3_frame, levels = c("0", "1", "2")))
+        t_end3 <- t_temp3 %>% 
           group_by(length, end3_frame) %>%
           summarise(end3_count = n()) %>%
           mutate(end3_perc = (end3_count / sum (end3_count)) * 100) %>%
           data.frame
-        t_final <- cbind(t_end5[,c(1,ncol(t_end5))], "end3_perc" = t_end3[,ncol(t_end3)])
-        keep_length <- subset(t_final, end5_perc >= periodicity_th | end3_perc >= periodicity_th)$length
+        keep_length3 <- unique(subset(t_end3, end3_perc >= periodicity_th)$length)
+        keep_length <- intersect(keep_length5, keep_length3)
         df <- subset(df, as.numeric(as.character(length)) %in% keep_length)
         cat(sprintf("%s (%s %%) reads have been removed\n\n", 
                     format(nreads - nrow(df), nsmall = 2), 
@@ -152,9 +161,6 @@ bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NUL
       }
     }
     
-    df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
-    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + annotation[as.character(df$transcript), "l_cds"]
-    df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
     df <- df[, !(names(df) %in% "strand")]
     
     if (granges == T || granges == TRUE) {
