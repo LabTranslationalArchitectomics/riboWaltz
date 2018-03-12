@@ -29,11 +29,20 @@ Ribosome profiling is a powerful technique used to study translation at the geno
 
 ## Installation
 
-  To install __riboWaltz__ directly from GitHub run
-
+  To install __riboWaltz__ directly from GitHub the *devtools* package is required. If it is not installed, run
+    
     install.packages("devtools")
-    library("devtools")
+	
+  Otherwise, load *devtools* and install __riboWaltz__ by typing
+	
+	```{r, eval=FALSE}
+  	library("devtools")
     install_github("LabTranslationalArchitectomics/riboWaltz")
+  ```
+  
+  Please note: to install __riboWaltz__ generating the vignette replace the last command with:
+  
+    install_github("LabTranslationalArchitectomics/riboWaltz", build_vignettes=TRUE)
 
 
 

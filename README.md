@@ -21,13 +21,16 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
 
 ### Installation
 
-To install __riboWaltz__, directly from GitHub: 
+To install __riboWaltz__ directly from GitHub the _devtools_ package is required. If it is not installed, run
     
     install.packages("devtools")
-    library("devtools")
+	
+Otherwise, load _devtools_ and install __riboWaltz__ typing
+	
+	library("devtools")
     install_github("LabTranslationalArchitectomics/riboWaltz")
   
-To install __riboWaltz__ and generate the vignette substitute the latter command with:
+Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
     install_github("LabTranslationalArchitectomics/riboWaltz", build_vignettes=TRUE)
 
