@@ -4,8 +4,9 @@
 \alias{codon_usage_psite}
 \title{Compute and plot the usage of the codons.}
 \usage{
-codon_usage_psite(data, annotation, sample, fastapath, transcripts = NULL,
-  codon_usage = NULL, scatter_label = F, aminoacid = F)
+codon_usage_psite(data, annotation, sample, fastapath, bsgenome_dp = NULL,
+  txdb = NULL, transcripts = NULL, codon_usage = NULL,
+  scatter_label = F, aminoacid = F)
 }
 \arguments{
 \item{data}{A list of data frames from \code{\link{psite_info}} that may or 
@@ -22,15 +23,30 @@ specified in \code{fastapath}.}
 \item{sample}{A character string vector specifying the name of the sample
 of interest.}
 
-\item{fastapath}{A character string specifying the path to the FASTA file 
-containing the nucleotide sequence of the transcripts. For each mRNA the 
-the record description line must contain the transcript name as in the 
-reference transcriptome and the sequence must derive from the same relase 
-of the genome. If the data frame of interest does not include a
-\emph{psite_codon} column, this argument is used to extract for each read 
-the three nucletotides covered by the identified P-sites. Coupled with the 
-annotation file it is always used required to compute the frequency of the 
-triplets along the coding sequences and normalize the codon usage values.}
+\item{fastapath}{A character string specifying the path to the FASTA file
+containing the nucleotide sequence of the transcripts. For each mRNA the
+the record description line must contain the transcript name as in the
+reference transcriptome and the sequence must derive from the same relase
+of the genome. Either \code{fastapath} or \code{bsgenome_dp} coulped with
+\code{txdb} must be specified if the data frame of interest does not
+already include a \emph{psite_codon} column (see \code{\link{psite_info}}).
+This arguments are used to extract for each read the three nucletotides
+covered by the identified P-sites.}
+
+\item{bsgenome_dp}{A character string specifying the name of the BSgenome
+data package to be loaded. If the specified data package is not already
+present in your system, it will be installed through the biocLite.R script.
+Please check the data packages available in the Bioconductor repositories
+for your version of R/Bioconductor using the
+\code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
+Either \code{fastapath} or \code{bsgenome_dp} coulped with
+\code{txdb} must be specified if the data frame of interest does not
+already include a \emph{psite_codon} column (see \code{\link{psite_info}}).
+This arguments are used to extract for each read the three nucletotides
+covered by the identified P-sites.}
+
+\item{txdb}{A TxDb object storing transcript annotations.  It is considered
+only if \code{bsgenome_dp} is specified.}
 
 \item{transcripts}{A character string vector specifying the name of the 
 transcripts to be considered in the analysis. By default this argument is 
@@ -61,7 +77,7 @@ sequences will be used instead. It is considered only if
 A list containing a ggplot2 object (named "plot"), and a data frame
   ("df") with the associated data. An additional ggplot2 object
   ("plot_comparison") is returned if the parameter \code{codon_usage} is
-  specyfied.
+  specified.
 }
 \description{
 For a specified sample computes the empirical codon usage i.e. the frequency 

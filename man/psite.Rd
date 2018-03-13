@@ -8,7 +8,7 @@ psite(data, flanking = 6, start = TRUE, extremity = "auto",
   plot = FALSE, plotdir = NULL, plotformat = "png", cl = 99)
 }
 \arguments{
-\item{data}{A list of data frames from \code{\link{bamtolist}}.}
+\item{data}{A list of data frames from \code{\link{bedtolist}}.}
 
 \item{flanking}{An integer that specifies, for all the reads aligning on the
 start codon, the minimum number of nucleotides that must flank the

@@ -7,7 +7,7 @@
 rlength_distr(data, sample, cl = 100)
 }
 \arguments{
-\item{data}{A list of data frames from \code{\link{bamtolist}}.}
+\item{data}{A list of data frames from \code{\link{bedtolist}}.}
 
 \item{sample}{A character string specifying the name of the sample of
 interest.}

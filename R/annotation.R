@@ -10,14 +10,17 @@
 #' transcript names should coincide with those in the alignment file.
 #' 
 #' @param gtfpath A character string specifying the complete path to te GTF
-#'   file, including its name and extension.
-#' @param dataSource A character string describing the origin of the data file. 
-#'   Please refer to the description of \emph{dataSource} of the 
-#'   \code{makeTxDbFromGFF} function included in the \code{GenomicFeatures} 
+#'   file, including its name and extension. Either \code{gtfpath} or
+#'   \code{txdb} must be specified.
+#' @param txdb A TxDb object storing transcript annotations. Either
+#'   \code{gtfpath} or \code{txdb} must be specified.
+#' @param dataSource A character string describing the origin of the data file.
+#'   Please refer to the description of \emph{dataSource} of the
+#'   \code{makeTxDbFromGFF} function included in the \code{GenomicFeatures}
 #'   package.
-#' @param organism A character string specifying the Genus and species of this 
-#'   organism. Please refer to the description of  \emph{organism} of the 
-#'   \code{makeTxDbFromGFF} function included in the \code{GenomicFeatures} 
+#' @param organism A character string specifying the Genus and species of this
+#'   organism. Please refer to the description of  \emph{organism} of the
+#'   \code{makeTxDbFromGFF} function included in the \code{GenomicFeatures}
 #'   package.
 #' @return A data frame.
 #' @examples
@@ -26,14 +29,29 @@
 #' bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
 #' @import GenomicFeatures
 #' @export
-create_annotation  <-  function(gtfpath, dataSource = NA, organism = NA) {
-  path_to_gtf <- gtfpath
-  txdb <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
+create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA) {
   
-  exon <- exonsBy(txdb, by = "tx",use.names=T)
-  utr5<- fiveUTRsByTranscript(txdb,use.names=T)
-  cds <- cdsBy(txdb, by = "tx", use.names=T)
-  utr3<-threeUTRsByTranscript(txdb,use.names=T)
+  if(length(gtfpath) != 0 & length(txdb) != 0){
+    warning("gtfpath and txdb are both specified. Only gtfpath will be considered\n")
+    txdb = NULL
+  }
+  
+  if(length(gtfpath) == 0 & length(txdb) == 0){
+    cat("\n")
+    stop("\nERROR: neither gtfpath nor txdb is specified \n\n")
+  }
+  
+  if(length(gtfpath) != 0){
+    path_to_gtf <- gtfpath
+    txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
+  } else {
+    txdbanno <- txdb
+  }
+  
+  exon <- exonsBy(txdbanno, by = "tx",use.names=T)
+  utr5<- fiveUTRsByTranscript(txdbanno,use.names=T)
+  cds <- cdsBy(txdbanno, by = "tx", use.names=T)
+  utr3<-threeUTRsByTranscript(txdbanno,use.names=T)
   
   anno_df <- data.frame("transcript"=names(exon), "l_tr" = sapply(exon,function(x) sum(width(x))))
   l_utr5<-data.frame("transcript"=names(utr5),"l_utr5"= sapply(utr5,function(x) sum(width(x))))

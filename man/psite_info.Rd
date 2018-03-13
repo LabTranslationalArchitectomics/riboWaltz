@@ -4,10 +4,11 @@
 \alias{psite_info}
 \title{Updates reads information adding features associated to the inferred P-sites.}
 \usage{
-psite_info(data, offset, granges = FALSE, fastapath = NULL)
+psite_info(data, offset, granges = FALSE, fastapath = NULL,
+  bsgenome_dp = NULL, txdb = NULL)
 }
 \arguments{
-\item{data}{A list of data frames from \code{\link{bamtolist}}}
+\item{data}{A list of data frames from \code{\link{bedtolist}}}
 
 \item{offset}{A data frame from \code{\link{psite}}.}
 
@@ -17,12 +18,25 @@ input for the downstream analyses and graphical outputs provided by
 riboWaltz) will be returned.}
 
 \item{fastapath}{A character string specifying the path to the FASTA file
-containing the nucleotide sequence of the transcripts. For each mRNA the 
-the record description line must contain the transcript name as in the 
-reference transcriptome and the sequence must derive from the same relase 
-of the genome. Use this argument to attach to the data frames an additional
-column containing the three nucletotides corresponding to the identified
-P-sites. Default is NULL.}
+containing the nucleotide sequence of the transcripts. For each mRNA the
+the record description line must contain the transcript name as in the
+reference transcriptome and the sequence must derive from the same relase
+of the genome. Either \code{fastapath} or \code{bsgenome_dp} coulped with
+\code{txdb} must be specified to attach an additional column reporting the
+three nucletotides covered by the identified P-sites. Default is NULL.}
+
+\item{bsgenome_dp}{A character string specifying the name of the BSgenome
+data package to be loaded. If the specified data package is not already
+present in your system, it will be installed through the biocLite.R script.
+Please check the data packages available in the Bioconductor repositories
+for your version of R/Bioconductor using the
+\code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
+Either \code{fastapath} or \code{bsgenome_dp} coulped with \code{txdb} must
+be specified to attach an additional column reporting the three
+nucletotides covered by the identified P-sites. Default is NULL.}
+
+\item{txdb}{A TxDb object storing transcript annotations. It is considered
+only if \code{bsgenome_dp} is specified.}
 }
 \value{
 A list of data frames or a GRangesList object if

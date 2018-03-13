@@ -77,7 +77,7 @@ To run `bamtobed`, only the path to the BAM file(s) is required, possibly couple
   |  ENSMUST00000000033.9  |  3708  |  115  |  543  |  3050  |
   |  ENSMUST00000000049.5  |  1190  |  51  |  1038  |  101  |
   
-  The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated. During the creation of the annotation file, the input GTF is converted in a TxDb object. Therefore, a TxDb object can also be directly used as annotation input. 
+  The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated. During the generation of the annotation file, the input GTF is converted in a TxDb object and then in a dataframe. Therefore, a TxDb object can also be directly used as input of `create_annotation`. 
 
 #### Sequence data
 
@@ -85,7 +85,7 @@ Optionally, a file containing transcript sequence information in FASTA format ca
 
 #### Selection of read lengths
 
-Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths: i) all read lengths are included in the analysis (all-inclusive mode) ii) only read lengths specified by the user are included (manual mode); iii) only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity
+Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths: i) all read lengths are included in the analysis (all-inclusive mode) ii) only read lengths specified by the user are included (manual mode); iii) only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
 
 #### Overview of the data
 

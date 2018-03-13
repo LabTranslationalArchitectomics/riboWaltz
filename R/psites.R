@@ -7,7 +7,7 @@
 #' length-specific occupancy metaprofiles of the read ends aligning around the
 #' start codon, displaying the identified P-sites offsets.
 #'
-#' @param data A list of data frames from \code{\link{bamtolist}}.
+#' @param data A list of data frames from \code{\link{bedtolist}}.
 #' @param flanking An integer that specifies, for all the reads aligning on the
 #'   start codon, the minimum number of nucleotides that must flank the
 #'   translation initiation site in both directions. Default is 6.
@@ -236,19 +236,30 @@ psite <- function(data, flanking = 6, start=TRUE, extremity="auto", plot = FALSE
 #' transcriptome sequences is provided, an additional column containing the
 #' three nucleotides covered by the P-site will be attached.
 #'
-#' @param data A list of data frames from \code{\link{bamtolist}}
+#' @param data A list of data frames from \code{\link{bedtolist}}
 #' @param offset A data frame from \code{\link{psite}}.
 #' @param granges A logical value whether or not to return a GRangesList 
 #'   object. Default is FALSE, meaning that a list of data frames (the required
 #'   input for the downstream analyses and graphical outputs provided by
 #'   riboWaltz) will be returned.
 #' @param fastapath A character string specifying the path to the FASTA file
-#'   containing the nucleotide sequence of the transcripts. For each mRNA the 
-#'   the record description line must contain the transcript name as in the 
-#'   reference transcriptome and the sequence must derive from the same relase 
-#'   of the genome. Use this argument to attach to the data frames an additional
-#'   column containing the three nucletotides corresponding to the identified
-#'   P-sites. Default is NULL.
+#'   containing the nucleotide sequence of the transcripts. For each mRNA the
+#'   the record description line must contain the transcript name as in the
+#'   reference transcriptome and the sequence must derive from the same relase
+#'   of the genome. Either \code{fastapath} or \code{bsgenome_dp} coulped with
+#'   \code{txdb} must be specified to attach an additional column reporting the
+#'   three nucletotides covered by the identified P-sites. Default is NULL.
+#' @param bsgenome_dp A character string specifying the name of the BSgenome
+#'   data package to be loaded. If the specified data package is not already
+#'   present in your system, it will be installed through the biocLite.R script.
+#'   Please check the data packages available in the Bioconductor repositories
+#'   for your version of R/Bioconductor using the
+#'   \code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
+#'   Either \code{fastapath} or \code{bsgenome_dp} coulped with \code{txdb} must
+#'   be specified to attach an additional column reporting the three
+#'   nucletotides covered by the identified P-sites. Default is NULL.
+#' @param txdb A TxDb object storing transcript annotations. It is considered
+#'   only if \code{bsgenome_dp} is specified.
 #' @return A list of data frames or a GRangesList object if
 #'   \code{granges} == TRUE.
 #' @examples
@@ -257,8 +268,11 @@ psite <- function(data, flanking = 6, start=TRUE, extremity="auto", plot = FALSE
 #' data(mm81cdna)
 #'
 #' reads_psite_list <- psite_info(reads_list, psite_offset)
+#' @import GenomicFeatures
+#' @import BSgenome
 #' @export
-psite_info <- function(data, offset, granges = FALSE, fastapath = NULL) {
+psite_info <- function(data, offset, granges = FALSE, fastapath = NULL,
+                       bsgenome_dp = NULL, txdb = NULL) {
   names <- names(data)
   for (n in names) {
     cat(sprintf("processing %s\n", n))
@@ -281,10 +295,34 @@ psite_info <- function(data, offset, granges = FALSE, fastapath = NULL) {
                                             & df$psite_from_stop < 0,
                                             "5utr",
                                             "3utr")))
-    if(length(fastapath) != 0) {
-      cat("adding codon\n\n")
-      sequences_biost <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-      df$psite_codon <- as.character(subseq(sequences_biost[as.character(df$transcript)],
+    
+    if(length(fastapath) != 0 & length(bsgenome_dp) != 0){
+      warning("fastapath and bsgenome_dp are both specified. Only fastapath will be considered\n")
+      bsgenome_dp = NULL
+    }
+    
+    if(length(bsgenome_dp) != 0 & length(txdb) == 0){
+      cat("\n")
+      stop("\nERROR: txdb is not specified \n\n")
+    }
+    
+    if(length(fastapath) != 0 | length(bsgenome_dp) != 0){
+      if(length(fastapath) != 0) {
+        cat("adding codon\n\n")
+        sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+      } else {
+        if(length(bsgenome_dp) != 0){
+          if(bsgenome_dp %in% installed.genomes()){
+            library(bsgenome_dp, character.only = TRUE)
+          } else {
+            source("http://www.bioconductor.org/biocLite.R")
+            biocLite(bsgenome_dp, suppressUpdates = TRUE)
+            library(bsgenome_dp, character.only = TRUE)
+          }
+        }
+        sequences <- extractTranscriptSeqs(get(bsgenome_dp), txdb, use.names=T)
+      }
+      df$psite_codon <- as.character(subseq(sequences[as.character(df$transcript)],
                                             start = df$psite,
                                             end = df$psite + 2))
     }

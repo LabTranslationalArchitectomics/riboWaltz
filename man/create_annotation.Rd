@@ -4,20 +4,25 @@
 \alias{create_annotation}
 \title{Create an annotation data frame.}
 \usage{
-create_annotation(gtfpath, dataSource = NA, organism = NA)
+create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA,
+  organism = NA)
 }
 \arguments{
 \item{gtfpath}{A character string specifying the complete path to te GTF
-file, including its name and extension.}
+file, including its name and extension. Either \code{gtfpath} or
+\code{txdb} must be specified.}
 
-\item{dataSource}{A character string describing the origin of the data file. 
-Please refer to the description of \emph{dataSource} of the 
-\code{makeTxDbFromGFF} function included in the \code{GenomicFeatures} 
+\item{txdb}{A TxDb object storing transcript annotations. Either
+\code{gtfpath} or \code{txdb} must be specified.}
+
+\item{dataSource}{A character string describing the origin of the data file.
+Please refer to the description of \emph{dataSource} of the
+\code{makeTxDbFromGFF} function included in the \code{GenomicFeatures}
 package.}
 
-\item{organism}{A character string specifying the Genus and species of this 
-organism. Please refer to the description of  \emph{organism} of the 
-\code{makeTxDbFromGFF} function included in the \code{GenomicFeatures} 
+\item{organism}{A character string specifying the Genus and species of this
+organism. Please refer to the description of  \emph{organism} of the
+\code{makeTxDbFromGFF} function included in the \code{GenomicFeatures}
 package.}
 }
 \value{

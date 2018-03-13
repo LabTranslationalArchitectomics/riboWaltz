@@ -6,7 +6,7 @@
 #' possible to visualise the heatmaps for all the reads or to restrict the
 #' graphical output to a sub-range of read lengths.
 #'
-#' @param data A list of data frames from \code{\link{bamtolist}}.
+#' @param data A list of data frames from \code{\link{bedtolist}}.
 #' @param annotation A data frame from \code{\link{create_annotation}}.
 #' @param sample A character string specifying the name of the sample of 
 #'   interest.

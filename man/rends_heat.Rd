@@ -8,7 +8,7 @@ rends_heat(data, annotation, sample, transcripts = NULL, cl = 99,
   utr5l = 50, cdsl = 50, utr3l = 50, log = F, colour = "black")
 }
 \arguments{
-\item{data}{A list of data frames from \code{\link{bamtolist}}.}
+\item{data}{A list of data frames from \code{\link{bedtolist}}.}
 
 \item{annotation}{A data frame from \code{\link{create_annotation}}.}
 
