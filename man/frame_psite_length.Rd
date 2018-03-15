@@ -2,7 +2,7 @@
 % Please edit documentation in R/frames.R
 \name{frame_psite_length}
 \alias{frame_psite_length}
-\title{Compute the number of P-sites per frame for each read length.}
+\title{Compute the number of P-sites per frame stratified by read length.}
 \usage{
 frame_psite_length(data, sample = NULL, region = "all", cl = 100,
   length_range = NULL)
@@ -11,42 +11,41 @@ frame_psite_length(data, sample = NULL, region = "all", cl = 100,
 \item{data}{A list of data frames from \code{\link{psite_info}}.}
 
 \item{sample}{A character string vector specifying the name of the sample(s)
-of interest. By default this argument is NULL, meaning that all the data
-frames in \code{data} will be considered.}
+of interest. By default this argument is NULL, meaning that all the samples
+in \code{data} are included in the analysis.}
 
 \item{region}{Either "all" or a character string among "5utr", "cds", "3utr"
-specifying which of the three regions of the transcript (5' UTR, CDS or 3'
-UTR, respectively) should be considered. Default is "all", meaning that the
-percentage is computed and plotted for all the three regions.}
+specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
+respectively) that must be included in the analysis. Default is "all",
+meaning that the all the regions are considered.}
 
-\item{cl}{An integer with value in \emph{[1,100]} specifying the read length
-confidence level for restricting the distribution to a chosen range of
-lengths. By default it is set to 100, i.e. the whole set of reads lengths
-will be considered. This parameter has no effect if \code{length_range} is
+\item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
+for restricting the analysis to a sub-range of read lengths. By default it is
+set to 100. This parameter has no effect if \code{length_range} is
 specified.}
 
-\item{length_range}{Either "all", an integer or an integer vector. In the
-first case all the reads will be used to generate barplot. Otherwise, only
-the reads matching the specified length(s) will be employed. If specified,
-this parameter prevails over \code{cl}}
+\item{length_range}{Either "all", an integer or an integer vector. Default is
+"all", meaning that all the read lengths will be included in the analysis.
+Otherwise, only the read lengths matching the specified value(s) are kept.
+If specified, this parameter prevails over \code{cl}.}
 }
 \value{
 A list containing a ggplot2 object and a data frame with the
   associated data.
 }
 \description{
-Similar to \code{\link{frame_psite}} but the result is stratified by the
+Similar to \code{\link{frame_psite}} but the results are stratified by the
 length of the reads.
 }
 \examples{
 data(reads_psite_list)
 
-## Generate the heatmap employing the whole dataset
+## Generate the heatmap for all the read lengths
 frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
 frame_len_whole[["plot"]]
 
-## Generate the heatmap for the coding sequence and visualize it for the
-middle 90\% of the range of read length
+## Generate the heatmap for a sub-range of read lengths (the middle 90\%) and
+restricting the analysis to the coding sequence
 frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 region = "cds", cl = 90)
 frame_len_sub[["plot"]]

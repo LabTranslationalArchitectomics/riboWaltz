@@ -2,32 +2,34 @@
 % Please edit documentation in R/psites.R
 \name{psite_info}
 \alias{psite_info}
-\title{Updates reads information adding features associated to the inferred P-sites.}
+\title{Update reads information according to the inferred P-sites.}
 \usage{
 psite_info(data, offset, granges = FALSE, fastapath = NULL,
   bsgenome_dp = NULL, txdb = NULL)
 }
 \arguments{
-\item{data}{A list of data frames from \code{\link{bedtolist}}}
+\item{data}{A list of data frames from either \code{\link{bamtolist}} or
+\code{\link{bedtolist}}.}
 
 \item{offset}{A data frame from \code{\link{psite}}.}
 
 \item{granges}{A logical value whether or not to return a GRangesList 
 object. Default is FALSE, meaning that a list of data frames (the required
 input for the downstream analyses and graphical outputs provided by
-riboWaltz) will be returned.}
+riboWaltz) is returned instead.}
 
 \item{fastapath}{A character string specifying the path to the FASTA file
-containing the nucleotide sequence of the transcripts. For each mRNA the
-the record description line must contain the transcript name as in the
-reference transcriptome and the sequence must derive from the same relase
-of the genome. Either \code{fastapath} or \code{bsgenome_dp} coulped with
-\code{txdb} must be specified to attach an additional column reporting the
-three nucletotides covered by the identified P-sites. Default is NULL.}
+containing the reference nucleotide sequences. Please make sure that the
+sequences and their names derive from the same release of and are in
+agreement with the annotation file used in the
+\code{\link{create_annotation}} function. Either \code{fastapath} or
+\code{bsgenome_dp} coulped with \code{txdb} must be specified to attach an
+additional column reporting the three nucletotides covered by the
+identified P-sites. Default is NULL.}
 
 \item{bsgenome_dp}{A character string specifying the name of the BSgenome
 data package to be loaded. If the specified data package is not already
-present in your system, it will be installed through the biocLite.R script.
+present in your system, it is installed through the biocLite.R script.
 Please check the data packages available in the Bioconductor repositories
 for your version of R/Bioconductor using the
 \code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
@@ -35,23 +37,24 @@ Either \code{fastapath} or \code{bsgenome_dp} coulped with \code{txdb} must
 be specified to attach an additional column reporting the three
 nucletotides covered by the identified P-sites. Default is NULL.}
 
-\item{txdb}{A TxDb object storing transcript annotations. It is considered
-only if \code{bsgenome_dp} is specified.}
+\item{txdb}{A TxDb object. This parameter is considered only if
+\code{bsgenome_dp} is specified. Default is NULL.}
 }
 \value{
-A list of data frames or a GRangesList object if
-  \code{granges} == TRUE.
+A list of data frames or a GRangesList object.
 }
 \description{
-Updates the data frames of the input list with the P-site position identfied 
-by \code{\link{psite}}. It attaches to the data frames 4 columns containing 
-the P-site position with respect to the beginning of the transcript and to 
-both its start and stop codon and the region of the transcript (5' UTR, CDS, 
-3' UTR) that includes the P-site. Please note: if a transcript doesn't 
-present any annotated CDS then the positions of the P-site from both the 
-start and the stop codon will be set to NA. If the FASTA file with the
-transcriptome sequences is provided, an additional column containing the
-three nucleotides covered by the P-site will be attached.
+Starting ftom the P-site position identfied by \code{\link{psite}}, this
+function updates the data frames that contains information about the reads.
+It attaches to the data frames 4 columns reporting the P-site position with
+respect to the 1st nucleotide of the transcript, the start and the stop codon
+of the annotated coding sequence (if any) and the region of the transcript
+(5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript
+is not associated to any annotated CDS then the positions of the P-site from
+both the start and the stop codon is set to NA. If either a FASTA file or a
+BSgenome data package with the nucleotide  sequences is provided, an
+additional column reporting the three nucleotides covered by the P-site is
+attached.
 }
 \examples{
 data(reads_list)

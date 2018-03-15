@@ -1,26 +1,27 @@
 #' Plot read length distributions.
 #'
-#' Plots the read length distribution for a specified sample of the input list.
-#' It is possible to visualise the whole length distribution or to restrict it
-#' to a chosen range of read lengths.
+#' For a specified sample this function plots the read length distribution. It
+#' is possible to visualise the distribution for all the read lengths or to
+#' restrict the graphical output to a sub-range of read lengths.
 #'
-#' @param data A list of data frames from \code{\link{bedtolist}}.
+#' @param data A list of data frames from either \code{\link{bamtolist}} or
+#'   \code{\link{bedtolist}}.
 #' @param sample A character string specifying the name of the sample of
 #'   interest.
-#' @param cl An integer with value in \emph{[1,100]} specifying the read length 
-#'   confidence level for restricting the distribution to a chosen range of 
-#'   lengths. By default it is set to 100, i.e. the whole distribution will be
-#'   displayed.
+#' @param cl An integer value in \emph{[1,100]} specifying the confidence level
+#'   for restricting the plot to a sub-range of read lengths. By default it is
+#'   set to 100, meaning that the whole distribution is displayed.
 #' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_list)
 #'
-#' ## Visualise the whole read length distribution
+#' ## Visualise distribution for all the read lengths
 #' lendist_whole <- rlength_distr(reads_list, sample = "Samp1", cl = 100)
 #' lendist_whole[["plot"]]
 #'
-#' ## Visualise the middle 95% of the read length distribution
+#' ## Visualise the metaheatmaps for a sub-range of read lengths (the middle
+#' 95%)
 #' lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
 #' lendist_sub95[["plot"]]
 #' @import ggplot2

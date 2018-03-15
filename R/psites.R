@@ -1,64 +1,60 @@
-#' Identify the ribosome P-site position along the reads.
-#' 
-#' Identifies, within each read, the position of the ribosome P-site, determined
-#' by the localisation of its first nucleotide. The function returns the 
-#' position of the P-site specifically inferred for the many read lengths by 
-#' processing the samples separately. It also allows to plot a collection of
-#' length-specific occupancy metaprofiles of the read ends aligning around the
-#' start codon, displaying the identified P-sites offsets.
+#' Identify the ribosome P-site position within the reads.
 #'
-#' @param data A list of data frames from \code{\link{bedtolist}}.
-#' @param flanking An integer that specifies, for all the reads aligning on the
-#'   start codon, the minimum number of nucleotides that must flank the
-#'   translation initiation site in both directions. Default is 6.
-#' @param Mode A character string specifing the set of reads that should be used
-#'   to compute the P-site offsets. It can be either "start" or "stop" for the 
-#'   reads aligning on the translation initiation site or mapping on the last
-#'   triplet before the stop codon, respectively. Default is "start".
+#' This function identifies within each read the position of the ribosome
+#' P-site, determined by the localisation of its first nucleotide. The function
+#' processes the samples separately starting from the reads aligning on the
+#' reference codon (selected by the user between the start codon and the second
+#' to last codon) of any annotated coding sequence. It then returns the position
+#' of the P-site specifically inferred for all the read lengths. It also allows
+#' to plot a collection of read length-specific occupancy metaprofiles
+#' showing the P-sites offsets computed throughout the two steps of the
+#' algorithm.
+#'
+#' @param data A list of data frames from either \code{\link{bamtolist}} or
+#'   \code{\link{bedtolist}}.
+#' @param flanking An integer that specifies how many nucleotides, at least, of
+#'   the reads mapping on the reference codon must flank the reference codon in
+#'   both directions. Default is 6.
+#' @param start A logical value whether ot not to compute the P-site offsets
+#'   starting from the reads aligning on the translation initiation site. FALSE
+#'   implies that the reads mapping on the last triplet before the stop codon
+#'   are used instead. Default is TRUE.
 #' @param extremity A character string specifing which extremity of the reads
-#'   should be used for the correction step of the P-site identification. It can
-#'   be either "5end" or "3end" for the 5' and the 3' extremity, respectively.
-#'   Default is "auto", meaning that the best extremity is automatically chosen.
+#'   should be used in the correction step of the algorithm. It can be either
+#'   "5end" or "3end" for the 5' and the 3' extremity, respectively. Default is
+#'   "auto", meaning that the best extremity is automatically selected.
 #' @param plot A logical value whether or not to plot the occupancy metaprofiles
-#'   for the computation of the offsets. Default is FALSE.
-#' @param plotdir A character string specifying the (existing or not) folder
-#'   where the occupancy metaprofiles shuold be saved. This parameter is
-#'   considered only if \code{plot} is TRUE. By default this argument is NULL,
-#'   which implies the folder is set as a subfolder of the working directory,
-#'   called \emph{offset_plot}.
-#' @param plotformat Either "png" (the default) or "pdf". This parameter
-#'   specifies the file format in which the occupancy metaprofiles shuold be
-#'   saved. It is considered only if \code{plot} is TRUE.
-#' @param cl An integer with value in \emph{[1,100]} specifying the read length
-#'   confidence level for restricting the plot of the occupancy metaprofiles to
-#'   a range of lengths. By default it is set to 99. This parameter is
-#'   considered only if \code{plot} is TRUE.
-#' @details This function compute the P-site identification starting from the 
-#'   reads that align on the start codon of any annotated coding sequences,
-#'   exploiting the knowledge that their associated P-sites corresponds to the
-#'   triplet AUG. The P-site identification is then divided in two steps: i)
-#'   computation of the offsets between the extremities of the reads and the
-#'   start codons based on the alignment of 5' and the 3' end around the
-#'   translation initiation site ii) correction of some offsets based on the
-#'   global results of the previous step.
+#'   showing the P-sites offsets computed throughout the two steps of the
+#'   algorithm. Default is FALSE.
+#' @param plotdir A character string specifying the (existing or not) location
+#'   of the directory where the occupancy metaprofiles shuold be stored. This
+#'   parameter is considered only if \code{plot} is TRUE. By default this
+#'   argument is NULL, which implies it is set as a subfolder of the working
+#'   directory, called \emph{offset_plot}.
+#' @param plotformat Either "png" (the default) or "pdf", this parameter
+#'   specifies the file format of the generated metaprofiles. It is considered
+#'   only if \code{plot} is TRUE.
+#' @param cl An integer value in \emph{[1,100]} specifying the confidence level
+#'   for restricting the generation of the occupancy metaprofiles to a sub-range
+#'   of read lengths. By default it is set to 99. This parameter is considered
+#'   only if \code{plot} is TRUE.
 #' @return A data frame.
 #' @examples
 #' data(reads_list)
 #'
-#' ## Compute the P-site offset automatically not plotting the metaprofiles
-#' based on the alignment of the read ends
+#' ## Compute the P-site offset automatically selecting the otimal read
+#' extremity for the correction step and not plotting any metaprofile
 #' psite(reads_list, flanking = 6, extremity="auto")
 #'
-#' ## Compute the P-site offset specifying the extremity used for the correction
-#' step, plotting the metaprofiles based on the alignment of the read ends, only
-#' for the middle 95% of the read length. The plots will be placed in the
-#' current working directory.
+#' ## Compute the P-site offset specifying the extremity used in the correction
+#' step and plotting the metaprofiles only for a sub-range of read lengths (the
+#' middle 95%). The plots will be placed in the current working directory.
 #' psite_offset <- psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
 #' psite_offset
 #' @import ggplot2
 #' @import cowplot
 #' @export
-psite <- function(data, flanking = 6, start=TRUE, extremity="auto", plot = FALSE,
+psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FALSE,
                   plotdir = NULL, plotformat="png", cl = 99) {
   names <- names(data)
   offset <- NULL
@@ -224,44 +220,47 @@ psite <- function(data, flanking = 6, start=TRUE, extremity="auto", plot = FALSE
   return(offset)
 }
 
-#' Updates reads information adding features associated to the inferred P-sites.
+#' Update reads information according to the inferred P-sites.
 #' 
-#' Updates the data frames of the input list with the P-site position identfied 
-#' by \code{\link{psite}}. It attaches to the data frames 4 columns containing 
-#' the P-site position with respect to the beginning of the transcript and to 
-#' both its start and stop codon and the region of the transcript (5' UTR, CDS, 
-#' 3' UTR) that includes the P-site. Please note: if a transcript doesn't 
-#' present any annotated CDS then the positions of the P-site from both the 
-#' start and the stop codon will be set to NA. If the FASTA file with the
-#' transcriptome sequences is provided, an additional column containing the
-#' three nucleotides covered by the P-site will be attached.
+#' Starting ftom the P-site position identfied by \code{\link{psite}}, this
+#' function updates the data frames that contains information about the reads.
+#' It attaches to the data frames 4 columns reporting the P-site position with
+#' respect to the 1st nucleotide of the transcript, the start and the stop codon
+#' of the annotated coding sequence (if any) and the region of the transcript
+#' (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript
+#' is not associated to any annotated CDS then the positions of the P-site from
+#' both the start and the stop codon is set to NA. If either a FASTA file or a
+#' BSgenome data package with the nucleotide  sequences is provided, an
+#' additional column reporting the three nucleotides covered by the P-site is
+#' attached.
 #'
-#' @param data A list of data frames from \code{\link{bedtolist}}
+#' @param data A list of data frames from either \code{\link{bamtolist}} or
+#'   \code{\link{bedtolist}}.
 #' @param offset A data frame from \code{\link{psite}}.
 #' @param granges A logical value whether or not to return a GRangesList 
 #'   object. Default is FALSE, meaning that a list of data frames (the required
 #'   input for the downstream analyses and graphical outputs provided by
-#'   riboWaltz) will be returned.
+#'   riboWaltz) is returned instead.
 #' @param fastapath A character string specifying the path to the FASTA file
-#'   containing the nucleotide sequence of the transcripts. For each mRNA the
-#'   the record description line must contain the transcript name as in the
-#'   reference transcriptome and the sequence must derive from the same relase
-#'   of the genome. Either \code{fastapath} or \code{bsgenome_dp} coulped with
-#'   \code{txdb} must be specified to attach an additional column reporting the
-#'   three nucletotides covered by the identified P-sites. Default is NULL.
+#'   containing the reference nucleotide sequences. Please make sure that the
+#'   sequences and their names derive from the same release of and are in
+#'   agreement with the annotation file used in the
+#'   \code{\link{create_annotation}} function. Either \code{fastapath} or
+#'   \code{bsgenome_dp} coulped with \code{txdb} must be specified to attach an
+#'   additional column reporting the three nucletotides covered by the
+#'   identified P-sites. Default is NULL.
 #' @param bsgenome_dp A character string specifying the name of the BSgenome
 #'   data package to be loaded. If the specified data package is not already
-#'   present in your system, it will be installed through the biocLite.R script.
+#'   present in your system, it is installed through the biocLite.R script.
 #'   Please check the data packages available in the Bioconductor repositories
 #'   for your version of R/Bioconductor using the
 #'   \code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
 #'   Either \code{fastapath} or \code{bsgenome_dp} coulped with \code{txdb} must
 #'   be specified to attach an additional column reporting the three
 #'   nucletotides covered by the identified P-sites. Default is NULL.
-#' @param txdb A TxDb object storing transcript annotations. It is considered
-#'   only if \code{bsgenome_dp} is specified.
-#' @return A list of data frames or a GRangesList object if
-#'   \code{granges} == TRUE.
+#' @param txdb A TxDb object. This parameter is considered only if
+#'   \code{bsgenome_dp} is specified. Default is NULL.
+#' @return A list of data frames or a GRangesList object.
 #' @examples
 #' data(reads_list)
 #' data(psite_offset)

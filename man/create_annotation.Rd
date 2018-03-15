@@ -8,35 +8,34 @@ create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA,
   organism = NA)
 }
 \arguments{
-\item{gtfpath}{A character string specifying the complete path to te GTF
-file, including its name and extension. Either \code{gtfpath} or
-\code{txdb} must be specified.}
+\item{gtfpath}{A character string specifying the path to te GTF file,
+including its name and extension. Either \code{gtfpath} or \code{txdb} must
+be specified.}
 
-\item{txdb}{A TxDb object storing transcript annotations. Either
-\code{gtfpath} or \code{txdb} must be specified.}
+\item{txdb}{A TxDb object. Either \code{gtfpath} or \code{txdb} must be
+specified.}
 
 \item{dataSource}{A character string describing the origin of the data file.
-Please refer to the description of \emph{dataSource} of the
-\code{makeTxDbFromGFF} function included in the \code{GenomicFeatures}
-package.}
+For more information about this parameter please refer to the description
+of \emph{dataSource} of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}}
+function included in the \code{GenomicFeatures} package.}
 
 \item{organism}{A character string specifying the Genus and species of this
-organism. Please refer to the description of  \emph{organism} of the
-\code{makeTxDbFromGFF} function included in the \code{GenomicFeatures}
-package.}
+organism. For more information about this parameter please refer to the
+description of \emph{dataSource} of the
+\code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
+\code{GenomicFeatures} package.}
 }
 \value{
 A data frame.
 }
 \description{
-Creates a data frame with a basic reference annotation of the transripts 
-starting from a GTF file. The data frame will contain a column named 
-\emph{transcript} reporting the name of the transcripts (as reported in the 
-GTF, usually the ENST ID and version, dot separated) and four columns named 
-\emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3} reporting the 
-length of the whole transcript and of the annotated \emph{5' UTR}, the 
-\emph{CDS} and the \emph{3' UTR}, respectively. Please note that the 
-transcript names should coincide with those in the alignment file.
+Starting from a GTF file or a TxDb object this function generates a dada
+frame containing a basic annotation of the transcripts. The data frame
+includes a column named \emph{transcript} reporting the name of the reference
+sequences and four columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and
+\emph{l_utr3} reporting the length of the transcripts and of their annotated
+\emph{5' UTR}, \emph{CDS} and \emph{3' UTR}, respectively.
 }
 \examples{
 gtf_file <- location_of_GTF_file

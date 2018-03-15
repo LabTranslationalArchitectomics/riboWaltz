@@ -2,44 +2,47 @@
 % Please edit documentation in R/frames.R
 \name{frame_psite}
 \alias{frame_psite}
-\title{Compute the number of P-sites per frame.}
+\title{Compute the percentage of P-sites per frame.}
 \usage{
 frame_psite(data, sample = NULL, region = "all", length_range = "all")
 }
 \arguments{
 \item{data}{A list of data frames from \code{\link{psite_info}}.}
 
-\item{sample}{A list of character string vectors specifying the name of the
-samples of interest. Default is NULL, meaning that all the samples will be
-taken into account.}
+\item{sample}{A character string vector specifying the name of the sample(s)
+of interest. By default this argument is NULL, meaning that all the samples
+in \code{data} are included in the analysis.}
 
 \item{region}{Either "all" or a character string among "5utr", "cds", "3utr"
-specifying which of the three regions of the transcript (5' UTR, CDS or 3'
-UTR, respectively) should be considered. Default is "all", meaning that the
-percentage is computed and plotted for all the three regions.}
+specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
+respectively) that must be included in the analysis. Default is "all",
+meaning that the all the regions are considered.}
 
-\item{length_range}{Either "all", an integer or an integer vector. In the
-first case all the reads will be used to generate barplot. Otherwise, only
-the reads matching the specified length(s) will be employed.}
+\item{length_range}{Either "all", an integer or an integer vector. Default is
+"all", meaning that all the read lengths will be included in the analysis.
+Otherwise, only the read lengths matching the specified value(s) are kept.}
 }
 \value{
 A list containing a ggplot2 object and a data frame with the
   associated data.
 }
 \description{
-Generates a barplot reporting the percentage of identified P-sites on the 
-three reading frames of the transcript. This value is computed for the
-annotated 5' UTRs, coding sequences and 3' UTRs, separately.
+For one or several samples this function computes the percentage of P-sites
+falling on the three reading frames of the transcripts and generates a
+barplot of the resulting values. This analysis is performed for the annotated
+5' UTR, coding sequence and 3' UTR, separately. It is possible to compute the
+percentage of P-sites per frame using all the read lengths or to restrict the
+analysis to a sub-range of read lengths.
 }
 \examples{
 data(reads_psite_list)
 
-## Generate the barplot employing the whole dataset
+## Generate the barplot for all the read lengths
 frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
 frame_whole[["plot"]]
 
-## Generate the barplot for the coding sequence employing reads of 28
-nucleotides
+## Generate the barplot restricting the analysis to the coding sequence and
+to the reads of 28 nucleotides
 frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 length_range=28)
 frame_sub[["plot"]]

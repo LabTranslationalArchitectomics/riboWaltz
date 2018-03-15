@@ -1,31 +1,34 @@
-#' Compute the number of P-sites per frame.
+#' Compute the percentage of P-sites per frame.
 #'
-#' Generates a barplot reporting the percentage of identified P-sites on the 
-#' three reading frames of the transcript. This value is computed for the
-#' annotated 5' UTRs, coding sequences and 3' UTRs, separately.
+#' For one or several samples this function computes the percentage of P-sites
+#' falling on the three reading frames of the transcripts and generates a
+#' barplot of the resulting values. This analysis is performed for the annotated
+#' 5' UTR, coding sequence and 3' UTR, separately. It is possible to compute the
+#' percentage of P-sites per frame using all the read lengths or to restrict the
+#' analysis to a sub-range of read lengths.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
-#' @param sample A list of character string vectors specifying the name of the
-#'   samples of interest. Default is NULL, meaning that all the samples will be
-#'   taken into account.
+#' @param sample A character string vector specifying the name of the sample(s)
+#'   of interest. By default this argument is NULL, meaning that all the samples
+#'   in \code{data} are included in the analysis.
 #' @param region Either "all" or a character string among "5utr", "cds", "3utr"
-#'   specifying which of the three regions of the transcript (5' UTR, CDS or 3'
-#'   UTR, respectively) should be considered. Default is "all", meaning that the
-#'   percentage is computed and plotted for all the three regions.
-#' @param length_range Either "all", an integer or an integer vector. In the
-#'   first case all the reads will be used to generate barplot. Otherwise, only
-#'   the reads matching the specified length(s) will be employed.
+#'   specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
+#'   respectively) that must be included in the analysis. Default is "all",
+#'   meaning that the all the regions are considered.
+#' @param length_range Either "all", an integer or an integer vector. Default is
+#'   "all", meaning that all the read lengths will be included in the analysis.
+#'   Otherwise, only the read lengths matching the specified value(s) are kept.
 #' @return A list containing a ggplot2 object and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_psite_list)
 #'
-#' ## Generate the barplot employing the whole dataset
+#' ## Generate the barplot for all the read lengths
 #' frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
 #' frame_whole[["plot"]]
 #'
-#' ## Generate the barplot for the coding sequence employing reads of 28
-#' nucleotides
+#' ## Generate the barplot restricting the analysis to the coding sequence and
+#' to the reads of 28 nucleotides
 #' frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 #' length_range=28)
 #' frame_sub[["plot"]]
@@ -116,39 +119,38 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
   return(ret_list)
 }
 
-#' Compute the number of P-sites per frame for each read length.
+#' Compute the number of P-sites per frame stratified by read length.
 #'
-#' Similar to \code{\link{frame_psite}} but the result is stratified by the
+#' Similar to \code{\link{frame_psite}} but the results are stratified by the
 #' length of the reads.
 #'
 #' @param data A list of data frames from \code{\link{psite_info}}.
 #' @param sample A character string vector specifying the name of the sample(s)
-#'   of interest. By default this argument is NULL, meaning that all the data
-#'   frames in \code{data} will be considered.
+#'   of interest. By default this argument is NULL, meaning that all the samples
+#'   in \code{data} are included in the analysis.
 #' @param region Either "all" or a character string among "5utr", "cds", "3utr"
-#'   specifying which of the three regions of the transcript (5' UTR, CDS or 3'
-#'   UTR, respectively) should be considered. Default is "all", meaning that the
-#'   percentage is computed and plotted for all the three regions.
-#' @param cl  An integer with value in \emph{[1,100]} specifying the read length
-#'   confidence level for restricting the distribution to a chosen range of
-#'   lengths. By default it is set to 100, i.e. the whole set of reads lengths
-#'   will be considered. This parameter has no effect if \code{length_range} is
+#'   specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
+#'   respectively) that must be included in the analysis. Default is "all",
+#'   meaning that the all the regions are considered.
+#' @param cl An integer value in \emph{[1,100]} specifying the confidence level
+#'   for restricting the analysis to a sub-range of read lengths. By default it is
+#'   set to 100. This parameter has no effect if \code{length_range} is
 #'   specified.
-#' @param length_range Either "all", an integer or an integer vector. In the
-#'   first case all the reads will be used to generate barplot. Otherwise, only
-#'   the reads matching the specified length(s) will be employed. If specified,
-#'   this parameter prevails over \code{cl}
+#' @param length_range Either "all", an integer or an integer vector. Default is
+#'   "all", meaning that all the read lengths will be included in the analysis.
+#'   Otherwise, only the read lengths matching the specified value(s) are kept.
+#'   If specified, this parameter prevails over \code{cl}.
 #' @return A list containing a ggplot2 object and a data frame with the
 #'   associated data.
 #' @examples
 #' data(reads_psite_list)
 #'
-#' ## Generate the heatmap employing the whole dataset
+#' ## Generate the heatmap for all the read lengths
 #' frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
 #' frame_len_whole[["plot"]]
 #'
-#' ## Generate the heatmap for the coding sequence and visualize it for the
-#' middle 90% of the range of read length
+#' ## Generate the heatmap for a sub-range of read lengths (the middle 90%) and
+#' restricting the analysis to the coding sequence
 #' frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 #' region = "cds", cl = 90)
 #' frame_len_sub[["plot"]]

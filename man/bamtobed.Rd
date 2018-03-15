@@ -7,19 +7,21 @@
 bamtobed(bamfolder, bedfolder = NULL)
 }
 \arguments{
-\item{bamfolder}{A character string specifying the path to the BAM files.
-The function looks for BAM format file recursively starting from the
-specified folder.}
+\item{bamfolder}{A character string specifying the path to the directory
+containing the BAM files. The function recursively looks for BAM format
+file starting from the specified folder.}
 
 \item{bedfolder}{A character string specifying the (existing or not) location
-of the output directory i.e. where the BED files shuold be saved. By
-default this argument is NULL, which implies the folder is set as a
-subfolder of \code{bamfolder}, called \emph{bed}.}
+of the directory where the BED files will be stored. By default this
+argument is NULL, which implies the folder is set as a subdirectory of
+\code{bamfolder}, called \emph{bed}.}
 }
 \description{
-Converts a list of BAM files into a list of BED files containing, for each
-read, the name of the transcript on which it alignes, the position of its
-fist and last nucleotide, its length and the associated strand.
+Converts one or several BAM files into a list of BED files containing, in
+each raw, the name of the reference sequence (i.e. of the transcript), the
+leftmost and rightmost position of the read, its length and the associated
+strand. Please note that thus function calls the bamtobed utility of the
+BEDTools suite.
 }
 \examples{
 path_bam <- location_of_BAM_files
