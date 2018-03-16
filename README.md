@@ -68,7 +68,7 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 
 #### Annotation data frame
   
-  A reference annotation file is required to attach to the data frames two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript, two crucial information for localizing the reads within the three region of the transcrips (5' UTR, the CDS and the 3' UTR) and computing the P-site offsets. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
+  A reference annotation file is required to attach to the data frames two additional columns containing the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide, two crucial information for localizing the reads within the three region of the transcrips (5' UTR, the CDS and the 3' UTR) and computing the P-site offsets. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. Here an example:
   
   |  transcript  |  l_tr  |  l_utr5  |  l_cds  |  l_utr3  |
   |:------:|:---------:|:------:|:---------:|:------:|
