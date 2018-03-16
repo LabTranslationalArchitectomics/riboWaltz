@@ -47,7 +47,7 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 	
   Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage and they are removed. Moreover, multiple options for treating the read lengths are available (see chapter _Sequence_ _data_ for more information). The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a sample called *Samp1* (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:
   
-    |  transcript  |  end5  |  end3  |  start_pos  |  stop_pos  |
+  |  transcript  |  end5  |  end3  |  start_pos  |  stop_pos  |
   |:------:|:-----:|:------:|:------:|:------:|:------:|
   |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
   |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
