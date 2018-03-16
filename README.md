@@ -41,30 +41,28 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 
 #### Acquiring input files
 
-  One or more BAM files can be read and converted into a list of data frames or into a GRangesList object through the `bamtolist` function. To run `bamtolist`, only the path to the BAM file(s) and an annotation file (see next chapter for additional information) are required. For convenience, it is suggested to to rename the BAM files before their acquisition, in order to maintain the same nomenclature of the samples through the whole analysis. However, it is also possible to assign to the samples the desired name thanks to the *list_name* option. Pay attention to the order in which their are provided: the first string will be assigned to the first file, the second string to the second one and so on.
+  One or more BAM files can be read and converted into a list of data frames or into a GRangesList object by running the `bamtolist` function. To run `bamtolist`, only the path to the BAM file(s) and an annotation file (see next chapter for additional information) are required. For convenience, it is suggested to to rename the BAM files before their acquisition in order to maintain the same nomenclature of the samples through the whole analysis. However, it is also possible to assign the desired name to the samples thanks to the *list_name* option. Pay attention to the order in which their are provided: the first string is assigned to the first file, the second string to the second one and so on.
   
 	reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file)
 	
-  Multiple options for treating the read lengths are available (see chapter _Sequence_ _data_ for more information). Moreover, since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage and they are removed. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a single sample called *Samp1* (a subset of the original data is here provided. Please contact the authors for the whole datset).
+  Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage and they are removed. Moreover, multiple options for treating the read lengths are available (see chapter _Sequence_ _data_ for more information). The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a sample called *Samp1* (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:
+  
+    |  transcript  |  end5  |  end3  |  start_pos  |  stop_pos  |
+  |:------:|:-----:|:------:|:------:|:------:|:------:|
+  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
+  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
+  |  ENSMUST00000000001.4  |  131  |  159  |  29  |  142  |  1206  |
+  |  ENSMUST00000000001.4  |  132  |  158  |  27  |  142  |  1206  |
+  |  ENSMUST00000000001.4  |  140  |  167  |  28  |  142  |  1206  |
+  |  ENSMUST00000000001.4  |  142  |  170  |  29  |  142  |  1206  |
   
   Alternatively, the BAM file can be first converted into BED files and then into a list of data frames or into a GRangesList object through the functions `bamtobed` and `bedtolist`. The `bamtobed` function calls the bamtobed utility of the BEDTools suite (for the installation follow the instructions at http://bedtools.readthedocs.io/en/latest/content/installation.html). The BEDTools suite has been developed for command line environments, so `bamtobed` can be only run on UNIX, LINUX and Apple OS X operating systems. Once the bed files are produced, it is possible to switch to any other machine without further restrictions.
 
-  To run `bamtobed`, only the path to the BAM file(s) is required, possibly coupled with the location of the output directory.
+  To run `bamtobed`, only the path to the BAM file(s) is required, possibly coupled with the location of the directory where the BED files should be saved.
 
     bamtobed(bamfolder=path_to_bam, bedfolder=path_to_bed)
 
-  The resulting files will contain, for each read, the name of the transcript on which it alignes, the position of its first and last nucleotide, its length and the associated strand. The BED files will appear like the following (the header of the columns is here added for clarity):
-
-  |  transcript  |  start  |  end  |  length  |  strand  |
-  |:------:|:-----:|:------:|:------:|:------:|
-  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  +  |
-  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  +  |
-  |  ENSMUST00000000001.4  |  131  |  159  |  29  |  +  |
-  |  ENSMUST00000000001.4  |  132  |  158  |  27  |  +  |
-  |  ENSMUST00000000001.4  |  140  |  167  |  28  |  +  |
-  |  ENSMUST00000000001.4  |  142  |  170  |  29  |  +  |
-
-   Then, the `bedtolist` function loads and reads the BED files merging them in a list. `bedtolist` only requires the path to the BED file(s) and an annotation file. The syntax of this function is the same as for `bamtolist`:
+   Then, the `bedtolist` function loads and reads the BED files merging them into a list. `bedtolist` only requires the path to the BED file(s) and an annotation file. The syntax of this function is the same as for `bamtolist`:
 
     reads_list <- bedtolist(bedfolder = path_to_bed, annotation = annotation_file)
 

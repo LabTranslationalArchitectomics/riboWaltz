@@ -2,14 +2,16 @@
 #'
 #' Reads one or several BAM files, converts each file into a data frame and
 #' combines them into a list. Alternatively, it returns a GRangesList i.e. a
-#' list of GRanges objects. In both cases two additional columns are attached to
-#' the data structures, reporting the leftmost and rightmost position of the CDS
-#' of the reference sequence with respect to its 1st nuclotide. Please note: if
-#' a transcript is not associated to any annotated CDS then its start and the
-#' stop codon are set to 0. Moreover, since the input data refers to a
-#' transcriptome alingment, the reads mapping to the negative strand should be
-#' present in a low percentage and they are removed. Multiple options for
-#' treating the read lengths are available.
+#' list of GRanges objects. In both cases the data structure contains for each
+#' read the name of the reference sequence (i.e. of the transcript) on which it
+#' aligns, the leftmost and rightmost position of the read and its length. Two
+#' additional columns are also attached, reporting the leftmost and rightmost
+#' position of the CDS of the reference sequence with respect to its 1st
+#' nuclotide. Please note: if a transcript is not associated to any annotated
+#' CDS then its start and the stop codon are set to 0. Moreover, since the input
+#' data refers to a transcriptome alingment, the reads mapping to the negative
+#' strand should be present in a low percentage and they are removed. Multiple
+#' options for treating the read lengths are available.
 #'
 #' @param bamfolder A character string indicating the path to the folder
 #'   containing the BAM files.
@@ -91,7 +93,8 @@ bamtolist <- function(bamfolder, annotation, filter = "none", custom_range = NUL
                 format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
     
     df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
-    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + annotation[as.character(df$transcript), "l_cds"]
+    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + 
+      annotation[as.character(df$transcript), "l_cds"]
     df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
     
     if (identical(filter, "custom")) {
@@ -155,17 +158,17 @@ bamtolist <- function(bamfolder, annotation, filter = "none", custom_range = NUL
 
 #' Convert BAM files into BED files.
 #'
-#' Converts one or several BAM files into a list of BED files containing, in
-#' each raw, the name of the reference sequence (i.e. of the transcript), the
-#' leftmost and rightmost position of the read, its length and the associated
-#' strand. Please note that thus function calls the bamtobed utility of the
-#' BEDTools suite.
+#' Converts one or several BAM files into a list of BED files containing for
+#' each read the name of the reference sequence (i.e. of the transcript) on
+#' which it aligns, the leftmost and rightmost position of the read, its length
+#' and the associated strand. Please note that thus function calls the bamtobed
+#' utility of the BEDTools suite.
 #'
 #' @param bamfolder A character string specifying the path to the directory
 #'   containing the BAM files. The function recursively looks for BAM format
 #'   file starting from the specified folder.
 #' @param bedfolder A character string specifying the (existing or not) location
-#'   of the directory where the BED files will be stored. By default this
+#'   of the directory where the BED files should be stored. By default this
 #'   argument is NULL, which implies the folder is set as a subdirectory of
 #'   \code{bamfolder}, called \emph{bed}.
 #' @examples
@@ -277,7 +280,8 @@ bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NUL
                 format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
     
     df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
-    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + annotation[as.character(df$transcript), "l_cds"]
+    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + 
+      annotation[as.character(df$transcript), "l_cds"]
     df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
     
     if (identical(filter, "custom")) {

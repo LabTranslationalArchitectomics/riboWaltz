@@ -17,8 +17,7 @@
 #'   NULL, meaning that all the transcripts in \code{data} are used. Note that
 #'   if either the 5' UTR, the coding sequence or the 3' UTR of a transcript is
 #'   shorther than \code{utr5l}, \eqn{2*}\code{cdsl} and \code{utr3l}
-#'   respectively, the transcript is automatically discarded. By default this
-#'   argument is NULL, meaning that all the transcripts in \code{data} are used.
+#'   respectively, the transcript is automatically discarded.
 #' @param cl An integer value in \emph{[1,100]} specifying the confidence level
 #'   for restricting the plot to a sub-range of read lengths. By default it is
 #'   set to 99.
@@ -34,7 +33,8 @@
 #' @param log A logical value whether or not to use a logarithmic scale colour
 #'   (strongly suggested in case of large variations of the signal). Default is
 #'   FALSE.
-#' @param colour A character string specifying the colour of the plot.
+#' @param colour A character string specifying the colour of the plot. Default
+#'   is "black".
 #' @return A list containing a ggplot2 object, and a data frame with the
 #'   associated data.
 #' @examples

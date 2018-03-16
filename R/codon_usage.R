@@ -42,8 +42,6 @@
 #'   NULL, meaning that all the transcripts in \code{data} are used. Please note
 #'   that the transcripts not associated to any annotated \emph{5' UTR},
 #'   \emph{CDS} and \emph{3'UTR} or not labeled as protein coding are removed.
-#'   By default this argument is NULL, meaning that all the transcripts in
-#'   \code{data} are used.
 #' @param codon_usage A data frame containing codon usage values provided by the
 #'   user. These values are compared with the empirical codon usage indexes of
 #'   the sample of interest. The data frame must contain at least the 64 codons

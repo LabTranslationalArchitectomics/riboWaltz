@@ -16,7 +16,7 @@
 #'   respectively) that must be included in the analysis. Default is "all",
 #'   meaning that the all the regions are considered.
 #' @param length_range Either "all", an integer or an integer vector. Default is
-#'   "all", meaning that all the read lengths will be included in the analysis.
+#'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
 #' @return A list containing a ggplot2 object and a data frame with the
 #'   associated data.
@@ -137,7 +137,7 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #'   set to 100. This parameter has no effect if \code{length_range} is
 #'   specified.
 #' @param length_range Either "all", an integer or an integer vector. Default is
-#'   "all", meaning that all the read lengths will be included in the analysis.
+#'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
 #'   If specified, this parameter prevails over \code{cl}.
 #' @return A list containing a ggplot2 object and a data frame with the
