@@ -237,10 +237,6 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #' @param data A list of data frames from either \code{\link{bamtolist}} or
 #'   \code{\link{bedtolist}}.
 #' @param offset A data frame from \code{\link{psite}}.
-#' @param granges A logical value whether or not to return a GRangesList 
-#'   object. Default is FALSE, meaning that a list of data frames (the required
-#'   input for the downstream analyses and graphical outputs provided by
-#'   riboWaltz) is returned instead.
 #' @param fastapath A character string specifying the path to the FASTA file
 #'   containing the reference nucleotide sequences. Please make sure that the
 #'   sequences and their names derive from the same release of and are in
@@ -254,24 +250,28 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #'   present in your system, it is installed through the biocLite.R script.
 #'   Please check the data packages available in the Bioconductor repositories
 #'   for your version of R/Bioconductor using the
-#'   \code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
-#'   Either \code{fastapath} or \code{bsgenome_dp} coulped with \code{txdb} must
-#'   be specified to attach an additional column reporting the three
-#'   nucletotides covered by the identified P-sites. Default is NULL.
+#'   \code{\link[BSgenome]{available.genomes}} function from the BSgenome
+#'   package. Either \code{fastapath} or \code{bsgenome_dp} coulped with
+#'   \code{txdb} must be specified to attach an additional column reporting the
+#'   three nucletotides covered by the identified P-sites. Default is NULL.
 #' @param txdb A TxDb object. This parameter is considered only if
 #'   \code{bsgenome_dp} is specified. Default is NULL.
+#' @param granges A logical value whether or not to return a GRangesList object.
+#'   Default is FALSE, meaning that a list of data frames (the required input
+#'   for the downstream analyses and graphical outputs provided by riboWaltz) is
+#'   returned instead.
 #' @return A list of data frames or a GRangesList object.
 #' @examples
 #' data(reads_list)
 #' data(psite_offset)
 #' data(mm81cdna)
-#'
+#' 
 #' reads_psite_list <- psite_info(reads_list, psite_offset)
 #' @import GenomicFeatures
 #' @import BSgenome
 #' @export
-psite_info <- function(data, offset, granges = FALSE, fastapath = NULL,
-                       bsgenome_dp = NULL, txdb = NULL) {
+psite_info <- function(data, offset, fastapath = NULL, bsgenome_dp = NULL,
+                       txdb = NULL,  granges = FALSE) {
   names <- names(data)
   for (n in names) {
     cat(sprintf("processing %s\n", n))

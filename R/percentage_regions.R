@@ -16,7 +16,7 @@
 #'   transcripts to be included in the analysis. By default this argument is
 #'   NULL, meaning that all the transcripts in \code{data} are used. Please note
 #'   that the transcripts not associated to any annotated \emph{5' UTR},
-#'   \emph{CDS} and \emph{3'UTR} are removed.
+#'   \emph{CDS} and \emph{3'UTR} are automatically discarded.
 #' @param label A character string vector of the same length of \code{sample}
 #'   specifying the name of the samples to be displaied in the plot. By default
 #'   this argument is NULL meaning that name of the samples are used.

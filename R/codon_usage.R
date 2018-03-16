@@ -41,7 +41,8 @@
 #'   transcripts to be included in the analysis. By default this argument is
 #'   NULL, meaning that all the transcripts in \code{data} are used. Please note
 #'   that the transcripts not associated to any annotated \emph{5' UTR},
-#'   \emph{CDS} and \emph{3'UTR} or not labeled as protein coding are removed.
+#'   \emph{CDS} and \emph{3'UTR} and transcripts with coding sequence length not
+#'   divisible by 3 are automatically discarded.
 #' @param codon_usage A data frame containing codon usage values provided by the
 #'   user. These values are compared with the empirical codon usage indexes of
 #'   the sample of interest. The data frame must contain at least the 64 codons
@@ -70,6 +71,12 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL,
                               bsgenome_dp = NULL, txdb = NULL,
                               transcripts = NULL, codon_usage = NULL,
                               scatter_label = F, aminoacid = F) {
+  
+  if(length(bsgenome_dp) != 0 & length(txdb) == 0){
+    cat("\n")
+    stop("\nERROR: txdb is not specified \n\n")
+  }
+  
   rownames(annotation) <- as.character(annotation$transcript)
   l.transcripts <- rownames(annotation)[which(annotation$l_utr5 > 0 &
                                                 annotation$l_cds >0 &
@@ -91,11 +98,6 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL,
   if(length(fastapath) != 0 & length(bsgenome_dp) != 0){
     warning("fastapath and bsgenome_dp are both specified. Only fastapath will be considered\n")
     bsgenome_dp = NULL
-  }
-  
-  if(length(bsgenome_dp) != 0 & length(txdb) == 0){
-    cat("\n")
-    stop("\nERROR: txdb is not specified \n\n")
   }
   
   if(length(fastapath) != 0 | length(bsgenome_dp) != 0){
@@ -206,8 +208,8 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL,
       geom_text(aes(x=1, y=0), label = paste0("R=",correlation), vjust=-0.2, size = bs*0.2, hjust = 1, color = "black")
     pcomp
     
-    if (scatter_label == T) {
-      if (aminoacid == T) {
+    if (scatter_label == T || scatter_label == TRUE) {
+      if (aminoacid == T || aminoacid == TRUE) {
         pcomp <- pcomp +
           ggrepel::geom_text_repel(aes(usage_index, comp_values, label = as.character(aa)), show.legend = F)
       } else {
