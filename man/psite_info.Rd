@@ -4,19 +4,14 @@
 \alias{psite_info}
 \title{Update reads information according to the inferred P-sites.}
 \usage{
-psite_info(data, offset, granges = FALSE, fastapath = NULL,
-  bsgenome_dp = NULL, txdb = NULL)
+psite_info(data, offset, fastapath = NULL, bsgenome_dp = NULL,
+  txdb = NULL, granges = FALSE)
 }
 \arguments{
 \item{data}{A list of data frames from either \code{\link{bamtolist}} or
 \code{\link{bedtolist}}.}
 
 \item{offset}{A data frame from \code{\link{psite}}.}
-
-\item{granges}{A logical value whether or not to return a GRangesList 
-object. Default is FALSE, meaning that a list of data frames (the required
-input for the downstream analyses and graphical outputs provided by
-riboWaltz) is returned instead.}
 
 \item{fastapath}{A character string specifying the path to the FASTA file
 containing the reference nucleotide sequences. Please make sure that the
@@ -32,13 +27,18 @@ data package to be loaded. If the specified data package is not already
 present in your system, it is installed through the biocLite.R script.
 Please check the data packages available in the Bioconductor repositories
 for your version of R/Bioconductor using the
-\code{\link[BSgenome]{available.genomes}} function from the BSgenome package.
-Either \code{fastapath} or \code{bsgenome_dp} coulped with \code{txdb} must
-be specified to attach an additional column reporting the three
-nucletotides covered by the identified P-sites. Default is NULL.}
+\code{\link[BSgenome]{available.genomes}} function from the BSgenome
+package. Either \code{fastapath} or \code{bsgenome_dp} coulped with
+\code{txdb} must be specified to attach an additional column reporting the
+three nucletotides covered by the identified P-sites. Default is NULL.}
 
 \item{txdb}{A TxDb object. This parameter is considered only if
 \code{bsgenome_dp} is specified. Default is NULL.}
+
+\item{granges}{A logical value whether or not to return a GRangesList object.
+Default is FALSE, meaning that a list of data frames (the required input
+for the downstream analyses and graphical outputs provided by riboWaltz) is
+returned instead.}
 }
 \value{
 A list of data frames or a GRangesList object.

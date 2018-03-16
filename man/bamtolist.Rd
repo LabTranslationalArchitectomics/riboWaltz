@@ -46,14 +46,16 @@ A list of data frames or a GRangesList object.
 \description{
 Reads one or several BAM files, converts each file into a data frame and
 combines them into a list. Alternatively, it returns a GRangesList i.e. a
-list of GRanges objects. In both cases two additional columns are attached to
-the data structures, reporting the leftmost and rightmost position of the CDS
-of the reference sequence with respect to its 1st nuclotide. Please note: if
-a transcript is not associated to any annotated CDS then its start and the
-stop codon are set to 0. Moreover, since the input data refers to a
-transcriptome alingment, the reads mapping to the negative strand should be
-present in a low percentage and they are removed. Multiple options for
-treating the read lengths are available.
+list of GRanges objects. In both cases the data structure contains for each
+read the name of the reference sequence (i.e. of the transcript) on which it
+aligns, the leftmost and rightmost position of the read and its length. Two
+additional columns are also attached, reporting the leftmost and rightmost
+position of the CDS of the reference sequence with respect to its 1st
+nuclotide. Please note: if a transcript is not associated to any annotated
+CDS then its start and the stop codon are set to 0. Moreover, since the input
+data refers to a transcriptome alingment, the reads mapping to the negative
+strand should be present in a low percentage and they are removed. Multiple
+options for treating the read lengths are available.
 }
 \examples{
 path_bam <- location_of_BAM_files

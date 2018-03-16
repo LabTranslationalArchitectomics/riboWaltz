@@ -19,7 +19,7 @@ respectively) that must be included in the analysis. Default is "all",
 meaning that the all the regions are considered.}
 
 \item{length_range}{Either "all", an integer or an integer vector. Default is
-"all", meaning that all the read lengths will be included in the analysis.
+"all", meaning that all the read lengths are included in the analysis.
 Otherwise, only the read lengths matching the specified value(s) are kept.}
 }
 \value{

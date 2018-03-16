@@ -22,8 +22,7 @@ transcripts to be included in the analysis. By default this argument is
 NULL, meaning that all the transcripts in \code{data} are used. Note that
 if either the 5' UTR, the coding sequence or the 3' UTR of a transcript is
 shorther than \code{utr5l}, \eqn{2*}\code{cdsl} and \code{utr3l}
-respectively, the transcript is automatically discarded. By default this
-argument is NULL, meaning that all the transcripts in \code{data} are used.}
+respectively, the transcript is automatically discarded.}
 
 \item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
 for restricting the plot to a sub-range of read lengths. By default it is
@@ -45,7 +44,8 @@ The default value is 50.}
 (strongly suggested in case of large variations of the signal). Default is
 FALSE.}
 
-\item{colour}{A character string specifying the colour of the plot.}
+\item{colour}{A character string specifying the colour of the plot. Default
+is "black".}
 }
 \value{
 A list containing a ggplot2 object, and a data frame with the

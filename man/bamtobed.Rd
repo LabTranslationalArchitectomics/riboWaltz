@@ -12,16 +12,16 @@ containing the BAM files. The function recursively looks for BAM format
 file starting from the specified folder.}
 
 \item{bedfolder}{A character string specifying the (existing or not) location
-of the directory where the BED files will be stored. By default this
+of the directory where the BED files should be stored. By default this
 argument is NULL, which implies the folder is set as a subdirectory of
 \code{bamfolder}, called \emph{bed}.}
 }
 \description{
-Converts one or several BAM files into a list of BED files containing, in
-each raw, the name of the reference sequence (i.e. of the transcript), the
-leftmost and rightmost position of the read, its length and the associated
-strand. Please note that thus function calls the bamtobed utility of the
-BEDTools suite.
+Converts one or several BAM files into a list of BED files containing for
+each read the name of the reference sequence (i.e. of the transcript) on
+which it aligns, the leftmost and rightmost position of the read, its length
+and the associated strand. Please note that thus function calls the bamtobed
+utility of the BEDTools suite.
 }
 \examples{
 path_bam <- location_of_BAM_files
