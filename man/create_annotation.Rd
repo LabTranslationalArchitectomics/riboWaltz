@@ -9,22 +9,30 @@ create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA,
 }
 \arguments{
 \item{gtfpath}{A character string specifying the path to te GTF file,
-including its name and extension. Either \code{gtfpath} or \code{txdb} must
-be specified.}
+including its name and extension. Please make sure the GTF derives from the
+same release of the sequences used in the alignment step. Note that either
+\code{gtfpath} or \code{txdb} must be specified.}
 
-\item{txdb}{A TxDb object. Either \code{gtfpath} or \code{txdb} must be
-specified.}
+\item{txdb}{A character string specifying the name of the annotation package
+for TxDb object(s) to be loaded. If it is not already present in your
+system, it will be installed through the biocLite.R script (check the list
+of TxDb annotation packages available in the Bioconductor repositories at
+http://bioconductor.org/packages/release/BiocViews.html#___TxDb )). Please
+make sure the annotation package derives from the same release of the
+sequences used in the alignment step. Note that either \code{gtfpath} or
+\code{txdb} must be specified.}
 
-\item{dataSource}{A character string describing the origin of the data file.
-For more information about this parameter please refer to the description
-of \emph{dataSource} of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}}
-function included in the \code{GenomicFeatures} package.}
-
-\item{organism}{A character string specifying the Genus and species of this
-organism. For more information about this parameter please refer to the
-description of \emph{dataSource} of the
+\item{dataSource}{An optional character string describing the origin of the
+GTF data file. For more information about this parameter please refer to
+the description of \emph{dataSource} of the
 \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 \code{GenomicFeatures} package.}
+
+\item{organism}{A optional character string reporting the genus and species
+of the organism when \code{gtfpath} is specified.  For more information
+about this parameter please refer to the description of \emph{dataSource}
+of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
+the \code{GenomicFeatures} package.}
 }
 \value{
 A data frame.

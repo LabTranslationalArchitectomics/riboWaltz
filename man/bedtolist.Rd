@@ -5,7 +5,7 @@
 \title{Convert BED files into a list of data frames or a GRangesList.}
 \usage{
 bedtolist(bedfolder, annotation, filter = "none", custom_range = NULL,
-  periodicity_th = 50, list_name = NULL, granges = F)
+  periodicity_th = 50, list_name = NULL, granges = FALSE)
 }
 \arguments{
 \item{bedfolder}{A character string indicating the path to the folder

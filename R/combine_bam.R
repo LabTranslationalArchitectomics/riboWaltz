@@ -42,7 +42,7 @@
 #' @param granges A logical value whether or not to return a GRangesList object.
 #'   Default is FALSE, meaning that a list of data frames (the required input
 #'   for \code{\link{psite}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr}) is returned instead.
+#'   \code{\link{rlength_distr} ) is returned instead.
 #' @return A list of data frames or a GRangesList object.
 #' @examples
 #' path_bam <- location_of_BAM_files
@@ -51,7 +51,7 @@
 #' @import dplyr
 #' @export
 bamtolist <- function(bamfolder, annotation, filter = "none", custom_range = NULL, 
-                      periodicity_th = 50, list_name = NULL, granges = F) {
+                      periodicity_th = 50, list_name = NULL, granges = FALSE) {
   names <- list.files(path = bamfolder, pattern = ".bam")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bam")))
@@ -239,7 +239,7 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @import dplyr
 #' @export
 bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NULL, 
-                      periodicity_th = 50, list_name = NULL, granges = F) {
+                      periodicity_th = 50, list_name = NULL, granges = FALSE) {
   names <- list.files(path = bedfolder, pattern = ".bed")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bed")))

@@ -4,8 +4,9 @@
 \alias{psite_info}
 \title{Update reads information according to the inferred P-sites.}
 \usage{
-psite_info(data, offset, fastapath = NULL, bsgenome_dp = NULL,
-  txdb = NULL, granges = FALSE)
+psite_info(data, offset, fastapath = NULL, fasta_genome = TRUE,
+  bsgenome = NULL, gtfpath = NULL, txdb = NULL, dataSource = NA,
+  organism = NA, granges = FALSE)
 }
 \arguments{
 \item{data}{A list of data frames from either \code{\link{bamtolist}} or
@@ -13,27 +14,64 @@ psite_info(data, offset, fastapath = NULL, bsgenome_dp = NULL,
 
 \item{offset}{A data frame from \code{\link{psite}}.}
 
-\item{fastapath}{A character string specifying the path to the FASTA file
-containing the reference nucleotide sequences. Please make sure that the
-sequences and their names derive from the same release of and are in
-agreement with the annotation file used in the
-\code{\link{create_annotation}} function. Either \code{fastapath} or
-\code{bsgenome_dp} coulped with \code{txdb} must be specified to attach an
-additional column reporting the three nucletotides covered by the
-identified P-sites. Default is NULL.}
+\item{fastapath}{An optional character string specifying the path to the
+FASTA file used in the alignment step, including its name and extension.
+This file can contain reference nucleotide sequences either of a genome
+assembly or of all the transcripts (see \code{fasta_genome}). Please make
+sure the sequences derive from the same release of the annotation file used
+in the \code{\link{create_annotation}} function. Note: either
+\code{fastapath} or \code{bsgenome} is required to generate an
+additional column reporting the three nucletotides covered by the P-sites.
+Default is NULL.}
 
-\item{bsgenome_dp}{A character string specifying the name of the BSgenome
-data package to be loaded. If the specified data package is not already
-present in your system, it is installed through the biocLite.R script.
-Please check the data packages available in the Bioconductor repositories
-for your version of R/Bioconductor using the
-\code{\link[BSgenome]{available.genomes}} function from the BSgenome
-package. Either \code{fastapath} or \code{bsgenome_dp} coulped with
-\code{txdb} must be specified to attach an additional column reporting the
-three nucletotides covered by the identified P-sites. Default is NULL.}
+\item{fasta_genome}{A locigal value whether or not the FASTA file specified
+by \code{fastapath} contains nucleotide sequences of a genome assembly.
+FALSE means that the nucleotide sequences of all the transcripts are
+provided instead. When this parameter is TRUE (the default), an annotation
+object is required (see \code{gtfpath} and \code{txdb}).}
 
-\item{txdb}{A TxDb object. This parameter is considered only if
-\code{bsgenome_dp} is specified. Default is NULL.}
+\item{bsgenome}{An optional character string specifying the name of the
+BSgenome data package containing the genome sequences to be loaded. If it
+is not already present in your system, it will be installed through the
+biocLite.R script (check the list of data packages available in the
+Bioconductor repositories for your version of R/Bioconductor by the
+\code{\link[BSgenome]{available.genomes}} function of the BSgenome
+package)). This parameter also requires an annotation object (see
+\code{gtfpath} and \code{txdb}). Please make sure the sequences included in
+the specified BSgenome data pakage are in agreement with the sequences used
+in the alignment step. Note: either \code{fastapath} or \code{bsgenome}
+is required to generate an additional column reporting the three
+nucletotides covered by the P-sites. Default is NULL.}
+
+\item{gtfpath}{A character string specifying the path to te GTF file,
+including its name and extension. Please make sure the GTF derives from the
+same release of what is specified by \code{fastapath} or by
+\code{bsgenome}. Note that either \code{gtfpath} or \code{txdb} must be
+specified when the nucleotide sequences of a genome assembly are provided
+(see \code{fastapath} or \code{bsgenome}). Default is NULL.}
+
+\item{txdb}{A character string specifying the name of the annotation package
+for TxDb object(s) to be loaded. If it is not already present in your
+system, it will be installed through the biocLite.R script (check the list
+of TxDb annotation packages available in the Bioconductor repositories at
+http://bioconductor.org/packages/release/BiocViews.html#___TxDb )). Please
+make sure the annotation package derives from the same release of what is
+specified by \code{fastapath} or by \code{bsgenome}. Note that either
+\code{gtfpath} or \code{txdb} must be specified when the nucleotide
+sequences of a genome assembly are provided (see \code{fastapath} or
+\code{bsgenome}). Default is NULL.}
+
+\item{dataSource}{An optional character string describing the origin of the
+GTF data file. For more information about this parameter please refer to
+the description of \emph{dataSource} of the
+\code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
+\code{GenomicFeatures} package.}
+
+\item{organism}{A optional character string reporting the genus and species
+of the organism when \code{gtfpath} is specified.  For more information
+about this parameter please refer to the description of \emph{dataSource}
+of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
+the \code{GenomicFeatures} package.}
 
 \item{granges}{A logical value whether or not to return a GRangesList object.
 Default is FALSE, meaning that a list of data frames (the required input

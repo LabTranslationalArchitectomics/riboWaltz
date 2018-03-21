@@ -19,6 +19,20 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
 
 ------------------------------------------------------------------------
 
+### Dependencies
+
+__riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
+
+* Biostrings (>= 2.46.0)
+* cowplot (>= 0.6.2)
+* dplyr (>= 0.5.0),
+* GenomicFeatures (>= 1.24.5)
+* GenomicRanges (>= 1.24.3)
+* ggplot2 (>= 2.2.1)
+* ggrepel (>= 0.6.5)
+
+------------------------------------------------------------------------
+
 ### Installation
 
 To install __riboWaltz__ directly from GitHub the _devtools_ package is required. If it is not installed, run
@@ -33,7 +47,6 @@ Otherwise, load _devtools_ and install __riboWaltz__ typing
 Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
     install_github("LabTranslationalArchitectomics/riboWaltz", build_vignettes=TRUE)
-
 
 ------------------------------------------------------------------------
 

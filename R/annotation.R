@@ -7,19 +7,27 @@
 #' \emph{l_utr3} reporting the length of the transcripts and of their annotated
 #' \emph{5' UTR}, \emph{CDS} and \emph{3' UTR}, respectively.
 #' @param gtfpath A character string specifying the path to te GTF file,
-#'   including its name and extension. Either \code{gtfpath} or \code{txdb} must
-#'   be specified.
-#' @param txdb A TxDb object. Either \code{gtfpath} or \code{txdb} must be
-#'   specified.
-#' @param dataSource A character string describing the origin of the data file.
-#'   For more information about this parameter please refer to the description
-#'   of \emph{dataSource} of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}}
-#'   function included in the \code{GenomicFeatures} package.
-#' @param organism A character string specifying the Genus and species of this
-#'   organism. For more information about this parameter please refer to the
-#'   description of \emph{dataSource} of the
+#'   including its name and extension. Please make sure the GTF derives from the
+#'   same release of the sequences used in the alignment step. Note that either
+#'   \code{gtfpath} or \code{txdb} must be specified.
+#' @param txdb A character string specifying the name of the annotation package
+#'   for TxDb object(s) to be loaded. If it is not already present in your
+#'   system, it will be installed through the biocLite.R script (check the list
+#'   of TxDb annotation packages available in the Bioconductor repositories at
+#'   http://bioconductor.org/packages/release/BiocViews.html#___TxDb )). Please
+#'   make sure the annotation package derives from the same release of the
+#'   sequences used in the alignment step. Note that either \code{gtfpath} or
+#'   \code{txdb} must be specified.
+#' @param dataSource An optional character string describing the origin of the
+#'   GTF data file. For more information about this parameter please refer to
+#'   the description of \emph{dataSource} of the
 #'   \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 #'   \code{GenomicFeatures} package.
+#' @param organism A optional character string reporting the genus and species
+#'   of the organism when \code{gtfpath} is specified.  For more information
+#'   about this parameter please refer to the description of \emph{dataSource}
+#'   of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
+#'   the \code{GenomicFeatures} package.
 #' @return A data frame.
 #' @examples
 #' gtf_file <- location_of_GTF_file
@@ -43,7 +51,14 @@ create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, or
     path_to_gtf <- gtfpath
     txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
   } else {
-    txdbanno <- txdb
+    if(txdb %in% rownames(installed.packages())){
+      library(txdb, character.only = TRUE)
+    } else {
+      source("https://bioconductor.org/biocLite.R")
+      biocLite(txdb, suppressUpdates = TRUE)
+      library(txdb, character.only = TRUE)
+    }
+    txdbanno <- get(txdb)
   }
   
   exon <- exonsBy(txdbanno, by = "tx",use.names=T)

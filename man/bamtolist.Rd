@@ -5,7 +5,7 @@
 \title{Convert BAM files into a list of data frames or into a GRangesList object.}
 \usage{
 bamtolist(bamfolder, annotation, filter = "none", custom_range = NULL,
-  periodicity_th = 50, list_name = NULL, granges = F)
+  periodicity_th = 50, list_name = NULL, granges = FALSE)
 }
 \arguments{
 \item{bamfolder}{A character string indicating the path to the folder

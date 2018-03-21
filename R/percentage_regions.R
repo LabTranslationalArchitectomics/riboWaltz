@@ -32,7 +32,6 @@
 #' reg_psite <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
 #' reg_psite[["plot"]]
 #' @import ggplot2
-#' @import reshape
 #' @export
 region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
                        label = NULL, colour = c("gray70", "gray40", "gray10")) {
@@ -66,7 +65,7 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
   }
   
   norm.table <- t(t(barplot.table) / colSums(barplot.table)) * 100
-  melt.table <- melt(norm.table)
+  melt.table <- reshape::melt(norm.table)
   colnames(melt.table) <- c("region","sample","percentage")
   melt.table$class<-"mapped"
   melt.table$sample <- factor(melt.table$sample, levels = sample, labels = label)

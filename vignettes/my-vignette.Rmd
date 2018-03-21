@@ -28,6 +28,22 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
 
 
 
+## Dependencies
+
+__riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
+
+* Biostrings (>= 2.46.0)
+* cowplot (>= 0.6.2)
+* dplyr (>= 0.5.0)
+* GenomicAlignments (>= 1.14.1)
+* GenomicFeatures (>= 1.24.5)
+* GenomicRanges (>= 1.24.3)
+* ggplot2 (>= 2.2.1)
+* ggrepel (>= 0.6.5)
+* reshape (>= 0.8.7)
+
+
+
 ## Installation
 
   To install __riboWaltz__ directly from GitHub the *devtools* package is required. If it is not installed, run
@@ -36,10 +52,10 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
 	
   Otherwise, load *devtools* and install __riboWaltz__ by typing
 	
-	```{r, eval=FALSE}
-  	library("devtools")
-    install_github("LabTranslationalArchitectomics/riboWaltz")
-  ```
+```{r, eval=FALSE}
+	library("devtools")
+  install_github("LabTranslationalArchitectomics/riboWaltz")
+```
   
   Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
@@ -73,7 +89,7 @@ library(riboWaltz)
 
   Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage and they are removed. Moreover, multiple options for treating the read lengths are available (see chapter _Sequence_ _data_ for more information). The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a sample called *Samp1* (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:
   
-  ```{r}
+```{r}
 head(reads_list[["Samp1"]])
 ```
   Alternatively, the BAM file can be first converted into BED files and then into a list of data frames or into a GRangesList object through the functions `bamtobed` and `bedtolist`. The `bamtobed` function calls the bamtobed utility of the BEDTools suite (for the installation follow the instructions at http://bedtools.readthedocs.io/en/latest/content/installation.html). The BEDTools suite has been developed for command line environments, so `bamtobed` can be only run on UNIX, LINUX and Apple OS X operating systems. Once the bed files are produced, it is possible to switch to any other machine without further restrictions.
