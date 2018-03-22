@@ -8,16 +8,19 @@
 #' additional columns are also attached, reporting the leftmost and rightmost
 #' position of the CDS of the reference sequence with respect to its 1st
 #' nuclotide. Please note: if a transcript is not associated to any annotated
-#' CDS then its start and the stop codon are set to 0. Moreover, since the input
-#' data refers to a transcriptome alingment, the reads mapping to the negative
-#' strand should be present in a low percentage and they are removed. Multiple
-#' options for treating the read lengths are available.
+#' CDS then its start and the stop codon are set to 0. Multiple options for
+#' treating the read lengths are available.
 #'
 #' @param bamfolder A character string indicating the path to the folder
 #'   containing the BAM files.
 #' @param annotation A data frame from \code{\link{create_annotation}}. Please
 #'   make sure that the name of the reference sequences in the annotation data
 #'   frame coincides with those in the BAM files.
+#' @param transcript_align A locigal value whether or not the BAM files within
+#'   \code{bamfolder} refers to a transcriptome alignment (intended as an
+#'   alignment based on a reference FASTA of all the transcript sequences). When
+#'   this parameter is TRUE (the default) no reads mapping on the negative
+#'   strand should be present and they are therefore removed.
 #' @param filter Either "none" (the default), "custom" or "periodicity". It
 #'   specifies how to handle the selection of the read length. "none": all read
 #'   lengths are included in the analysis; "custom": only read lengths specified
@@ -42,16 +45,17 @@
 #' @param granges A logical value whether or not to return a GRangesList object.
 #'   Default is FALSE, meaning that a list of data frames (the required input
 #'   for \code{\link{psite}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr} ) is returned instead.
+#'   \code{\link{rlength_distr}}) is returned instead.
 #' @return A list of data frames or a GRangesList object.
 #' @examples
-#' path_bam <- location_of_BAM_files
+#' path_bam <- "location_of_BAM_files"
 #' annotation_df <- dataframe_with_transcript_annotation
 #' bamtolist(bamfolder = path_bam, annotation = annotation_df)
 #' @import dplyr
 #' @export
-bamtolist <- function(bamfolder, annotation, filter = "none", custom_range = NULL, 
-                      periodicity_th = 50, list_name = NULL, granges = FALSE) {
+bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
+                      filter = "none", custom_range = NULL, periodicity_th = 50,
+                      list_name = NULL, granges = FALSE) {
   names <- list.files(path = bamfolder, pattern = ".bam")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bam")))
@@ -81,16 +85,18 @@ bamtolist <- function(bamfolder, annotation, filter = "none", custom_range = NUL
     df <- as.data.frame(GenomicAlignments::readGAlignments(filename))
     df <- df[, c("seqnames", "start", "end", "width", "strand")]
     colnames(df) <- c("transcript", "end5", "end3", "length", "strand")
-    nreads <- nrow(df)
-    cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
-    df <- subset(df, as.character(transcript) %in% rownames(annotation))
-    cat(sprintf("reads (kept): %f M\n", (nreads / 1e+06)))
-    df <- subset(df, strand == "+")
-    nreads <- nrow(df)
-    cat(sprintf("positive strand: %s %%\n", 
-                format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
-    cat(sprintf("negative strand: %s %%\n\n", 
-                format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+    
+    if(transcript_align == TRUE | transcript_align == T){
+      nreads <- nrow(df)
+      cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
+      df <- subset(df, as.character(transcript) %in% rownames(annotation))
+      df <- subset(df, strand == "+")
+      cat(sprintf("positive strand: %s %%\n", 
+                  format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
+      cat(sprintf("negative strand: %s %%\n", 
+                  format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %f M\n\n", (nrow(df) / 1e+06)))
+    }
     
     df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
     df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + 
@@ -172,8 +178,8 @@ bamtolist <- function(bamfolder, annotation, filter = "none", custom_range = NUL
 #'   argument is NULL, which implies the folder is set as a subdirectory of
 #'   \code{bamfolder}, called \emph{bed}.
 #' @examples
-#' path_bam <- location_of_BAM_files
-#' path_bed <- location_of_output_directory
+#' path_bam <- "location_of_BAM_files"
+#' path_bed <- "location_of_output_directory"
 #' bamtobed(bamfolder = path_bam, bedfolder = path_bed)
 #' @export
 bamtobed <- function(bamfolder, bedfolder = NULL) {
@@ -196,16 +202,19 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' the data structures, reporting the leftmost and rightmost position of the CDS
 #' of the reference sequence with respect to its 1st nuclotide. Please note: if
 #' a transcript is not associated to any annotated CDS then its start and the
-#' stop codon are set to 0. Moreover, since the input data refers to a
-#' transcriptome alingment, the reads mapping to the negative strand should be
-#' present in a low percentage and they are removed. Multiple options for
-#' treating the read lengths are available.
+#' stop codon are set to 0. Multiple options for treating the read lengths are
+#' available.
 #'
 #' @param bedfolder A character string indicating the path to the folder
 #'   containing the BED files.
 #' @param annotation A data frame from \code{\link{create_annotation}}. Please
 #'   make sure that the name of the reference sequences in the annotation data
 #'   frame coincides with those in the BED files.
+#' @param transcript_align A locigal value whether or not the BED files within
+#'   \code{bedfolder} refers to a transcriptome alignment (intended as an
+#'   alignment based on a reference FASTA of all the transcript sequences). When
+#'   this parameter is TRUE (the default) no reads mapping on the negative
+#'   strand should be present and they are therefore removed.
 #' @param filter Either "none" (the default), "custom" or "periodicity". It
 #'   specifies how to handle the selection of the read length. "none": all read
 #'   lengths are included in the analysis; "custom": only read lengths specified
@@ -230,16 +239,17 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @param granges A logical value whether or not to return a GRangesList object.
 #'   Default is FALSE, meaning that a list of data frames (the required input
 #'   for \code{\link{psite}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr}) is returned instead.
+#'   \code{\link{rlength_distr}}) is returned instead.
 #' @return A list of data frames or a GRangesList object.
 #' @examples
-#' path_bed <- location_of_BED_files
+#' path_bed <- "location_of_BED_files"
 #' annotation_df <- dataframe_with_transcript_annotation
 #' bedtolist(bedfolder = path_bed, annotation = annotation_df)
 #' @import dplyr
 #' @export
-bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NULL, 
-                      periodicity_th = 50, list_name = NULL, granges = FALSE) {
+bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
+                      filter = "none", custom_range = NULL, periodicity_th = 50,
+                      list_name = NULL, granges = FALSE) {
   names <- list.files(path = bedfolder, pattern = ".bed")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bed")))
@@ -268,16 +278,18 @@ bedtolist <- function(bedfolder, annotation, filter = "none", custom_range = NUL
     filename <- paste(bedfolder, n, sep = "/")
     df <- read.table(filename, header = FALSE, sep = "\t")
     colnames(df) <- c("transcript", "end5", "end3", "length", "strand")
-    nreads <- nrow(df)
-    cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
-    df <- subset(df, as.character(transcript) %in% rownames(annotation))
-    cat(sprintf("reads (kept): %f M\n", (nreads / 1e+06)))
-    df <- subset(df, strand == "+")
-    nreads <- nrow(df)
-    cat(sprintf("positive strand: %s %%\n", 
-                format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
-    cat(sprintf("negative strand: %s %%\n\n", 
-                format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+
+    if(transcript_align == TRUE | transcript_align == T){
+      nreads <- nrow(df)
+      cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
+      df <- subset(df, as.character(transcript) %in% rownames(annotation))
+      df <- subset(df, strand == "+")
+      cat(sprintf("positive strand: %s %%\n", 
+                  format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
+      cat(sprintf("negative strand: %s %%\n", 
+                  format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %f M\n\n", (nrow(df) / 1e+06)))
+    }
     
     df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
     df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + 

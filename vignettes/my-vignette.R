@@ -1,6 +1,6 @@
 ## ---- eval=FALSE---------------------------------------------------------
-#  	library("devtools")
-#    install_github("LabTranslationalArchitectomics/riboWaltz")
+#  	library(devtools)
+#    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE)
 
 ## ---- eval=TRUE, warning=FALSE-------------------------------------------
 library(riboWaltz)

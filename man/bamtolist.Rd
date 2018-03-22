@@ -4,8 +4,9 @@
 \alias{bamtolist}
 \title{Convert BAM files into a list of data frames or into a GRangesList object.}
 \usage{
-bamtolist(bamfolder, annotation, filter = "none", custom_range = NULL,
-  periodicity_th = 50, list_name = NULL, granges = FALSE)
+bamtolist(bamfolder, annotation, transcript_align = TRUE, filter = "none",
+  custom_range = NULL, periodicity_th = 50, list_name = NULL,
+  granges = FALSE)
 }
 \arguments{
 \item{bamfolder}{A character string indicating the path to the folder
@@ -14,6 +15,12 @@ containing the BAM files.}
 \item{annotation}{A data frame from \code{\link{create_annotation}}. Please
 make sure that the name of the reference sequences in the annotation data
 frame coincides with those in the BAM files.}
+
+\item{transcript_align}{A locigal value whether or not the BAM files within
+\code{bamfolder} refers to a transcriptome alignment (intended as an
+alignment based on a reference FASTA of all the transcript sequences). When
+this parameter is TRUE (the default) no reads mapping on the negative
+strand should be present and they are therefore removed.}
 
 \item{filter}{Either "none" (the default), "custom" or "periodicity". It
 specifies how to handle the selection of the read length. "none": all read
@@ -39,6 +46,11 @@ order in which they are provided: the first string is assigned to the first
 file, the second string to the second one and so on. By default this
 argument is NULL, implying that the data frames are named after the name of
 the BAM file, leaving their path and extension out.}
+
+\item{granges}{A logical value whether or not to return a GRangesList object.
+Default is FALSE, meaning that a list of data frames (the required input
+for \code{\link{psite}}, \code{\link{rends_heat}} and
+\code{\link{rlength_distr}}) is returned instead.}
 }
 \value{
 A list of data frames or a GRangesList object.
@@ -52,13 +64,11 @@ aligns, the leftmost and rightmost position of the read and its length. Two
 additional columns are also attached, reporting the leftmost and rightmost
 position of the CDS of the reference sequence with respect to its 1st
 nuclotide. Please note: if a transcript is not associated to any annotated
-CDS then its start and the stop codon are set to 0. Moreover, since the input
-data refers to a transcriptome alingment, the reads mapping to the negative
-strand should be present in a low percentage and they are removed. Multiple
-options for treating the read lengths are available.
+CDS then its start and the stop codon are set to 0. Multiple options for
+treating the read lengths are available.
 }
 \examples{
-path_bam <- location_of_BAM_files
+path_bam <- "location_of_BAM_files"
 annotation_df <- dataframe_with_transcript_annotation
 bamtolist(bamfolder = path_bam, annotation = annotation_df)
 }

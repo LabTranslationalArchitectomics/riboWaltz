@@ -301,7 +301,6 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #' 
 #' reads_psite_list <- psite_info(reads_list, psite_offset)
 #' @import dplyr
-#' @import GenomicFeatures
 #' @export
 psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
                        bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
@@ -333,7 +332,7 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
   if(length(gtfpath) != 0 | length(txdb) != 0){
     if(length(gtfpath) != 0){
       path_to_gtf <- gtfpath
-      txdbanno <- makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
+      txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
     } else {
       if(txdb %in% rownames(installed.packages())){
         library(txdb, character.only = TRUE)
@@ -350,14 +349,16 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
     if(length(fastapath) != 0) {
       if(fasta_genome == TRUE | fasta_genome == T){
         temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-        exon <- exonsBy(txdbanno, by="tx", use.names=TRUE)
+        exon <- GenomicFeatures::exonsBy(txdbanno, by="tx", use.names=TRUE)
         names(exon) <- paste(names(exon), c(1:length(names(exon))), sep="_._" )
         exon <-  as.data.frame(exon)
         sub_exon <- subset(exon, seqnames %in% names(temp_sequences))
         seq_df <- sub_exon %>% 
           group_by(group_name) %>%
-          summarise(seq = paste(subseq(temp_sequences[as.character(seqnames)], start = start, end = end), collapse=""))
-        sequences <-  DNAStringSet(x = seq_df$seq)
+          summarise(seq = paste(Biostrings::subseq(temp_sequences[as.character(seqnames)],
+                                                   start = start,
+                                                   end = end), collapse=""))
+        sequences <- Biostrings::DNAStringSet(x = seq_df$seq)
         names(sequences) = unlist(lapply(strsplit(seq_df$group_name, "_._"), `[[`, 1))
       } else {
         sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
@@ -371,7 +372,7 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
         library(bsgenome, character.only = TRUE)
       }
     }
-     sequences <- extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
+     sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
   }
 
   names <- names(data)

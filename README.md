@@ -41,12 +41,12 @@ To install __riboWaltz__ directly from GitHub the _devtools_ package is required
 	
 Otherwise, load _devtools_ and install __riboWaltz__ typing
 	
-	library("devtools")
-    install_github("LabTranslationalArchitectomics/riboWaltz")
+	library(devtools)
+    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE)
   
 Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
-    install_github("LabTranslationalArchitectomics/riboWaltz", build_vignettes=TRUE)
+    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes=TRUE)
 
 ------------------------------------------------------------------------
 
@@ -54,11 +54,11 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 
 #### Acquiring input files
 
-  One or more BAM files can be read and converted into a list of data frames or into a GRangesList object by running the `bamtolist` function. To run `bamtolist`, only the path to the BAM file(s) and an annotation file (see next chapter for additional information) are required. For convenience, it is suggested to to rename the BAM files before their acquisition in order to maintain the same nomenclature of the samples through the whole analysis. However, it is also possible to assign the desired name to the samples thanks to the *list_name* option. Pay attention to the order in which their are provided: the first string is assigned to the first file, the second string to the second one and so on.
+  One or more BAM files can be read and converted into a list of data frames or into a GRangesList object by running the `bamtolist` function. To run `bamtolist`, only the path to the BAM file(s) and an annotation file (see next chapter for additional information) are required. For convenience, it is suggested to to rename the BAM files before their acquisition in order to maintain the same nomenclature of the samples through the whole analysis. However, it is also possible to assign the desired name to the samples thanks to the *list_name* option. Pay attention to the order in which their are provided: the first string is assigned to the first file, the second string to the second one and so on. If the original BAM files come from an alignment on transcripts (intended as an alignment based on a reference FASTA of all the transcript sequences), no reads associated to the negative strand should be present and they are therefore removed. Moreover, multiple options for treating the read lengths are available (see chapter _Sequence_ _data_ for more information).
   
 	reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file)
 	
-  Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage and they are removed. Moreover, multiple options for treating the read lengths are available (see chapter _Sequence_ _data_ for more information). The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a sample called *Samp1* (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:
+  The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the `bedtolist` function is provided by the *reads_list* dataset included in the package, that contains the data for a sample called *Samp1* (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:
   
   |  transcript  |  end5  |  end3  |  length  |  start_pos  |  stop_pos  |
   |:------:|:-----:|:------:|:------:|:------:|:------:|
@@ -96,7 +96,7 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 
 #### Sequence data
 
-Optionally, a file containing transcript sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis. The user is also free to use a TxDb annotation object.  By specifying a genome build, the corresponding BSGenome object in R will be used for sequence retrieval.  
+Optionally, a file containing transcript or genome sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis. The user is also free to use a TxDb annotation object or a GTF file. By specifying a genome build, the corresponding BSGenome object in R will be used for sequence retrieval.  
 
 #### Selection of read lengths
 

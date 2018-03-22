@@ -24,7 +24,7 @@ and the associated strand. Please note that thus function calls the bamtobed
 utility of the BEDTools suite.
 }
 \examples{
-path_bam <- location_of_BAM_files
-path_bed <- location_of_output_directory
+path_bam <- "location_of_BAM_files"
+path_bed <- "location_of_output_directory"
 bamtobed(bamfolder = path_bam, bedfolder = path_bed)
 }

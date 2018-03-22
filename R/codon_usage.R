@@ -95,8 +95,6 @@
 #' @return A list containing a ggplot2 object (named "plot"), and a data frame
 #'   ("df") with the associated data. An additional ggplot2 object
 #'   ("plot_comparison") is returned if \code{codon_usage} is specified.
-#' @import Biostrings
-#' @import GenomicFeatures
 #' @import ggplot2
 #' @export
 codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_genome = TRUE,
@@ -161,7 +159,7 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_
   if(length(gtfpath) != 0 | length(txdb) != 0){
     if(length(gtfpath) != 0){
       path_to_gtf <- gtfpath
-      txdbanno <- makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
+      txdbanno <-  GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
     } else {
       if(txdb %in% rownames(installed.packages())){
         library(txdb, character.only = TRUE)
@@ -178,14 +176,16 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_
     if(length(fastapath) != 0) {
       if(fasta_genome == TRUE | fasta_genome == T){
         temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-        exon <- exonsBy(txdbanno, by="tx", use.names=TRUE)
+        exon <- GenomicFeatures::exonsBy(txdbanno, by="tx", use.names=TRUE)
         names(exon) <- paste(names(exon), c(1:length(names(exon))), sep="_._" )
         exon <-  as.data.frame(exon)
         sub_exon <- subset(exon, seqnames %in% names(temp_sequences))
         seq_df <- sub_exon %>% 
           group_by(group_name) %>%
-          summarise(seq = paste(subseq(temp_sequences[as.character(seqnames)], start = start, end = end), collapse=""))
-        sequences <-  DNAStringSet(x = seq_df$seq)
+          summarise(seq = paste(Biostrings::subseq(temp_sequences[as.character(seqnames)],
+                                                   start = start,
+                                                   end = end), collapse=""))
+        sequences <- Biostrings::DNAStringSet(x = seq_df$seq)
         names(sequences) = unlist(lapply(strsplit(seq_df$group_name, "_._"), `[[`, 1))
       } else {
         sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
@@ -199,7 +199,7 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_
         library(bsgenome, character.only = TRUE)
       }
     }
-    sequences <- extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
+    sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
   }
   
   if(!is.element('psite_codon', colnames(data[[sample]]))) {

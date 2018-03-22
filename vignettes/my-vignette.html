@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2018-03-21" />
+<meta name="date" content="2018-03-22" />
 
 <title>riboWaltz</title>
 
@@ -71,7 +71,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h4 class="author"><em><p>Fabio Lauria (<a href="mailto:fabio.lauria@unitn.it">fabio.lauria@unitn.it</a>)</p>
 <p>Toma Tebaldi (<a href="mailto:t.tebaldi@unitn.it">t.tebaldi@unitn.it</a>)</p>
 <p>Gabriella Viero (<a href="mailto:gabriella.viero@cnr.it">gabriella.viero@cnr.it</a>)</p></em></h4>
-<h4 class="date"><em>2018-03-21</em></h4>
+<h4 class="date"><em>2018-03-22</em></h4>
 
 
 
@@ -104,10 +104,10 @@ text-align: justify}
 <p>To install <strong>riboWaltz</strong> directly from GitHub the <em>devtools</em> package is required. If it is not installed, run</p>
 <pre><code>install.packages(&quot;devtools&quot;)</code></pre>
 <p>Otherwise, load <em>devtools</em> and install <strong>riboWaltz</strong> by typing</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="kw">library</span>(<span class="st">&quot;devtools&quot;</span>)
-  <span class="kw">install_github</span>(<span class="st">&quot;LabTranslationalArchitectomics/riboWaltz&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="kw">library</span>(devtools)
+  <span class="kw">install_github</span>(<span class="st">&quot;LabTranslationalArchitectomics/riboWaltz&quot;</span>, <span class="dt">dependencies =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>Please note: to install <strong>riboWaltz</strong> generating the vignette replace the last command with:</p>
-<pre><code>install_github(&quot;LabTranslationalArchitectomics/riboWaltz&quot;, build_vignettes=TRUE)</code></pre>
+<pre><code>install_github(&quot;LabTranslationalArchitectomics/riboWaltz&quot;, dependencies = TRUE, build_vignettes=TRUE)</code></pre>
 </div>
 <div id="loading" class="section level2">
 <h2>Loading</h2>
@@ -118,13 +118,13 @@ text-align: justify}
 <h2>Usage</h2>
 <div id="acquiring-input-files" class="section level3">
 <h3>Acquiring input files</h3>
-<p>One or more BAM files can be read and converted into a list of data frames or into a GRangesList object by running the <code>bamtolist</code> function. To run <code>bamtolist</code>, only the path to the BAM file(s) and an annotation file (see next chapter for additional information) are required. For convenience, it is suggested to to rename the BAM files before their acquisition in order to maintain the same nomenclature of the samples through the whole analysis. However, it is also possible to assign the desired name to the samples thanks to the <em>list_name</em> option. Pay attention to the order in which their are provided: the first string is assigned to the first file, the second string to the second one and so on.</p>
+<p>One or more BAM files can be read and converted into a list of data frames or into a GRangesList object by running the <code>bamtolist</code> function. To run <code>bamtolist</code>, only the path to the BAM file(s) and an annotation file (see next chapter for additional information) are required. For convenience, it is suggested to to rename the BAM files before their acquisition in order to maintain the same nomenclature of the samples through the whole analysis. However, it is also possible to assign the desired name to the samples thanks to the <em>list_name</em> option. Pay attention to the order in which their are provided: the first string is assigned to the first file, the second string to the second one and so on. If the original BAM files come from an alignment on transcripts (intended as an alignment based on a reference FASTA of all the transcript sequences), no reads associated to the negative strand should be present and they are therefore removed. Moreover, multiple options for treating the read lengths are available (see chapter <em>Sequence</em> <em>data</em> for more information).</p>
 <pre><code>reads_list &lt;- bamtolist(bamfolder = path_to_bam, annotation = annotation_file)</code></pre>
 <pre><code># reading Samp1.bed
 # reads: 4.344494 M
 # positive strand: 98.65 %
 # negative strand: 1.35 %</code></pre>
-<p>Since the original BAM files come from an alignment on transcripts, the reads associated to the negative strand should be present in a low percentage and they are removed. Moreover, multiple options for treating the read lengths are available (see chapter <em>Sequence</em> <em>data</em> for more information). The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the <code>bedtolist</code> function is provided by the <em>reads_list</em> dataset included in the package, that contains the data for a sample called <em>Samp1</em> (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:</p>
+<p>The resulting data structures contain for each read the name of the reference transcript on which it aligns, the leftmost and rightmost position of the read and its length. Two additional columns are also attached, reporting the leftmost and rightmost position of the CDS of the reference sequence with respect to its 1st nuclotide. An example of the final output of the <code>bedtolist</code> function is provided by the <em>reads_list</em> dataset included in the package, that contains the data for a sample called <em>Samp1</em> (a subset of the original dataset is here provided. Please contact the authors for more information). Here the first rows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(reads_list[[<span class="st">&quot;Samp1&quot;</span>]])</code></pre></div>
 <pre><code>##             transcript end5 end3 length start_pos stop_pos
 ## 1 ENSMUST00000000001.4   92  119     28       142     1206
@@ -152,7 +152,7 @@ text-align: justify}
 <p>The annotation file can be either provided by the user or generated starting from a GTF file by using the <code>create_annotation</code> function. In the latter case, the name of the transript in the annotation data frame are composed by the ENST ID and version, dot separated. During the generation of the annotation file, the input GTF is converted in a TxDb object and than in a data frame. Therefore, a TxDb object can also be directly used as input of <code>create_annotation</code>.</p>
 <div id="sequence-data" class="section level4">
 <h4>Sequence data</h4>
-<p>Optionally, a file containing transcript sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis. The user is also free to use a TxDb annotation object. By specifying a genome build, the corresponding BSGenome object in R will be used for sequence retrieval.</p>
+<p>Optionally, a file containing transcript or genome sequence information in FASTA format can be provided as input to perform P-site specific codon sequence analysis. The user is also free to use a TxDb annotation object or a GTF file. By specifying a genome build, the corresponding BSGenome object in R will be used for sequence retrieval.</p>
 </div>
 <div id="selection-of-read-lengths" class="section level4">
 <h4>Selection of read lengths</h4>

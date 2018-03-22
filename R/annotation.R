@@ -33,7 +33,6 @@
 #' gtf_file <- location_of_GTF_file
 #' path_bed <- location_of_output_directory
 #' bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
-#' @import GenomicFeatures
 #' @export
 create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA) {
   
@@ -61,10 +60,10 @@ create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, or
     txdbanno <- get(txdb)
   }
   
-  exon <- exonsBy(txdbanno, by = "tx",use.names=T)
-  utr5<- fiveUTRsByTranscript(txdbanno,use.names=T)
-  cds <- cdsBy(txdbanno, by = "tx", use.names=T)
-  utr3<-threeUTRsByTranscript(txdbanno,use.names=T)
+  exon <- GenomicFeatures::exonsBy(txdbanno, by = "tx",use.names=T)
+  utr5<- GenomicFeatures::fiveUTRsByTranscript(txdbanno,use.names=T)
+  cds <- GenomicFeatures::cdsBy(txdbanno, by = "tx", use.names=T)
+  utr3<- GenomicFeatures::threeUTRsByTranscript(txdbanno,use.names=T)
   
   anno_df <- data.frame("transcript"=names(exon), "l_tr" = sapply(exon,function(x) sum(width(x))))
   l_utr5<-data.frame("transcript"=names(utr5),"l_utr5"= sapply(utr5,function(x) sum(width(x))))
