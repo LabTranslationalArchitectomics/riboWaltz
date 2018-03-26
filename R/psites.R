@@ -52,14 +52,12 @@
 #' psite_offset <- psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
 #' psite_offset
 #' @import ggplot2
-#' @import cowplot
 #' @export
 psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FALSE,
                   plotdir = NULL, plotformat="png", cl = 99) {
   names <- names(data)
   offset <- NULL
   for (n in names) { 
-    n = "Samp1"
     cat(sprintf("processing %s\n", n))
     df <- data[[n]]
     lev <- sort(unique(df$length))
@@ -206,7 +204,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
         
         subplotdir <- paste(plotdir, n, sep = "/")
         dir.create(subplotdir)
-        save_plot(paste(subplotdir, "/", len, ".", plotformat, sep = ""), p, base_height = 5, base_aspect_ratio = 3)
+        ggsave(paste(subplotdir, "/", len, ".", plotformat, sep = ""), plot = p, width = 15, height = 3, units = "in")
       }
       cat(sprintf("\rplotting   %s\n",
                   paste(paste(rep(c(" ", "<<", "-"), c(25 - progress, 1, progress)), collapse = ""), " ", 
