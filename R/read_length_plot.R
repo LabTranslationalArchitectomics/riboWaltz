@@ -39,7 +39,7 @@ rlength_distr <- function(data, sample, cl = 100) {
     labs(title = sample, x = "Read length", y = "Count (%)") +
     theme_bw(base_size = 18) +
     theme(plot.title = element_text(hjust = 0.5)) +
-    scale_x_continuous(limits = c(xmin-0.5, xmax+0.5), breaks = seq(xmin + ((xmin) %% 2), xmax, by=floor((xmax-xmin)/7)))
+    scale_x_continuous(limits = c(xmin-0.5, xmax+0.5), breaks = seq(xmin + ((xmin) %% 2), xmax, by=mac(c(1,floor((xmax-xmin)/7)))))
 
   output<-list()
   output[["plot"]]<-p
