@@ -1,6 +1,6 @@
-#' Convert BAM files into a list of data frames or into a GRangesList object.
+#' Convert BAM files into a list of data tables or into a GRangesList object.
 #'
-#' Reads one or several BAM files, converts each file into a data frame and
+#' Reads one or several BAM files, converts each file into a data table and
 #' combines them into a list. Alternatively, it returns a GRangesList i.e. a
 #' list of GRanges objects. In both cases the data structure contains for each
 #' read the name of the reference sequence (i.e. of the transcript) on which it
@@ -13,9 +13,9 @@
 #'
 #' @param bamfolder A character string indicating the path to the folder
 #'   containing the BAM files.
-#' @param annotation A data frame from \code{\link{create_annotation}}. Please
+#' @param annotation A data table from \code{\link{create_annotation}}. Please
 #'   make sure that the name of the reference sequences in the annotation data
-#'   frame coincides with those in the BAM files.
+#'   table coincides with those in the BAM files.
 #' @param transcript_align A locigal value whether or not the BAM files within
 #'   \code{bamfolder} refers to a transcriptome alignment (intended as an
 #'   alignment based on a reference FASTA of all the transcript sequences). When
@@ -36,27 +36,27 @@
 #'   extremities falling in the same frame) are kept. This parameter is
 #'   considered only when \code{filter} is set to "periodicity". Default is 50.
 #' @param list_name A character string vector specifying the desired names for
-#'   the data frames of the output list. Its length must coincides with the
+#'   the data tables of the output list. Its length must coincides with the
 #'   number of BAM files within \code{bamfolder}. Please pay attention to the
 #'   order in which they are provided: the first string is assigned to the first
 #'   file, the second string to the second one and so on. By default this
-#'   argument is NULL, implying that the data frames are named after the name of
+#'   argument is NULL, implying that the data tables are named after the name of
 #'   the BAM file, leaving their path and extension out.
 #' @param granges A logical value whether or not to return a GRangesList object.
-#'   Default is FALSE, meaning that a list of data frames (the required input
+#'   Default is FALSE, meaning that a list of data tables (the required input
 #'   for \code{\link{psite}}, \code{\link{rends_heat}} and
 #'   \code{\link{rlength_distr}}) is returned instead.
-#' @return A list of data frames or a GRangesList object.
+#' @return A list of data tables or a GRangesList object.
 #' @examples
 #' path_bam <- "location_of_BAM_files"
-#' annotation_df <- dataframe_with_transcript_annotation
-#' bamtolist(bamfolder = path_bam, annotation = annotation_df)
-#' @import dplyr
+#' annotation_dt <- datatable_with_transcript_annotation
+#' bamtolist(bamfolder = path_bam, annotation = annotation_dt)
+#' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
                       filter = "none", custom_range = NULL, periodicity_th = 50,
                       list_name = NULL, granges = FALSE) {
-  names <- list.files(path = bamfolder, pattern = ".bam")
+  names <- list.files(path = bamfolder, pattern = ".bam$")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bam")))
   } else {
@@ -71,10 +71,9 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
   }
   
   if(filter == "custom" & !inherits(custom_range, "numeric") & !inherits(custom_range, "integer")){
-    stop("'custom_range' must be integer.\n\n")
+    stop("ERROR: custom_range must be integer\n\n")
   }
-  
-  rownames(annotation) <- as.character(annotation$transcript)
+
   sample_reads_list <- list()
   i <- 0
   for (n in names) {
@@ -82,66 +81,63 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     cat(sprintf("reading %s\n", n))
     sampname <- list_name[i]
     filename <- paste(bamfolder, n, sep = "/")
-    df <- as.data.frame(GenomicAlignments::readGAlignments(filename))
-    df <- df[, c("seqnames", "start", "end", "width", "strand")]
-    colnames(df) <- c("transcript", "end5", "end3", "length", "strand")
-    
+    dt <- as.data.table(GenomicAlignments::readGAlignments(filename))
+    dt <- dt[,.(seqnames, start, end, width, strand)]
+    names(dt) <- c("transcript", "end5", "end3", "length", "strand")
+
     if(transcript_align == TRUE | transcript_align == T){
-      nreads <- nrow(df)
+      nreads <- nrow(dt)
       cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
-      df <- subset(df, as.character(transcript) %in% rownames(annotation))
-      df <- subset(df, strand == "+")
+      dt <- dt[as.character(transcript) %in% as.character(annotation$transcript) & strand == "+"]
       cat(sprintf("positive strand: %s %%\n", 
-                  format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
+                  format(round((nrow(dt) / nreads) * 100, 2), nsmall = 2) ))
       cat(sprintf("negative strand: %s %%\n", 
-                  format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
-      cat(sprintf("reads (kept): %f M\n\n", (nrow(df) / 1e+06)))
+                  format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %f M\n\n", (nrow(dt) / 1e+06)))
     }
     
-    df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
-    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + 
-      annotation[as.character(df$transcript), "l_cds"]
-    df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
+    dt[annotation, on = 'transcript', c("start_pos", "stop_pos") := list(i.l_utr5 + 1, i.l_utr5 + i.l_cds)]
+    dt[start_pos == 1 & stop_pos == 0, start_pos := 0]
     
     if (identical(filter, "custom")) {
-      df <- subset(df, as.numeric(as.character(length)) %in% custom_range)
+      nreads <- nrow(dt)
+      dt <- dt[length %in% custom_range]
       cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                  format(nreads - nrow(df), nsmall = 2), 
-                  format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+                  format(nreads - nrow(dt), nsmall = 2), 
+                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
     } else {
       if(identical(filter, "periodicity")){
-        subdf5 <- subset(df, start_pos!=0 & end5 - start_pos >=0 & stop_pos - end5 >=0)
-        t_temp5 <- subdf5 %>% 
-          mutate(end5_frame = (end5 - start_pos) %% 3) %>%
-          mutate(end5_frame = factor(end5_frame, levels = c("0", "1", "2")))
-        t_end5 <- t_temp5 %>% 
-          group_by(length, end5_frame) %>%
-          summarise(end5_count = n()) %>%
-          mutate(end5_perc = (end5_count / sum (end5_count)) * 100) %>%
-          data.frame
-        keep_length5 <- unique(subset(t_end5, end5_perc >= periodicity_th)$length)
-        subdf3 <- subset(df, start_pos!=0 & end3 - start_pos >=0 & stop_pos - end3 >=0)
-        t_temp3 <- subdf3 %>% 
-          mutate(end3_frame = (end3 - start_pos) %% 3) %>%
-          mutate(end3_frame = factor(end3_frame, levels = c("0", "1", "2")))
-        t_end3 <- t_temp3 %>% 
-          group_by(length, end3_frame) %>%
-          summarise(end3_count = n()) %>%
-          mutate(end3_perc = (end3_count / sum (end3_count)) * 100) %>%
-          data.frame
-        keep_length3 <- unique(subset(t_end3, end3_perc >= periodicity_th)$length)
+        nreads <- nrow(dt)
+        
+        subdt5 <- dt[start_pos != 0 &
+                       (end5 - start_pos) >= 0 &
+                       (stop_pos - end5) >= 0]
+        subdt5[, end5_frame := as.factor((end5 - start_pos) %% 3)]
+        t_end5 <- subdt5[, .N, by = list(length, end5_frame)
+                         ][, end5_perc := (N / sum(N)) * 100, , by = length]
+        keep_length5 <- unique(t_end5[end5_perc >= periodicity_th, length])
+        
+        subdt3 <- dt[start_pos != 0 &
+                       (end3 - start_pos) >= 0 &
+                       (stop_pos - end3) >= 0]
+        subdt3[, end3_frame := as.factor((end3 - start_pos) %% 3)]
+        t_end3 <- subdt3[, .N, by = list(length, end3_frame)
+                         ][, end3_perc := (N / sum(N)) * 100, , by = length]
+        keep_length3 <- unique(t_end3[end3_perc >= periodicity_th, length])
+        
         keep_length <- intersect(keep_length5, keep_length3)
-        df <- subset(df, as.numeric(as.character(length)) %in% keep_length)
+        dt <- dt[length %in% keep_length]
+        
         cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                    format(nreads - nrow(df), nsmall = 2), 
-                    format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+                    format(nreads - nrow(dt), nsmall = 2), 
+                    format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
       }
     }
     
-    df <- df[, !(names(df) %in% "strand")]
-    
+    dt[, strand := NULL]
+
     if (granges == T || granges == TRUE) {
-      df <- GenomicRanges::makeGRangesFromDataFrame(df,
+      dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns=TRUE,
                                                     ignore.strand=TRUE,
                                                     seqnames.field=c("transcript"),
@@ -149,10 +145,10 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
                                                     end.field="end3",
                                                     strand.field="strand",
                                                     starts.in.df.are.0based=FALSE)
-      strand(df) <- "+"
+      GenomicRanges::strand(dt) <- "+"
     }
     
-    sample_reads_list[[sampname]] <- df
+    sample_reads_list[[sampname]] <- dt
   }
   
   if (granges == T || granges == TRUE) {
@@ -194,9 +190,9 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
   system(bamtobed)
 }
 
-#' Convert BED files into a list of data frames or a GRangesList.
+#' Convert BED files into a list of data tables or a GRangesList.
 #'
-#' Reads one or several BED files, converts each file into a data frame and
+#' Reads one or several BED files, converts each file into a data table and
 #' combines them into a list. Alternatively, it returns a GRangesList i.e. a
 #' list of GRanges objects. In both cases two additional columns are attached to
 #' the data structures, reporting the leftmost and rightmost position of the CDS
@@ -207,9 +203,9 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #'
 #' @param bedfolder A character string indicating the path to the folder
 #'   containing the BED files.
-#' @param annotation A data frame from \code{\link{create_annotation}}. Please
+#' @param annotation A data table from \code{\link{create_annotation}}. Please
 #'   make sure that the name of the reference sequences in the annotation data
-#'   frame coincides with those in the BED files.
+#'   table coincides with those in the BED files.
 #' @param transcript_align A locigal value whether or not the BED files within
 #'   \code{bedfolder} refers to a transcriptome alignment (intended as an
 #'   alignment based on a reference FASTA of all the transcript sequences). When
@@ -230,22 +226,22 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #'   extremities falling in the same frame) are kept. This parameter is
 #'   considered only when \code{filter} is set to "periodicity". Default is 50.
 #' @param list_name A character string vector specifying the desired names for
-#'   the data frames of the output list. Its length must coincides with the
+#'   the data tables of the output list. Its length must coincides with the
 #'   number of BED files within \code{bedfolder}. Please pay attention to the
 #'   order in which they are provided: the first string is assigned to the first
 #'   file, the second string to the second one and so on. By default this
-#'   argument is NULL, implying that the data frames are named after the name of
+#'   argument is NULL, implying that the data tables are named after the name of
 #'   the BED file, leaving their path and extension out.
 #' @param granges A logical value whether or not to return a GRangesList object.
-#'   Default is FALSE, meaning that a list of data frames (the required input
+#'   Default is FALSE, meaning that a list of data tables (the required input
 #'   for \code{\link{psite}}, \code{\link{rends_heat}} and
 #'   \code{\link{rlength_distr}}) is returned instead.
-#' @return A list of data frames or a GRangesList object.
+#' @return A list of data tables or a GRangesList object.
 #' @examples
 #' path_bed <- "location_of_BED_files"
-#' annotation_df <- dataframe_with_transcript_annotation
-#' bedtolist(bedfolder = path_bed, annotation = annotation_df)
-#' @import dplyr
+#' annotation_dt <- datatable_with_transcript_annotation
+#' bedtolist(bedfolder = path_bed, annotation = annotation_dt)
+#' @import data.table
 #' @export
 bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
                       filter = "none", custom_range = NULL, periodicity_th = 50,
@@ -268,73 +264,69 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     stop("'custom_range' must be an integer.\n\n")
   }
   
-  rownames(annotation) <- as.character(annotation$transcript)
   sample_reads_list <- list()
   i <- 0
   for (n in names) {
     i <- i + 1
     cat(sprintf("reading %s\n", n))
     sampname <- list_name[i]
-    filename <- paste(bedfolder, n, sep = "/")
-    df <- read.table(filename, header = FALSE, sep = "\t")
-    colnames(df) <- c("transcript", "end5", "end3", "length", "strand")
+    filename <- paste(bamfolder, n, sep = "/")
+    dt <- fread(filename, sep="\t", header = FALSE)
+    names(dt) <- c("transcript", "end5", "end3", "length", "strand")
 
     if(transcript_align == TRUE | transcript_align == T){
-      nreads <- nrow(df)
+      nreads <- nrow(dt)
       cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
-      df <- subset(df, as.character(transcript) %in% rownames(annotation))
-      df <- subset(df, strand == "+")
+      dt <- dt[as.character(transcript) %in% as.character(annotation$transcript) & strand == "+"]
       cat(sprintf("positive strand: %s %%\n", 
-                  format(round((nrow(df)/nreads)*100, 2), nsmall = 2) ))
+                  format(round((nrow(dt) / nreads) * 100, 2), nsmall = 2) ))
       cat(sprintf("negative strand: %s %%\n", 
-                  format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
-      cat(sprintf("reads (kept): %f M\n\n", (nrow(df) / 1e+06)))
+                  format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %f M\n\n", (nrow(dt) / 1e+06)))
     }
     
-    df$start_pos <- annotation[as.character(df$transcript), "l_utr5"] + 1
-    df$stop_pos <- annotation[as.character(df$transcript), "l_utr5"] + 
-      annotation[as.character(df$transcript), "l_cds"]
-    df$start_pos <- ifelse(df$start_pos == 1 & df$stop_pos == 0, 0, df$start_pos)
+    dt[annotation, on = 'transcript', c("start_pos", "stop_pos") := list(i.l_utr5 + 1, i.l_utr5 + i.l_cds)]
+    dt[start_pos == 1 & stop_pos == 0, start_pos := 0]
     
     if (identical(filter, "custom")) {
-      df <- subset(df, as.numeric(as.character(length)) %in% custom_range)
+      nreads <- nrow(dt)
+      dt <- dt[length %in% custom_range]
       cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                  format(nreads - nrow(df), nsmall = 2), 
-                  format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+                  format(nreads - nrow(dt), nsmall = 2), 
+                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
     } else {
       if(identical(filter, "periodicity")){
-        subdf5 <- subset(df, start_pos!=0 & end5 - start_pos >=0 & stop_pos - end5 >=0)
-        t_temp5 <- subdf5 %>% 
-          mutate(end5_frame = (end5 - start_pos) %% 3) %>%
-          mutate(end5_frame = factor(end5_frame, levels = c("0", "1", "2")))
-        t_end5 <- t_temp5 %>% 
-          group_by(length, end5_frame) %>%
-          summarise(end5_count = n()) %>%
-          mutate(end5_perc = (end5_count / sum (end5_count)) * 100) %>%
-          data.frame
-        keep_length5 <- unique(subset(t_end5, end5_perc >= periodicity_th)$length)
-        subdf3 <- subset(df, start_pos!=0 & end3 - start_pos >=0 & stop_pos - end3 >=0)
-        t_temp3 <- subdf3 %>% 
-          mutate(end3_frame = (end3 - start_pos) %% 3) %>%
-          mutate(end3_frame = factor(end3_frame, levels = c("0", "1", "2")))
-        t_end3 <- t_temp3 %>% 
-          group_by(length, end3_frame) %>%
-          summarise(end3_count = n()) %>%
-          mutate(end3_perc = (end3_count / sum (end3_count)) * 100) %>%
-          data.frame
-        keep_length3 <- unique(subset(t_end3, end3_perc >= periodicity_th)$length)
+        nreads <- nrow(dt)
+        
+        subdt5 <- dt[start_pos != 0 &
+                       (end5 - start_pos) >= 0 &
+                       (stop_pos - end5) >= 0]
+        subdt5[, end5_frame := as.factor((end5 - start_pos) %% 3)]
+        t_end5 <- subdt5[, .N, by = list(length, end5_frame)
+                         ][, end5_perc := (N / sum(N)) * 100, , by = length]
+        keep_length5 <- unique(t_end5[end5_perc >= periodicity_th, length])
+        
+        subdt3 <- dt[start_pos != 0 &
+                       (end3 - start_pos) >=0 &
+                       (stop_pos - end3) >=0]
+        subdt3[, end3_frame := as.factor((end3 - start_pos) %% 3)]
+        t_end3 <- subdt3[, .N, by = list(length, end3_frame)
+                         ][, end3_perc := (N / sum(N)) * 100, , by = length]
+        keep_length3 <- unique(t_end3[end3_perc >= periodicity_th, length])
+        
         keep_length <- intersect(keep_length5, keep_length3)
-        df <- subset(df, as.numeric(as.character(length)) %in% keep_length)
+        dt <- dt[length %in% keep_length]
+        
         cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                    format(nreads - nrow(df), nsmall = 2), 
-                    format(round(((nreads - nrow(df))/nreads)*100, 2), nsmall = 2) ))
+                    format(nreads - nrow(dt), nsmall = 2), 
+                    format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
       }
     }
     
-    df <- df[, !(names(df) %in% "strand")]
+    dt[, strand := NULL]
     
     if (granges == T || granges == TRUE) {
-      df <- GenomicRanges::makeGRangesFromDataFrame(df,
+      dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns=TRUE,
                                                     ignore.strand=TRUE,
                                                     seqnames.field=c("transcript"),
@@ -342,10 +334,10 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
                                                     end.field="end3",
                                                     strand.field="strand",
                                                     starts.in.df.are.0based=FALSE)
-      strand(df) <- "+"
+      GenomicRanges::strand(dt) <- "+"
     }
     
-    sample_reads_list[[sampname]] <- df
+    sample_reads_list[[sampname]] <- dt
   }
   
   if (granges == T || granges == TRUE) {

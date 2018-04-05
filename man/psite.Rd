@@ -8,7 +8,7 @@ psite(data, flanking = 6, start = TRUE, extremity = "auto",
   plot = FALSE, plotdir = NULL, plotformat = "png", cl = 99)
 }
 \arguments{
-\item{data}{A list of data frames from either \code{\link{bamtolist}} or
+\item{data}{A list of data tables from either \code{\link{bamtolist}} or
 \code{\link{bedtolist}}.}
 
 \item{flanking}{An integer that specifies how many nucleotides, at least, of
@@ -45,7 +45,7 @@ of read lengths. By default it is set to 99. This parameter is considered
 only if \code{plot} is TRUE.}
 }
 \value{
-A data frame.
+A data table.
 }
 \description{
 This function identifies within each read the position of the ribosome

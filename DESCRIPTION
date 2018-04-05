@@ -25,7 +25,7 @@ License: MIT
 LazyData: TRUE
 Imports:
 	Biostrings (>= 2.46.0),
-    cowplot (>= 0.6.2),
+	data.table (>= 1.10.4.3),
     dplyr (>= 0.5.0),
 	GenomicAlignments (>= 1.14.1),
 	GenomicFeatures (>= 1.24.5),

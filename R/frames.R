@@ -7,7 +7,7 @@
 #' percentage of P-sites per frame using all the read lengths or to restrict the
 #' analysis to a sub-range of read lengths.
 #'
-#' @param data A list of data frames from \code{\link{psite_info}}.
+#' @param data A list of data tables from \code{\link{psite_info}}.
 #' @param sample A character string vector specifying the name of the sample(s)
 #'   of interest. By default this argument is NULL, meaning that all the samples
 #'   in \code{data} are included in the analysis.
@@ -18,7 +18,7 @@
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
-#' @return A list containing a ggplot2 object and a data frame with the
+#' @return A list containing a ggplot2 object and a data table with the
 #'   associated data.
 #' @examples
 #' data(reads_psite_list)
@@ -32,9 +32,10 @@
 #' frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 #' length_range=28)
 #' frame_sub[["plot"]]
+#' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
+frame_psite<-function(data, sample = NULL, region = "all", length_range = "all"){
   if(length(sample) == 0) {
     sample <- names(data)
   }
@@ -50,6 +51,7 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
   }
 
   for (samp in sample) {
+    data[[samp]] <- data.frame(data[[samp]])
     if (region == "all") {
 
       if(length_range[1] == "all"){
@@ -114,8 +116,8 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
   }
 
   ret_list<-list()
-  ret_list[["df"]]<-final_frame_df
-  ret_list[["plot"]]<-plot
+  ret_list[["dt"]] <- data.table(final_frame_df)
+  ret_list[["plot"]] <- plot
   return(ret_list)
 }
 
@@ -124,7 +126,7 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #' Similar to \code{\link{frame_psite}} but the results are stratified by the
 #' length of the reads.
 #'
-#' @param data A list of data frames from \code{\link{psite_info}}.
+#' @param data A list of data tables from \code{\link{psite_info}}.
 #' @param sample A character string vector specifying the name of the sample(s)
 #'   of interest. By default this argument is NULL, meaning that all the samples
 #'   in \code{data} are included in the analysis.
@@ -140,7 +142,7 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
 #'   If specified, this parameter prevails over \code{cl}.
-#' @return A list containing a ggplot2 object and a data frame with the
+#' @return A list containing a ggplot2 object and a data table with the
 #'   associated data.
 #' @examples
 #' data(reads_psite_list)
@@ -154,9 +156,10 @@ frame_psite<-function(data, sample=NULL, region="all", length_range="all"){
 #' frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 #' region = "cds", cl = 90)
 #' frame_len_sub[["plot"]]
+#' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite_length<-function(data, sample=NULL, region="all", cl=100, length_range=NULL){
+frame_psite_length<-function(data, sample = NULL, region = "all", cl = 100, length_range = NULL){
   if(length(sample) == 0) {
     sample <- names(data)
   }
@@ -167,13 +170,16 @@ frame_psite_length<-function(data, sample=NULL, region="all", cl=100, length_ran
   }
 
   for (samp in sample) {
+    data[[samp]] <- data.frame(data[[samp]])
     if (region == "all") {
+      
       df <- data[[samp]]
       df <- subset(df, start_pos!=0 & stop_pos!=0)
       df$frame <- df$psite_from_start %% 3
 
       minl <- quantile(df$length, (1 - cl/100)/2)
       maxl <- quantile(df$length, 1 - (1 - cl/100)/2)
+      
       if(length(length_range) != 0){
         if(!inherits(length_range, "numeric") & !inherits(length_range, "integer")){
           warning("length_range is invalid. Confidence interval is used\n")
@@ -238,8 +244,8 @@ frame_psite_length<-function(data, sample=NULL, region="all", cl=100, length_ran
   }
 
   ret_list<-list()
-  ret_list[["df"]]<-final_frame_df
-  ret_list[["plot"]]<-plot
+  ret_list[["dt"]] <- data.table(final_frame_df)
+  ret_list[["plot"]] <- plot
   return(ret_list)
 }
 

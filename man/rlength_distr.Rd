@@ -7,7 +7,7 @@
 rlength_distr(data, sample, cl = 100)
 }
 \arguments{
-\item{data}{A list of data frames from either \code{\link{bamtolist}} or
+\item{data}{A list of data tables from either \code{\link{bamtolist}} or
 \code{\link{bedtolist}}.}
 
 \item{sample}{A character string specifying the name of the sample of
@@ -18,7 +18,7 @@ for restricting the plot to a sub-range of read lengths. By default it is
 set to 100, meaning that the whole distribution is displayed.}
 }
 \value{
-A list containing a ggplot2 object, and a data frame with the
+A list containing a ggplot2 object, and a data table with the
   associated data.
 }
 \description{

@@ -8,7 +8,7 @@ frame_psite_length(data, sample = NULL, region = "all", cl = 100,
   length_range = NULL)
 }
 \arguments{
-\item{data}{A list of data frames from \code{\link{psite_info}}.}
+\item{data}{A list of data tables from \code{\link{psite_info}}.}
 
 \item{sample}{A character string vector specifying the name of the sample(s)
 of interest. By default this argument is NULL, meaning that all the samples
@@ -30,7 +30,7 @@ Otherwise, only the read lengths matching the specified value(s) are kept.
 If specified, this parameter prevails over \code{cl}.}
 }
 \value{
-A list containing a ggplot2 object and a data frame with the
+A list containing a ggplot2 object and a data table with the
   associated data.
 }
 \description{

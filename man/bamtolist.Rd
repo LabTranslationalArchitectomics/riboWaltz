@@ -2,7 +2,7 @@
 % Please edit documentation in R/combine_bam.R
 \name{bamtolist}
 \alias{bamtolist}
-\title{Convert BAM files into a list of data frames or into a GRangesList object.}
+\title{Convert BAM files into a list of data tables or into a GRangesList object.}
 \usage{
 bamtolist(bamfolder, annotation, transcript_align = TRUE, filter = "none",
   custom_range = NULL, periodicity_th = 50, list_name = NULL,
@@ -12,9 +12,9 @@ bamtolist(bamfolder, annotation, transcript_align = TRUE, filter = "none",
 \item{bamfolder}{A character string indicating the path to the folder
 containing the BAM files.}
 
-\item{annotation}{A data frame from \code{\link{create_annotation}}. Please
+\item{annotation}{A data table from \code{\link{create_annotation}}. Please
 make sure that the name of the reference sequences in the annotation data
-frame coincides with those in the BAM files.}
+table coincides with those in the BAM files.}
 
 \item{transcript_align}{A locigal value whether or not the BAM files within
 \code{bamfolder} refers to a transcriptome alignment (intended as an
@@ -40,23 +40,23 @@ extremities falling in the same frame) are kept. This parameter is
 considered only when \code{filter} is set to "periodicity". Default is 50.}
 
 \item{list_name}{A character string vector specifying the desired names for
-the data frames of the output list. Its length must coincides with the
+the data tables of the output list. Its length must coincides with the
 number of BAM files within \code{bamfolder}. Please pay attention to the
 order in which they are provided: the first string is assigned to the first
 file, the second string to the second one and so on. By default this
-argument is NULL, implying that the data frames are named after the name of
+argument is NULL, implying that the data tables are named after the name of
 the BAM file, leaving their path and extension out.}
 
 \item{granges}{A logical value whether or not to return a GRangesList object.
-Default is FALSE, meaning that a list of data frames (the required input
+Default is FALSE, meaning that a list of data tables (the required input
 for \code{\link{psite}}, \code{\link{rends_heat}} and
 \code{\link{rlength_distr}}) is returned instead.}
 }
 \value{
-A list of data frames or a GRangesList object.
+A list of data tables or a GRangesList object.
 }
 \description{
-Reads one or several BAM files, converts each file into a data frame and
+Reads one or several BAM files, converts each file into a data table and
 combines them into a list. Alternatively, it returns a GRangesList i.e. a
 list of GRanges objects. In both cases the data structure contains for each
 read the name of the reference sequence (i.e. of the transcript) on which it
@@ -69,6 +69,6 @@ treating the read lengths are available.
 }
 \examples{
 path_bam <- "location_of_BAM_files"
-annotation_df <- dataframe_with_transcript_annotation
-bamtolist(bamfolder = path_bam, annotation = annotation_df)
+annotation_dt <- datatable_with_transcript_annotation
+bamtolist(bamfolder = path_bam, annotation = annotation_dt)
 }

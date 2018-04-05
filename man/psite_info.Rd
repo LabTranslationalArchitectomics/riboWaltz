@@ -9,10 +9,10 @@ psite_info(data, offset, fastapath = NULL, fasta_genome = TRUE,
   organism = NA, granges = FALSE)
 }
 \arguments{
-\item{data}{A list of data frames from either \code{\link{bamtolist}} or
+\item{data}{A list of data tables from either \code{\link{bamtolist}} or
 \code{\link{bedtolist}}.}
 
-\item{offset}{A data frame from \code{\link{psite}}.}
+\item{offset}{A data table from \code{\link{psite}}.}
 
 \item{fastapath}{An optional character string specifying the path to the
 FASTA file used in the alignment step, including its name and extension.
@@ -74,17 +74,17 @@ of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
 the \code{GenomicFeatures} package.}
 
 \item{granges}{A logical value whether or not to return a GRangesList object.
-Default is FALSE, meaning that a list of data frames (the required input
+Default is FALSE, meaning that a list of data tables (the required input
 for the downstream analyses and graphical outputs provided by riboWaltz) is
 returned instead.}
 }
 \value{
-A list of data frames or a GRangesList object.
+A list of data tables or a GRangesList object.
 }
 \description{
 Starting ftom the P-site position identfied by \code{\link{psite}}, this
-function updates the data frames that contains information about the reads.
-It attaches to the data frames 4 columns reporting the P-site position with
+function updates the data tables that contains information about the reads.
+It attaches to the data tables 4 columns reporting the P-site position with
 respect to the 1st nucleotide of the transcript, the start and the stop codon
 of the annotated coding sequence (if any) and the region of the transcript
 (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript

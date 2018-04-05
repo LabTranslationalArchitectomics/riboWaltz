@@ -1,7 +1,7 @@
-#' Create an annotation data frame.
+#' Create an annotation data table.
 #'
 #' Starting from a GTF file or a TxDb object this function generates a dada
-#' frame containing a basic annotation of the transcripts. The data frame
+#' table containing a basic annotation of the transcripts. The data table
 #' includes a column named \emph{transcript} reporting the name of the reference
 #' sequences and four columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and
 #' \emph{l_utr3} reporting the length of the transcripts and of their annotated
@@ -28,13 +28,14 @@
 #'   about this parameter please refer to the description of \emph{dataSource}
 #'   of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
 #'   the \code{GenomicFeatures} package.
-#' @return A data frame.
+#' @return A data table.
 #' @examples
 #' gtf_file <- location_of_GTF_file
 #' path_bed <- location_of_output_directory
 #' bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
+#' @import data.table
 #' @export
-create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA) {
+create_annotation <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA) {
   
   if(length(gtfpath) != 0 & length(txdb) != 0){
     warning("gtfpath and txdb are both specified. Only gtfpath will be considered\n")
@@ -60,15 +61,19 @@ create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, or
     txdbanno <- get(txdb)
   }
   
-  exon <- GenomicFeatures::exonsBy(txdbanno, by = "tx",use.names=T)
-  utr5<- GenomicFeatures::fiveUTRsByTranscript(txdbanno,use.names=T)
-  cds <- GenomicFeatures::cdsBy(txdbanno, by = "tx", use.names=T)
-  utr3<- GenomicFeatures::threeUTRsByTranscript(txdbanno,use.names=T)
+  exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx",use.names=T))
+  utr5<- suppressWarnings(GenomicFeatures::fiveUTRsByTranscript(txdbanno,use.names=T))
+  cds <- suppressWarnings(GenomicFeatures::cdsBy(txdbanno, by = "tx", use.names=T))
+  utr3<- suppressWarnings(GenomicFeatures::threeUTRsByTranscript(txdbanno,use.names=T))
+  exon <- as.data.table(exon[unique(names(exon))])
+  utr5 <- as.data.table(utr5[unique(names(utr5))])
+  cds <- as.data.table(cds[unique(names(cds))])
+  utr3 <-as.data.table(utr3[unique(names(utr3))])
   
-  anno_df <- data.frame("transcript"=names(exon), "l_tr" = sapply(exon,function(x) sum(width(x))))
-  l_utr5<-data.frame("transcript"=names(utr5),"l_utr5"= sapply(utr5,function(x) sum(width(x))))
-  l_cds<-data.frame("transcript"=names(cds),"l_cds"=sapply(cds,function(x) sum(width(x))))
-  l_utr3<-data.frame("transcript"=names(utr3),"l_utr3"=sapply(utr3,function(x) sum(width(x))))
+  anno_df <- exon[, list(l_tr = sum(width)), by = list(transcript = group_name)]
+  l_utr5 <- utr5[, list(l_utr5 = sum(width)), by = list(transcript = group_name)]
+  l_cds <- cds[, list(l_cds = sum(width)), by = list(transcript = group_name)]
+  l_utr3 <- utr3[, list(l_utr3 = sum(width)), by = list(transcript = group_name)]
   
   merge_allx <- function(x, y) merge(x, y, all.x=TRUE)
   anno_df  <-  Reduce(merge_allx, list(anno_df, l_utr5, l_cds, l_utr3))
@@ -76,7 +81,3 @@ create_annotation  <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, or
   
   return(anno_df)
 }
-
-
-
-

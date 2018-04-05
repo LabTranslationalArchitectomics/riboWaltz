@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotation.R
 \name{create_annotation}
 \alias{create_annotation}
-\title{Create an annotation data frame.}
+\title{Create an annotation data table.}
 \usage{
 create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA,
   organism = NA)
@@ -35,11 +35,11 @@ of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
 the \code{GenomicFeatures} package.}
 }
 \value{
-A data frame.
+A data table.
 }
 \description{
 Starting from a GTF file or a TxDb object this function generates a dada
-frame containing a basic annotation of the transcripts. The data frame
+table containing a basic annotation of the transcripts. The data table
 includes a column named \emph{transcript} reporting the name of the reference
 sequences and four columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and
 \emph{l_utr3} reporting the length of the transcripts and of their annotated
