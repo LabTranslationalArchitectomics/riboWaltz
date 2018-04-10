@@ -18,6 +18,10 @@
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
+#' @param plot_title A character string specifying the title of the plot. When
+#'   "auto", the title of the plot reports the region specified by \code{region}
+#'   (if any) and the length of the reads used for generating the barplot.
+#'   Default is NULL, meaning that no title will be added to the plot.
 #' @return A list containing a ggplot2 object and a data table with the
 #'   associated data.
 #' @examples
@@ -30,93 +34,121 @@
 #' ## Generate the barplot restricting the analysis to the coding sequence and
 #' to the reads of 28 nucleotides
 #' frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
-#' length_range=28)
+#' length_range = 28)
 #' frame_sub[["plot"]]
 #' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite<-function(data, sample = NULL, region = "all", length_range = "all"){
+frame_psite <- function(data, sample = NULL, region = "all", length_range = "all",
+                        plot_title = NULL){
   if(length(sample) == 0) {
     sample <- names(data)
   }
-
+  
   if(!region%in%c("all", "cds", "5utr", "3utr")){
     warning("region is invalid. Set to default \"all\"\n")
     region="all"
   }
-
+  
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
     warning("length_range is invalid. Set to default \"all\"\n")
     length_range = "all"
   }
-
+  
   for (samp in sample) {
-    data[[samp]] <- data.frame(data[[samp]])
+    
+    if(identical(length_range, "all")){
+      dt <- data[[samp]]
+    } else {
+      dt <- data[[samp]][length %in% length_range]
+    }
+    
     if (region == "all") {
-
-      if(length_range[1] == "all"){
-        df <- data[[samp]]
-      }else{
-        df <- subset(data[[samp]], length%in%length_range)
-      }
-      
-      df <- subset(df, start_pos!=0 & stop_pos!=0)
-      df$frame <- df$psite_from_start %% 3
-      frame_df <- as.data.frame(table(df$frame, factor(df$psite_region, levels = c("5utr", "cds", "3utr"), labels=c("5' UTR", "CDS", "3' UTR"))))
-      colnames(frame_df) <- c("frame", "region", "count")
-      frame_df$perc <- (frame_df$count/rep(by(frame_df$count, frame_df$region, function(x) sum(x)), each = 3)) * 100
+      frame_dt <- dt[start_pos != 0 & stop_pos !=0
+               ][, frame := psite_from_start %% 3
+                 ][, list(count = .N), by = list(region = psite_region, frame)
+                   ][, percentage := (count / sum(count)) * 100, by = region
+                     ][is.na(percentage), percentage := 0
+                       ][, region := factor(region, levels = c("5utr", "cds", "3utr"), labels = c("5' UTR", "CDS", "3' UTR"))]
     } else {
-      df <- subset(data[[samp]], psite_region == region)
-      df$frame <- df$psite_from_start %% 3
-      frame_df <- as.data.frame(table(df$frame))
-      colnames(frame_df) <- c("frame", "count")
-      frame_df$perc <- (frame_df$count/sum(frame_df$count)) * 100
+      frame_dt <- dt[psite_region == region
+                     ][start_pos != 0 & stop_pos !=0
+                       ][, frame := psite_from_start %% 3
+                         ][, list(count = .N), by = frame
+                           ][, percentage := (count / sum(count)) * 100
+                             ][is.na(percentage), percentage := 0]
     }
-    frame_df$samp <- samp
-
-    if (exists("final_frame_df")) {
-      final_frame_df <- rbind(final_frame_df, frame_df)
+    
+    frame_dt[, sample := samp]
+    
+    if (exists("final_frame_dt")) {
+      final_frame_dt <- rbind(final_frame_dt, frame_dt)
     } else {
-      final_frame_df <- frame_df
+      final_frame_dt <- frame_dt
     }
-    rm(frame_df)
-  }
-
-  if(region == "all") {
-    plottitle_region <- NULL
-  } else {
-    if(region == "5utr") { plottitle_region <- "Region: 5' UTR" }
-    if(region == "cds") { plottitle_region <- "Region: CDS" }
-    if(region == "3utr") { plottitle_region <- "Region: 3' UTR" }
-  }
-
-  if(length_range[1] == "all") {
-    plottitle_range <- NULL
-  } else{
-    if(min(length_range) == max(length_range)) {
-      plottitle_range <- paste("Read length: ", min(length_range), " nts", sep = "")
-    } else {
-      if(identical(length_range, min(length_range) : max(length_range)) | identical(length_range, seq(min(length_range), max(length_range), 1))){
-        plottitle_range <- paste("Read lengths: ", min(length_range), "-", max(length_range), " nts", sep = "")
-      } else {
-        plottitle_range <- paste("Read lengths: ", paste(length_range, collapse=","), " nts", sep = "")
-      }
+    
+    if(identical(length_range, "all")){
+      length_range <- sort(unique(data[[samp]]$length))
     }
   }
-
-  plot<-ggplot(final_frame_df, aes(x = frame, y = perc)) +
+  
+  plot <- ggplot(final_frame_dt, aes(x = frame, y = percentage)) +
     geom_bar(stat = "identity") +
     theme_bw(base_size = 20) +
-    labs(x = "Frame", y = "P-site signal (%)", title = paste(plottitle_region, plottitle_range, sep="; "))
-
+    labs(x = "Frame", y = "P-site signal (%)")
+    
   if(region == "all") {
-    plot <- plot + facet_grid(samp ~ region)
+    plot <- plot + facet_grid(sample ~ region)
+    final_frame_dt <- final_frame_dt[order(region, frame, sample)]
   } else {
-    plot <- plot + facet_wrap( ~ samp, ncol = 3)
+    plot <- plot + facet_wrap( ~ sample, ncol = 3)
+    final_frame_dt <- final_frame_dt[order(frame, sample)]
   }
-
+  
+  if(identical(plot_title, "auto")) {
+    
+    if(region == "all") {
+      plottitle_region <- NULL
+    } else {
+      if(region == "5utr") { plottitle_region <- "Region: 5' UTR. " }
+      if(region == "cds") { plottitle_region <- "Region: CDS. " }
+      if(region == "3utr") { plottitle_region <- "Region: 3' UTR. " }
+    }
+    
+    if(min(length_range) == max(length_range)) {
+      plottitle_range <- paste0("Read length: ", min(length_range), " nts")
+    } else {
+      if(identical(length_range, min(length_range) : max(length_range)) | identical(length_range, seq(min(length_range), max(length_range), 1))){
+        plottitle_range <- paste0("Read lengths: ", min(length_range), " - ", max(length_range), " nts")
+      } else {
+        nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
+        sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ", ", "-")[-length(nextl)]
+        if(1 %in% which(diff(length_range) == 1)){
+          nextl <- c( length_range[1], nextl)
+          sep <- c("-", sep)
+        }
+        if((length(length_range) - 1) %in% which(diff(length_range) == 1)){
+          nextl <- c(nextl, length_range[length(length_range)])
+          sep <- c(sep, "-")
+        }
+        sep <- c(sep, "")
+        plottitle_range <- paste0("Read lengths: ", paste0(nextl, sep, collapse = ""), " nts")
+      }
+    }
+    plottitle <- paste0(plottitle_region, plottitle_range)
+    plot <- plot +
+      labs(title = plottitle) +
+      theme(plot.title = element_text(hjust = 0.5))
+  } else {
+    if(length(plot_title) != 0){
+      plot <- plot +
+        labs(title = plot_title) + 
+        theme(plot.title = element_text(hjust = 0.5))
+    }
+  }
+  
   ret_list<-list()
-  ret_list[["dt"]] <- data.table(final_frame_df)
+  ret_list[["dt"]] <- final_frame_dt
   ret_list[["plot"]] <- plot
   return(ret_list)
 }
@@ -135,13 +167,15 @@ frame_psite<-function(data, sample = NULL, region = "all", length_range = "all")
 #'   respectively) that must be included in the analysis. Default is "all",
 #'   meaning that the all the regions are considered.
 #' @param cl An integer value in \emph{[1,100]} specifying the confidence level
-#'   for restricting the analysis to a sub-range of read lengths. By default it is
-#'   set to 100. This parameter has no effect if \code{length_range} is
-#'   specified.
+#'   for restricting the analysis to a sub-range of read lengths. Default is 95.
+#'   This parameter has no effect if \code{length_range} is specified.
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
 #'   If specified, this parameter prevails over \code{cl}.
+#' @param plot_title A character string specifying the title of the plot. When
+#'   "auto", the title of the plot reports the region specified by \code{region}
+#'   (if any). Default is NULL, meaning that no title will be added to the plot.
 #' @return A list containing a ggplot2 object and a data table with the
 #'   associated data.
 #' @examples
@@ -159,100 +193,121 @@ frame_psite<-function(data, sample = NULL, region = "all", length_range = "all")
 #' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite_length<-function(data, sample = NULL, region = "all", cl = 100, length_range = NULL){
+frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
+                                  length_range = NULL, plot_title = NULL){
   if(length(sample) == 0) {
     sample <- names(data)
   }
-
+  
   if(!region%in%c("all", "cds", "5utr", "3utr")){
     warning("region is invalid. Set to default \"all\"\n")
-    region="all"
+    region = "all"
   }
-
+  
+  if(length(length_range) != 0){
+    if(!inherits(length_range, "numeric") & !inherits(length_range, "integer")){
+      length_range = NULL
+      warning("class of length_range is neither numeric nor integer. Default confidence interval will be used\n")
+    } else {
+      minl <- min(length_range)
+      maxl <- max(length_range)
+    }
+  }
+  
   for (samp in sample) {
-    data[[samp]] <- data.frame(data[[samp]])
+    
     if (region == "all") {
       
-      df <- data[[samp]]
-      df <- subset(df, start_pos!=0 & stop_pos!=0)
-      df$frame <- df$psite_from_start %% 3
-
-      minl <- quantile(df$length, (1 - cl/100)/2)
-      maxl <- quantile(df$length, 1 - (1 - cl/100)/2)
+      dt <- data[[samp]][start_pos != 0 & stop_pos != 0
+                         ][, frame := psite_from_start %% 3]
       
-      if(length(length_range) != 0){
-        if(!inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-          warning("length_range is invalid. Confidence interval is used\n")
-        } else {
-          minl <- min(length_range)
-          maxl <- max(length_range)
-        }
+      if(length(length_range) == 0){
+        minl <- quantile(dt$length, (1 - cl/100) / 2)
+        maxl <- quantile(dt$length, 1 - (1 - cl/100) / 2)
       }
-      lenmax <- length(minl:maxl)
+      
+      dt[, psite_region := factor(psite_region, levels = c("5utr", "cds", "3utr"))
+         ][, frame := factor(frame, levels = c(0, 1, 2))
+           ][, length := factor(length, levels = unique(length))]
+      
+      setkey(dt, length, psite_region, frame)
+      frame_dt <- dt[CJ(levels(length), levels(psite_region), levels(frame)), list(count = .N), by = .EACHI
+                     ][as.numeric(as.character(length)) %in% minl:maxl
+                       ][, percentage := (count / sum(count)) * 100, by = list(length, psite_region)
+                         ][is.na(percentage), percentage := 0
+                           ][, psite_region := factor(psite_region, levels = c("5utr", "cds", "3utr"), labels = c("5' UTR", "CDS", "3' UTR"))]
+      setnames(frame_dt, "psite_region", "region")
 
-      frame_df <- as.data.frame(table(factor(df$length, levels = minl:maxl), df$frame, factor(df$psite_region, levels = c("5utr", "cds", "3utr"), labels=c("5' UTR", "CDS", "3' UTR"))))
-      colnames(frame_df) <- c("length", "frame", "region", "count")
-      sum_count <- as.vector(by(frame_df$count, frame_df[,c("length", "region")], function(x) sum(x)))
-      frame_df$perc<-(frame_df$count / c(rep(sum_count[1:lenmax],3),rep(sum_count[(lenmax+1):(2 * lenmax)],3),rep(sum_count[(2 * lenmax+1):(3 * lenmax)],3))) * 100
     } else {
-      df <- subset(data[[samp]], psite_region == region)
-      df$frame <- df$psite_from_start %% 3
-
-      minl <- quantile(df$length, (1 - cl/100)/2)
-      maxl <- quantile(df$length, 1 - (1 - cl/100)/2)
-      if(length(length_range) != 0){
-        if(!inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-          warning("length_range is invalid. Confidence interval is used\n")
-        } else {
-          minl <- min(length_range)
-          maxl <- max(length_range)
-        }
+      
+      dt <- data[[samp]][psite_region == region
+                         ][, frame := psite_from_start %% 3
+                           ]
+      
+      if(length(length_range) == 0){
+        minl <- quantile(dt$length, (1 - cl/100) / 2)
+        maxl <- quantile(dt$length, 1 - (1 - cl/100) / 2)
       }
-      lenmax <- length(minl:maxl)
-
-      frame_df <- as.data.frame(table(factor(df$length, levels = minl:maxl), df$frame))
-      colnames(frame_df) <- c("length", "frame", "count")
-      sum_count <- as.vector(by(frame_df$count, frame_df$length, function(x) sum(x)))
-      frame_df$perc<-(frame_df$count / rep(sum_count, 3)) * 100
+      
+      dt[, frame := factor(frame, levels = c(0, 1, 2))
+         ][, length := factor(length, levels = unique(length))]
+      
+      setkey(dt, length, frame)
+      frame_dt <- dt[CJ(levels(length), levels(frame)), list(count = .N), by = .EACHI
+                     ][as.numeric(as.character(length)) %in% minl:maxl
+                       ][, percentage := (count / sum(count)) * 100, by = length
+                         ][is.na(percentage), percentage := 0]
     }
-    frame_df$samp <- samp
-
-    if (exists("final_frame_df")) {
-      final_frame_df <- rbind(final_frame_df, frame_df)
+    
+    frame_dt$sample <- samp
+    
+    if (exists("final_frame_dt")) {
+      final_frame_dt <- rbind(final_frame_dt, frame_dt)
     } else {
-      final_frame_df <- frame_df
+      final_frame_dt <- frame_dt
     }
-    rm(frame_df)
   }
-
-  final_frame_df[is.na(final_frame_df$perc),"perc"]<-0
-
-  plot<-ggplot(final_frame_df, aes(frame, as.numeric(as.character(length)))) +
-    geom_tile(aes(fill = perc)) +
-    scale_fill_gradient("P-site signal (%) ", low = "white", high = "#104ec1",
-                        breaks = c(min(final_frame_df$perc),(max(final_frame_df$perc)-min(final_frame_df$perc))/2,max(final_frame_df$perc)),
-                        labels = c(round(min(final_frame_df$perc)), round((max(final_frame_df$perc)-min(final_frame_df$perc))/2),round(max(final_frame_df$perc)))) +
-    labs(x="Frame",y="Read length") +
+  
+  minfp <- min(final_frame_dt$percentage)
+  maxfo <- max(final_frame_dt$percentage)
+  
+  plot <- ggplot(final_frame_dt, aes(frame, as.numeric(as.character(length)))) +
+    geom_tile(aes(fill = percentage)) +
+    scale_fill_gradient("P-site signal (%)  ", low = "white", high = "#104ec1",
+                        breaks = c(minfp, (maxfo - minfp) / 2, maxfo),
+                        labels = c(round(minfp), round((maxfo - minfp) / 2), round(maxfo))) +
+    labs(x = "Frame", y = "Read length") +
     theme_bw(base_size = 20) +
-    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
-    theme(legend.position="top") +
-    scale_y_continuous(limits=c(minl-0.5, maxl+0.5), breaks = seq(minl + ((minl) %% 2), maxl, by=max(2, floor((maxl-minl)/7))))
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+          panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+    theme(legend.position = "top") +
+    scale_y_continuous(limits = c(minl - 0.5, maxl + 0.5), breaks = seq(minl + ((minl) %% 2), maxl, by = max(2, floor((maxl - minl) / 7))))
+  
   if (region == "all") {
-    plot <- plot + facet_grid(samp ~ region)
+    plot <- plot + facet_grid(sample ~ region)
+    final_frame_dt <- final_frame_dt[order(length, region, frame, sample)]
   } else {
-    plot <- plot + facet_wrap( ~ samp, ncol = 3)
+    plot <- plot + facet_wrap( ~ sample, ncol = 3)
+    final_frame_dt <- final_frame_dt[order(length, frame, sample)]
   }
-
+  
+  if(identical(plot_title, "auto")){
+    if(region == "5utr") { plottitle <- "Region: 5' UTR" }
+    if(region == "cds") { plottitle <- "Region: CDS" }
+    if(region == "3utr") { plottitle <- "Region: 3' UTR" }
+    plot <- plot +
+      labs(title = plottitle) +
+      theme(plot.title = element_text(hjust = 0.5))
+  } else {
+    if(length(plot_title) != 0){
+    plot <- plot +
+      labs(title = plot_title) + 
+      theme(plot.title = element_text(hjust = 0.5))
+    }
+  }
+  
   ret_list<-list()
-  ret_list[["dt"]] <- data.table(final_frame_df)
+  ret_list[["dt"]] <- final_frame_dt
   ret_list[["plot"]] <- plot
   return(ret_list)
 }
-
-
-
-
-
-
-
-

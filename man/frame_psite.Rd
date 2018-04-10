@@ -4,7 +4,8 @@
 \alias{frame_psite}
 \title{Compute the percentage of P-sites per frame.}
 \usage{
-frame_psite(data, sample = NULL, region = "all", length_range = "all")
+frame_psite(data, sample = NULL, region = "all", length_range = "all",
+  plot_title = NULL)
 }
 \arguments{
 \item{data}{A list of data tables from \code{\link{psite_info}}.}
@@ -21,6 +22,11 @@ meaning that the all the regions are considered.}
 \item{length_range}{Either "all", an integer or an integer vector. Default is
 "all", meaning that all the read lengths are included in the analysis.
 Otherwise, only the read lengths matching the specified value(s) are kept.}
+
+\item{plot_title}{A character string specifying the title of the plot. When
+"auto", the title of the plot reports the region specified by \code{region}
+(if any) and the length of the reads used for generating the barplot.
+Default is NULL, meaning that no title will be added to the plot.}
 }
 \value{
 A list containing a ggplot2 object and a data table with the
@@ -44,6 +50,6 @@ frame_whole[["plot"]]
 ## Generate the barplot restricting the analysis to the coding sequence and
 to the reads of 28 nucleotides
 frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
-length_range=28)
+length_range = 28)
 frame_sub[["plot"]]
 }

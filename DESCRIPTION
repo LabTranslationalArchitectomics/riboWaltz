@@ -32,7 +32,6 @@ Imports:
     GenomicRanges (>= 1.24.3),
     ggplot2 (>= 2.2.1),
     ggrepel (>= 0.6.5),
-	reshape (>= 0.8.7)
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 6.0.1

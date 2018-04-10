@@ -350,7 +350,7 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
     if(length(fastapath) != 0) {
       if(fasta_genome == TRUE | fasta_genome == T){
         temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-        exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by="tx", use.names=TRUE))
+        exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names=TRUE))
         exon <- as.data.table(exon[unique(names(exon))])
         sub_exon <- exon[seqnames %in% names(temp_sequences)]
         seq_dt <- sub_exon[, list(seq = paste(Biostrings::subseq(temp_sequences[as.character(seqnames)],
@@ -400,13 +400,13 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
     
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
-                                                    keep.extra.columns=TRUE,
-                                                    ignore.strand=TRUE,
-                                                    seqnames.field=c("transcript"),
-                                                    start.field="end5",
-                                                    end.field="end3",
-                                                    strand.field="strand",
-                                                    starts.in.df.are.0based=FALSE)
+                                                    keep.extra.columns = TRUE,
+                                                    ignore.strand = TRUE,
+                                                    seqnames.field = c("transcript"),
+                                                    start.field = "end5",
+                                                    end.field = "end3",
+                                                    strand.field = "strand",
+                                                    starts.in.df.are.0based = FALSE)
       GenomicRanges::strand(dt) <- "+"
     }
     

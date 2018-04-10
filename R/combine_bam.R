@@ -138,13 +138,13 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
 
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
-                                                    keep.extra.columns=TRUE,
-                                                    ignore.strand=TRUE,
-                                                    seqnames.field=c("transcript"),
-                                                    start.field="end5",
-                                                    end.field="end3",
-                                                    strand.field="strand",
-                                                    starts.in.df.are.0based=FALSE)
+                                                    keep.extra.columns = TRUE,
+                                                    ignore.strand = TRUE,
+                                                    seqnames.field = c("transcript"),
+                                                    start.field = "end5",
+                                                    end.field = "end3",
+                                                    strand.field = "strand",
+                                                    starts.in.df.are.0based = FALSE)
       GenomicRanges::strand(dt) <- "+"
     }
     
@@ -327,13 +327,13 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
-                                                    keep.extra.columns=TRUE,
-                                                    ignore.strand=TRUE,
-                                                    seqnames.field=c("transcript"),
-                                                    start.field="end5",
-                                                    end.field="end3",
-                                                    strand.field="strand",
-                                                    starts.in.df.are.0based=FALSE)
+                                                    keep.extra.columns = TRUE,
+                                                    ignore.strand = TRUE,
+                                                    seqnames.field = c("transcript"),
+                                                    start.field = "end5",
+                                                    end.field = "end3",
+                                                    strand.field = "strand",
+                                                    starts.in.df.are.0based = FALSE)
       GenomicRanges::strand(dt) <- "+"
     }
     

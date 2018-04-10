@@ -25,7 +25,7 @@ that the transcripts not associated to any annotated \emph{5' UTR},
 
 \item{label}{A character string vector of the same length of \code{sample}
 specifying the name of the samples to be displaied in the plot. By default
-this argument is NULL meaning that name of the samples are used.}
+this argument is NULL meaning that the name of the samples are used.}
 
 \item{colour}{A character string vector of three elements specifying the
 colours of the bars corresponding to the \emph{5' UTR}, the \emph{CDS} and

@@ -225,12 +225,12 @@ Different lengths of ribosome protected fragments may derive from alternative ri
     comparison_dt[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
     comparison_dt[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 
-Then the list with the names of the data tables of interest can be defined. Pay attention: here we don't have any replicate, thus each element of *names_list* is a vector with just one string:
+  Then the list with the names of the data tables of interest can be defined. Pay attention: here we don't have any replicate, thus each element of *names_list* is a vector with just one string:
 
     names_list <- list("Only_28" = c("subsample_28nt"),
                        "All" = c("whole_sample"))
 
-At this point it is sufficient to run `metaheatmap_psite` using the data tables and the list of names previously defined.
+  At this point it is sufficient to run `metaheatmap_psite` using the data tables and the list of names previously defined.
 
     example_metaheatmap <- metaheatmap_psite(comparison_dt, mm81cdna, sample = names_list,
                                              utr5l = 20, cdsl = 40, utr3l = 20, log = F)
@@ -258,7 +258,7 @@ At this point it is sufficient to run `metaheatmap_psite` using the data tables 
   
   If such a data table is provided, `codon_usage_psite` returns a second graphical output: a scatter plot where each codon is represented by a dot. The following image shows the comparison between the empirical codon usage reported in the previous figure and the codon usage bias in mouse contained in a data table called *cub_mouse* (as for the fasta file, cub_mouse is not included among the example data of the package):
   
-  codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+	codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 										  fastapath = path_to_fasta, codon_usage = cub_mouse)
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_scatter.png" width="300" />

@@ -21,26 +21,26 @@ the end of the coding sequences to be exluded from the analisys. Default is
 0.}
 }
 \value{
-A list of data tables.
+A data table.
 }
 \description{
 For each sample and each transcript this function computes the number of
-P-sites in frame 0 whithin the coding sequence. It is possible to exclude
+P-sites in frame 0 within the coding sequence. It is possible to exclude
 from the analysis a specified number of nucleotides at the beginiing and/or
 at the end of the CDS, restricting the analysis to a subsequence of the
 coding region. Please note that only the transcripts associated to an
 annotated CDS are kept for the analysis. The resulting data table reports the
 name of the transripts along with the length of the considered region (in
-nucleotides) and the associated number of P-sites.
+nucleotides) and the associated number of P-sites for all the samples.
 }
 \examples{
 data(reads_psite_list)
 data(mm81cdna)
 
 ## Compute the number of P-sites in frame on the whole coding sequence.
-psite_cds_list <- psite_per_cds(reads_psite_list, mm81cdna)
+psite_cds <- psite_per_cds(reads_psite_list, mm81cdna)
 
 ## Compute the number of P-sites in frame on the coding sequence exluding
 the first 15 nucleotides and the last 10 nucleotides.
-psite_cds_list <- psite_per_cds(reads_psite_list, mm81cdna, start_nts = 15, stop_nts = 10)
+psite_cds <- psite_per_cds(reads_psite_list, mm81cdna, start_nts = 15, stop_nts = 10)
 }

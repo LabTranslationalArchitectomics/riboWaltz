@@ -4,7 +4,7 @@
 \alias{rends_heat}
 \title{Plot metaheatmaps based on the two extremities of the reads.}
 \usage{
-rends_heat(data, annotation, sample, transcripts = NULL, cl = 99,
+rends_heat(data, annotation, sample, transcripts = NULL, cl = 95,
   utr5l = 50, cdsl = 50, utr3l = 50, log = F, colour = "black")
 }
 \arguments{
@@ -25,8 +25,7 @@ shorther than \code{utr5l}, \eqn{2*}\code{cdsl} and \code{utr3l}
 respectively, the transcript is automatically discarded.}
 
 \item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
-for restricting the plot to a sub-range of read lengths. By default it is
-set to 99.}
+for restricting the plot to a sub-range of read lengths. Default is 95.}
 
 \item{utr5l}{A positive integer specifying the length (in nucleotides) of the
 5' UTR region that in the plot flanks the start codon. The default value is

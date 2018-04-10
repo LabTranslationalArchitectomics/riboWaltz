@@ -4,8 +4,8 @@
 \alias{frame_psite_length}
 \title{Compute the number of P-sites per frame stratified by read length.}
 \usage{
-frame_psite_length(data, sample = NULL, region = "all", cl = 100,
-  length_range = NULL)
+frame_psite_length(data, sample = NULL, region = "all", cl = 95,
+  length_range = NULL, plot_title = NULL)
 }
 \arguments{
 \item{data}{A list of data tables from \code{\link{psite_info}}.}
@@ -20,14 +20,17 @@ respectively) that must be included in the analysis. Default is "all",
 meaning that the all the regions are considered.}
 
 \item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
-for restricting the analysis to a sub-range of read lengths. By default it is
-set to 100. This parameter has no effect if \code{length_range} is
-specified.}
+for restricting the analysis to a sub-range of read lengths. Default is 95.
+This parameter has no effect if \code{length_range} is specified.}
 
 \item{length_range}{Either "all", an integer or an integer vector. Default is
 "all", meaning that all the read lengths are included in the analysis.
 Otherwise, only the read lengths matching the specified value(s) are kept.
 If specified, this parameter prevails over \code{cl}.}
+
+\item{plot_title}{A character string specifying the title of the plot. When
+"auto", the title of the plot reports the region specified by \code{region}
+(if any). Default is NULL, meaning that no title will be added to the plot.}
 }
 \value{
 A list containing a ggplot2 object and a data table with the
