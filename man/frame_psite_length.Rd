@@ -5,7 +5,7 @@
 \title{Compute the number of P-sites per frame stratified by read length.}
 \usage{
 frame_psite_length(data, sample = NULL, region = "all", cl = 95,
-  length_range = NULL, plot_title = NULL)
+  length_range = "all", plot_title = NULL)
 }
 \arguments{
 \item{data}{A list of data tables from \code{\link{psite_info}}.}
@@ -28,7 +28,7 @@ This parameter has no effect if \code{length_range} is specified.}
 Otherwise, only the read lengths matching the specified value(s) are kept.
 If specified, this parameter prevails over \code{cl}.}
 
-\item{plot_title}{A character string specifying the title of the plot. When
+\item{plot_title}{Any character string specifying the title of the plot. When
 "auto", the title of the plot reports the region specified by \code{region}
 (if any). Default is NULL, meaning that no title will be added to the plot.}
 }

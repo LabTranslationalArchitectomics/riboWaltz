@@ -109,33 +109,35 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_
     rownames(codon_values) <- as.character(codon_values$codon)
     if (nrow(codon_values) < 64 | length(unique(rownames(codon_values))) < 64){
       cat("\n")
-      stop("\n number of different triplets in codon_values < 64. At least one codon is missing\n\n")
+      stop("number of different triplets in codon_values < 64. At least one codon is missing\n\n")
     } else {
       if (length(unique(rownames(codon_values))) > 64){
         cat("\n")
-        stop("\n number of different triplets in codon_values > 64. Too many codons\n\n")
+        stop("number of different triplets in codon_values > 64. Too many codons\n\n")
       }
     }
   }
   
   if(length(fastapath) == 0 & length(bsgenome) == 0){
     cat("\n")
-    stop("\n impossible to normalize the data: no nucleotide sequences are provided. Either fastpath or bsgenome must be specified \n\n")
+    stop("impossible to normalize the data: no nucleotide sequences are provided. Either fastpath or bsgenome must be specified\n\n")
   }
 
   if(((length(fastapath) != 0 & (fasta_genome == TRUE | fasta_genome == T)) |
       length(bsgenome) != 0) &
      length(gtfpath) == 0 & length(txdb) == 0){
     cat("\n")
-    stop("\n genome annotation file not specified (both GTF path and TxDb object are missing) \n\n")
+    stop("genome annotation file not specified (both GTF path and TxDb object are missing)\n\n")
   }
   
   if(length(fastapath) != 0 & length(bsgenome) != 0){
+    cat("\n")
     warning("both fastapath and bsgenome are specified. Only fastapath will be considered\n")
     bsgenome = NULL
   }
   
   if(length(gtfpath) != 0 & length(txdb) != 0){
+    cat("\n")
     warning("both gtfpath and txdb are specified. Only gtfpath will be considered\n")
     txdb = NULL
   }
@@ -143,6 +145,7 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_
   if((length(gtfpath) != 0 | length(txdb) != 0) &
      ((length(fastapath) == 0 & length(bsgenome) == 0) |
       (length(fastapath) != 0 & (fasta_genome == FALSE | fasta_genome == F)))){
+    cat("\n")
     warning("a genome annotation file is specified but no sequences from genome assembly are provided\n")
   }
   

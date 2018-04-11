@@ -36,7 +36,7 @@ codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,
   
   if((psite == TRUE || psite == T) & min_overlap != 1){
     cat("\n")
-    stop("\nERROR: invalid value for min_over when psite is TRUE\n\n")
+    stop("invalid value for min_over when psite is TRUE\n\n")
   }
   
   if(length(sample) == 0){

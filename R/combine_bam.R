@@ -62,16 +62,16 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
   } else {
     if (length(list_name) > length(names)) {
       cat("\n")
-      stop("\nERROR: length of list_name greater than number of files\n\n")
+      stop("length of list_name greater than number of files\n\n")
     }
     if (length(list_name) < length(names)) {
       cat("\n")
-      stop("\nERROR: length of list_name smaller than number of files\n\n")
+      stop("length of list_name smaller than number of files\n\n")
     }
   }
   
   if(filter == "custom" & !inherits(custom_range, "numeric") & !inherits(custom_range, "integer")){
-    stop("ERROR: custom_range must be integer\n\n")
+    stop("custom_range must be integer\n\n")
   }
 
   sample_reads_list <- list()
@@ -252,11 +252,11 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
   } else {
     if (length(list_name) > length(names)) {
       cat("\n")
-      stop("\nERROR: length of list_name greater than number of files\n\n")
+      stop("length of list_name greater than number of files\n\n")
     }
     if (length(list_name) < length(names)) {
       cat("\n")
-      stop("\nERROR: length of list_name smaller than number of files\n\n")
+      stop("length of list_name smaller than number of files\n\n")
     }
   }
   

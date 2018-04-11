@@ -6,7 +6,7 @@
 \usage{
 metaprofile_psite(data, annotation, sample, scale_factors = NULL,
   length_range = "all", transcripts = NULL, utr5l = 25, cdsl = 50,
-  utr3l = 25, plot_title = "auto")
+  utr3l = 25, plot_title = NULL)
 }
 \arguments{
 \item{data}{A list of data tables from \code{\link{psite_info}}.}
@@ -19,10 +19,10 @@ of its replicates) of interest. Its elements are merge together using the
 scale factors specified by \code{scale_factors}.}
 
 \item{scale_factors}{A numeric vector of scale factors for merging the
-replicates (if any). The vector must contain at least a set of values, one
-for each replicates, named after the strings listed in \code{sample}. No
-specific order is required. Default is NULL, meaning that all the scale
-factors are set to 1.}
+replicates (if any). The vector must contain at least one value for each
+replicates, named after the strings listed in \code{sample}. No specific
+order is required. Default is NULL, meaning that all the scale factors are
+set to 1.}
 
 \item{length_range}{Either "all", an integer or an integer vector. Default is
 "all", meaning that all the read lengths are included in the analysis.
@@ -47,10 +47,11 @@ The default value is 50.}
 3' UTR region that in the plot flanks the start codon. The default value is
 25.}
 
-\item{plot_title}{Either "auto", NULL or any character string. The default is
-"auto", meaning that the title of the plot is the name of the sample
-followed by the number of the transcripts and the read lengths considered
-for generating the metaprofile.}
+\item{plot_title}{Any character string specifying the title of the plot. When
+"auto", the title of the plot reports the sample(s) specified by
+\code{sample} and the number of the transcripts and the length(s) of the
+reads considered for generating the metaprofile. Default is NULL, meaning
+that no title will be added to the plot.}
 }
 \value{
 A list containing a ggplot2 object, a data table with the associated

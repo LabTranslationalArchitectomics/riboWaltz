@@ -13,10 +13,10 @@
 #'   of its replicates) of interest. Its elements are merge together using the
 #'   scale factors specified by \code{scale_factors}.
 #' @param scale_factors A numeric vector of scale factors for merging the
-#'   replicates (if any). The vector must contain at least a set of values, one
-#'   for each replicates, named after the strings listed in \code{sample}. No
-#'   specific order is required. Default is NULL, meaning that all the scale
-#'   factors are set to 1.
+#'   replicates (if any). The vector must contain at least one value for each
+#'   replicates, named after the strings listed in \code{sample}. No specific
+#'   order is required. Default is NULL, meaning that all the scale factors are
+#'   set to 1.
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
@@ -35,10 +35,11 @@
 #' @param utr3l A positive integer specifying the length (in nucleotides) of the
 #'   3' UTR region that in the plot flanks the start codon. The default value is
 #'   25.
-#' @param plot_title Either "auto", NULL or any character string. The default is
-#'   "auto", meaning that the title of the plot is the name of the sample
-#'   followed by the number of the transcripts and the read lengths considered
-#'   for generating the metaprofile.
+#' @param plot_title Any character string specifying the title of the plot. When
+#'   "auto", the title of the plot reports the sample(s) specified by
+#'   \code{sample} and the number of the transcripts and the length(s) of the
+#'   reads considered for generating the metaprofile. Default is NULL, meaning
+#'   that no title will be added to the plot.
 #' @return A list containing a ggplot2 object, a data table with the associated
 #'   data and the transcripts employed for generating the plot.
 #' @examples
@@ -64,89 +65,139 @@
 metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
                               length_range = "all", transcripts = NULL,
                               utr5l = 25, cdsl = 50, utr3l = 25,
-                              plot_title = "auto") {
-  annotation <- data.frame(annotation)
-  rownames(annotation) <- as.character(annotation$transcript)
-  l.transcripts <- rownames(annotation)[which(annotation$l_utr5 >= utr5l &
-                                                annotation$l_cds >= 2 * (cdsl + 1) &
-                                                annotation$l_utr3 >= utr3l)]
-  if (length(transcripts) == 0) {
-    c.transcripts <- l.transcripts
-    ntr <- length(c.transcripts)
-  } else {
-    c.transcripts <- intersect(l.transcripts, transcripts)
-    ntr <- length(transcripts)
-  }
-
-  if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-    warning("length_range is invalid. Set to default \"all\"\n")
-    length_range="all"
-  }
-
-  for (samp in sample) {
-    data[[samp]] <- data.frame(data[[samp]])
-    df <- data[[samp]][which(data[[samp]]$transcript %in% c.transcripts), ]
-    if (identical(length_range, "all")) {
-      start.sub <- df[which(df$psite_from_start %in% seq(-utr5l, cdsl)), ]
-      stop.sub <- df[which(df$psite_from_stop %in% seq(-cdsl, utr3l)), ]
-    } else {
-      start.sub <- df[which(df$psite_from_start %in% seq(-utr5l, cdsl) & df$length%in%length_range), ]
-      stop.sub <- df[which(df$psite_from_stop %in% seq(-cdsl, utr3l) & df$length%in%length_range), ]
-    }
-    start.tab <- as.data.frame(table(factor(start.sub$psite_from_start, levels = -utr5l:cdsl)))
-    start.tab$reg <- "start"
-    stop.tab <- as.data.frame(table(factor(stop.sub$psite_from_stop, levels = -cdsl:utr3l)))
-    stop.tab$reg <- "stop"
-    colnames(start.tab) <- colnames(stop.tab) <- c("distance", "reads", "reg")
-    samp.tab <- rbind(start.tab, stop.tab)
-
-    if (length(scale_factors) != 0 & length(scale_factors) == length(sample)) {
-      samp.tab$reads <- samp.tab$reads * scale_factors[samp]
-    }
-
-    if (exists("final.tab.psitemetaprofile")) {
-      final.tab.psitemetaprofile$reads <- final.tab.psitemetaprofile$reads + samp.tab$reads
-    } else {
-      final.tab.psitemetaprofile <- samp.tab
-    }
-  }
-  final.tab.psitemetaprofile$reg <- factor(final.tab.psitemetaprofile$reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))
-
-  linestart <- data.frame(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
-  linered <- data.frame(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
+                              plot_title = NULL) {
   
-  if(length(plot_title) != 0 && plot_title == "auto"){
-    if (identical(length_range, "all")) {
-      plot_title <- paste(paste(sample, collapse = "+"), " (", ntr, " tr)", sep = "")
-    } else {
-      if(min(length_range)==max(length_range)) {
-        plot_title <- paste(paste(sample, collapse = "+"), " (", ntr, " tr) - Read length: ", min(length_range), " nts", sep = "")
-      } else {
-        if(identical(length_range, min(length_range):max(length_range)) | identical(length_range, seq(min(length_range),max(length_range),1))){
-          plot_title <- paste(paste(sample, collapse = "+"), " (", ntr, " tr) - Read lengths: ", min(length_range), "-", max(length_range), " nts",sep = "")
-        } else {
-          plot_title <- paste(paste(sample, collapse = "+"), " (", ntr, " tr) - Read lengths: ", paste(length_range, collapse=","), " nts",sep = "")
-        }
+  if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
+    cat("\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n")
+    length_range = "all"
+  }
+  
+  if(!identical(length_range, "all")){
+    for(samp in sample){
+      len_check <- unique(data[[samp]]$length)
+      if(sum(length_range %in% len_check) == 0) {
+        cat("\n")
+        warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
+        sample <- sample[sample != samp]
       }
     }
   }
 
-  plot <- ggplot(final.tab.psitemetaprofile, aes(as.numeric(as.character(distance)), reads)) +
+  if(length(sample) == 0){
+    cat("\n")
+    stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
+  }
+  
+  l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 
+                                             l_cds >= 2 * (cdsl + 1) &
+                                             l_utr3 >= utr3l, transcript])
+  
+  if (length(transcripts) == 0) {
+    c_transcripts <- l_transcripts
+    ntr <- length(c_transcripts)
+  } else {
+    c_transcripts <- intersect(l_transcripts, transcripts)
+    ntr <- length(transcripts)
+  }
+  
+  length_temp <- vector()
+
+  for (samp in sample) {
+    
+    dt <- data[[samp]][as.character(transcript) %in% c_transcripts, ]
+    
+    if (identical(length_range, "all")) {
+      start_sub <- dt[psite_from_start %in% seq(-utr5l, cdsl)]
+      stop_sub <- dt[psite_from_stop %in% seq(-cdsl, utr3l)]
+    } else {
+      start_sub <- dt[psite_from_start %in% seq(-utr5l, cdsl) & length %in% length_range]
+      stop_sub <- dt[psite_from_stop %in% seq(-cdsl, utr3l) & length %in% length_range]
+    }
+    
+    setkey(start_sub, psite_from_start)
+    start_tab <- start_sub[CJ(-utr5l:cdsl), list(reads = .N), by = list(distance = psite_from_start)
+                           ][, reg := "start"]
+    setkey(stop_sub, psite_from_stop)
+    stop_tab <- stop_sub[CJ(-cdsl:utr3l), list(reads = .N), by = list(distance = psite_from_stop)
+                           ][, reg := "stop"]
+    samp_tab <- rbind(start_tab, stop_tab)
+    
+    if (length(scale_factors) != 0 & length(scale_factors) == length(sample)) {
+      samp_tab[, reads := reads * scale_factors[samp]]
+    }
+
+    if (exists("final_tab_psm")) {
+      final_tab_psm[, reads := reads + samp_tab$reads]
+    } else {
+      final_tab_psm <- samp_tab
+    }
+    
+    length_temp <- unique(c(length_temp, data[[samp]]$length))
+  }
+  
+  if(!identical(length_range, "all")){
+    length_range <- sort(intersect(length_temp, length_range))
+  } else {
+    length_range <- sort(length_temp)
+  }
+  
+  final_tab_psm[, reg := factor(reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))]
+
+  linestart <- data.table(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
+  linered <- data.table(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
+  
+  plot <- ggplot(final_tab_psm, aes(distance, reads)) +
     geom_line(size=1.05, color="gray40") +
     geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
-    labs(x = "", y = "P-site", title = plot_title) +
+    labs(x = "", y = "P-site") +
     theme_bw(base_size = 20) +
     theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
     facet_grid(. ~ reg, scales = "free", switch = "x") +
     theme(strip.background = element_blank(), strip.placement = "outside") +
-    theme(plot.title = element_text(hjust = 0.5)) +
     geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
-  plot
 
+  if(identical(plot_title, "auto")) {
+    
+    title1 <- paste0(paste(sample, collapse = "+"), " (", ntr, " tr). Read length: ")
+    minlr <- min(length_range)
+    maxlr <- max(length_range)
+
+    if(minlr == maxlr) {
+      plottitle <- paste0(title1, min(length_range), " nts")
+    } else {
+      if(identical(length_range, minlr:maxlr) | identical(length_range, seq(minlr, maxlr, 1))){
+        plottitle <- paste0(title1, minlr, "-", maxlr, " nts")
+      } else {
+        nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
+        sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ", ", "-")[-length(nextl)]
+        if(1 %in% which(diff(length_range) == 1)){
+          nextl <- c( length_range[1], nextl)
+          sep <- c("-", sep)
+        }
+        if((length(length_range) - 1) %in% which(diff(length_range) == 1)){
+          nextl <- c(nextl, length_range[length(length_range)])
+          sep <- c(sep, "-")
+        }
+        sep <- c(sep, "")
+        plottitle <- paste0(title1, paste0(nextl, sep, collapse = ""), " nts")
+      }
+    }
+    plot <- plot +
+      labs(title = plottitle) +
+      theme(plot.title = element_text(hjust = 0.5))
+  } else {
+    if(length(plot_title) != 0){
+      plot <- plot +
+        labs(title = plot_title) + 
+        theme(plot.title = element_text(hjust = 0.5))
+    }
+  }
+  
   output <- list()
   output[["plot"]] <- plot
-  output[["dt"]] <- data.table(final.tab.psitemetaprofile)
-  output[["transcripts"]] <- c.transcripts
+  output[["dt"]] <- final_tab_psm
+  output[["transcripts"]] <- c_transcripts
   return(output)
 }
 
@@ -169,10 +220,10 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
 #'   The name of the elements of the list are used for labelling the raws of the
 #'   heatmap.
 #' @param scale_factors A numeric vector of scale factors for merging the
-#'   replicates (if any). The vector must contain at least a set of values, one
-#'   for each replicates, named after the strings listed in \code{sample}. No
-#'   specific order is required. Default is NULL, meaning that all the scale
-#'   factors are set to 1.
+#'   replicates (if any). The vector must contain at least one value for each
+#'   replicates, named after the strings listed in \code{sample}. No specific
+#'   order is required. Default is NULL, meaning that all the scale factors are
+#'   set to 1.
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
@@ -196,10 +247,10 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
 #'   FALSE.
 #' @param colour A character string specifying the colour of the plot. Default
 #'   is "black".
-#' @param plot_title Either "auto", NULL or any character string. The default is
-#'   "auto", meaning that the title of the plot is the name of the sample
-#'   followed by the number of the transcripts and the read lengths considered
-#'   for generating the metaprofile.
+#' @param plot_title Any character string specifying the title of the plot. When
+#'   "auto", the title of the plot reports the number of the transcripts and the
+#'   length(s) of the reads considered for generating the metaprofile. Default
+#'   is NULL, meaning that no title will be added to the plot.
 #' @return A list containing a ggplot2 object, a data table with the associated
 #'   data and the transcripts employed for generating the plot.
 #' @examples
@@ -236,104 +287,108 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
                               length_range = "all", transcripts = NULL,
                               utr5l = 25, cdsl = 50, utr3l = 25, log = F,
                               colour = "black", plot_title = NULL) {
-  annotation <- data.frame(annotation)
-  rownames(annotation) <- as.character(annotation$transcript)
-  l.transcripts <- rownames(annotation)[which(annotation$l_utr5 >= utr5l &
-                                                annotation$l_cds >= 2 * (cdsl + 1) &
-                                                annotation$l_utr3 >= utr3l)]
-  if (length(transcripts) == 0) {
-    c.transcripts <- l.transcripts
-    ntr <- length(c.transcripts)
-  } else {
-    c.transcripts <- intersect(l.transcripts, transcripts)
-    ntr <- length(transcripts)
-  }
-
+  
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-    warning("length_range is invalid. Set to default \"all\" \n")
-    length_range="all"
+    cat("\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n")
+    length_range = "all"
   }
-
-  if(inherits(length_range, "numeric") | inherits(length_range, "integer")){
+  
+  if(!identical(length_range, "all")){
     for(sampgroup in names(sample)){
-      len_check_vec <- numeric()
       for(samp in sample[[sampgroup]]){
         len_check <- unique(data[[samp]]$length)
         if(sum(length_range %in% len_check) == 0) {
-          warning(sprintf("data table \"%s\" does not contain reads of the specified lengths \n", samp))
+          cat("\n")
+          warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
+          sample[[sampgroup]] <- sample[[sampgroup]][sample[[sampgroup]] != samp]
         }
-        len_check_vec <- c(len_check_vec, len_check)
       }
-      if(sum(length_range %in% len_check_vec) == 0) {
+      if(length(sample[[sampgroup]]) == 0) {
+        cat("\n")
+        warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: group of samples removed \n", sampgroup))
         sample[[sampgroup]] <- NULL
-        warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: sample \"%s\" will not be considered \n", sampgroup, sampgroup))
       }
     }
   }
-
+  
+  if(length(sample) == 0){
+    cat("\n")
+    stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
+  }
+  
+  l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 
+                                             l_cds >= 2 * (cdsl + 1) &
+                                             l_utr3 >= utr3l, transcript])
+  
+  if (length(transcripts) == 0) {
+    c_transcripts <- l_transcripts
+    ntr <- length(c_transcripts)
+  } else {
+    c_transcripts <- intersect(l_transcripts, transcripts)
+    ntr <- length(transcripts)
+  }
+  
+  length_temp <- vector()
+  
   for(sampgroup in names(sample)){
     for (samp in sample[[sampgroup]]) {
-      data[[samp]] <- data.frame(data[[samp]])
-      df <- data[[samp]][which(data[[samp]]$transcript %in% c.transcripts), ]
+      
+      dt <- data[[samp]][as.character(transcript) %in% c_transcripts]
+      
       if (identical(length_range, "all")) {
-        start.sub <- df[which(df$psite_from_start %in% seq(-utr5l, cdsl)), ]
-        stop.sub <- df[which(df$psite_from_stop %in% seq(-cdsl, utr3l)), ]
+        start_sub <- dt[psite_from_start %in% seq(-utr5l, cdsl)]
+        stop_sub <- dt[psite_from_stop %in% seq(-cdsl, utr3l)]
       } else {
-        start.sub <- df[which(df$psite_from_start %in% seq(-utr5l, cdsl) & df$length%in%length_range), ]
-        stop.sub <- df[which(df$psite_from_stop %in% seq(-cdsl, utr3l) & df$length%in%length_range), ]
+        start_sub <- dt[psite_from_start %in% seq(-utr5l, cdsl) & length %in% length_range]
+        stop_sub <- dt[psite_from_stop %in% seq(-cdsl, utr3l) & length %in% length_range]
       }
-      start.tab <- as.data.frame(table(factor(start.sub$psite_from_start, levels = -utr5l:cdsl)))
-      start.tab$reg <- "start"
-      stop.tab <- as.data.frame(table(factor(stop.sub$psite_from_stop, levels = -cdsl:utr3l)))
-      stop.tab$reg <- "stop"
-      colnames(start.tab) <- colnames(stop.tab) <- c("distance", "reads", "reg")
-      samp.tab <- rbind(start.tab, stop.tab)
+      
+      setkey(start_sub, psite_from_start)
+      start_tab <- start_sub[CJ(-utr5l:cdsl), list(reads = .N), by = list(distance = psite_from_start)
+                             ][, reg := "start"]
+      setkey(stop_sub, psite_from_stop)
+      stop_tab <- stop_sub[CJ(-cdsl:utr3l), list(reads = .N), by = list(distance = psite_from_stop)
+                           ][, reg := "stop"]
+      samp_tab <- rbind(start_tab, stop_tab)
 
       if (length(scale_factors) != 0 & length(scale_factors) == length(sample)) {
-        samp.tab$reads <- samp.tab$reads * scale_factors[samp]
+        samp_tab[, reads := reads * scale_factors[samp]]
       }
-
-      if (exists("temp.tab.heatmap")) {
-        temp.tab.heatmap$reads <- temp.tab.heatmap$reads + samp.tab$reads
+      
+      if (exists("temp_tab_heatmap")) {
+        temp_tab_heatmap[, reads := reads + samp_tab$reads]
       } else {
-        temp.tab.heatmap <- samp.tab
+        temp_tab_heatmap <- samp_tab
       }
-      temp.tab.heatmap$sample <- sampgroup
+      temp_tab_heatmap[, sample := sampgroup]
+      
+      length_temp <- unique(c(length_temp, data[[samp]]$length))
     }
-
-    if (exists("final.tab.heatmap")) {
-      final.tab.heatmap <- rbind(final.tab.heatmap, temp.tab.heatmap)
+    
+    if (exists("final_tab_heatmap")) {
+      final_tab_heatmap <- rbind(final_tab_heatmap, temp_tab_heatmap)
     } else {
-      final.tab.heatmap <- temp.tab.heatmap
+      final_tab_heatmap <- temp_tab_heatmap
     }
-    rm(temp.tab.heatmap)
+    rm(temp_tab_heatmap)
   }
-
-  final.tab.heatmap$reg <- factor(final.tab.heatmap$reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))
-  final.tab.heatmap$sample <- factor(final.tab.heatmap$sample, levels = rev(unique(final.tab.heatmap$sample)))
-
+  
+  if(!identical(length_range, "all")){
+    length_range <- sort(intersect(length_temp, length_range))
+  } else {
+    length_range <- sort(length_temp)
+  }
+  
+  final_tab_heatmap[, reg := factor(reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))
+                    ][, sample := factor(sample, levels = rev(unique(final_tab_heatmap$sample)))]
+  
   linestart <- data.frame(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
   linered <- data.frame(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
-
-  if(length(plot_title) != 0 && plot_title == "auto"){
-    if (identical(length_range, "all")) {
-      plot_title <- paste(ntr, " tr", sep = "")
-    } else {
-      if(min(length_range)==max(length_range)) {
-        plot_title <- paste(ntr, " tr - Read length: ", min(length_range), " nts", sep = "")
-      } else {
-        if(identical(length_range, min(length_range):max(length_range)) | identical(length_range, seq(min(length_range),max(length_range),1))){
-          plot_title <- paste(ntr, " tr - Read lengths: ", min(length_range), "-", max(length_range), " nts",sep = "")
-        } else {
-          plot_title <- paste(ntr, " tr - Read lengths: ", paste(length_range, collapse=","), " nts",sep = "")
-        }
-      }
-    }
-  }
-
-  max <- max(final.tab.heatmap$reads)
-
-  plot <- ggplot(final.tab.heatmap, aes(as.numeric(as.character(distance)), sample)) +
+  
+  max <- max(final_tab_heatmap$reads)
+  
+  plot <- ggplot(final_tab_heatmap, aes(as.numeric(as.character(distance)), sample)) +
     geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60") +
     geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
     geom_tile(aes(fill = reads), height = 0.7) +
@@ -343,7 +398,7 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
     facet_grid(. ~ reg, scales = "free", switch = "x") +
     theme(plot.title = element_text(hjust = 0.5)) +
     theme(strip.background = element_blank())
-
+  
   if (log == F) {
     plot <- plot +
       scale_fill_gradient("P-site signal\n", low = "white", high = colour, limits = c(0.1, max), breaks = c(0.1, max/2, max), labels = c("0", floor(max/2), floor(max)), na.value = "white")
@@ -351,10 +406,47 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
     plot <- plot +
       scale_fill_gradient("P-site signal\n", low = "white", high = colour, limits = c(0.1, max), breaks = c(0.1, 10^(log10(max)/2 - 0.5), floor(max)), labels = c("0", floor(10^(log10(max)/2 - 0.5)), floor(max)), trans = "log", na.value = "transparent")
   }
-
+  
+  if(identical(plot_title, "auto")) {
+    
+    title1 <- paste0(ntr, " tr. Read length: ")
+    minlr <- min(length_range)
+    maxlr <- max(length_range)
+    
+    if(minlr == maxlr) {
+      plottitle <- paste0(title1, min(length_range), " nts")
+    } else {
+      if(identical(length_range, minlr:maxlr) | identical(length_range, seq(minlr, maxlr, 1))){
+        plottitle <- paste0(title1, minlr, "-", maxlr, " nts")
+      } else {
+        nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
+        sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ", ", "-")[-length(nextl)]
+        if(1 %in% which(diff(length_range) == 1)){
+          nextl <- c( length_range[1], nextl)
+          sep <- c("-", sep)
+        }
+        if((length(length_range) - 1) %in% which(diff(length_range) == 1)){
+          nextl <- c(nextl, length_range[length(length_range)])
+          sep <- c(sep, "-")
+        }
+        sep <- c(sep, "")
+        plottitle <- paste0(title1, paste0(nextl, sep, collapse = ""), " nts")
+      }
+    }
+    plot <- plot +
+      labs(title = plottitle) +
+      theme(plot.title = element_text(hjust = 0.5))
+  } else {
+    if(length(plot_title) != 0){
+      plot <- plot +
+        labs(title = plot_title) + 
+        theme(plot.title = element_text(hjust = 0.5))
+    }
+  }
+  
   output <- list()
   output[["plot"]] <- plot
-  output[["dt"]] <- data.table(final.tab.heatmap)
-  output[["transcripts"]] <- c.transcripts
+  output[["dt"]] <- final_tab_heatmap
+  output[["transcripts"]] <- c_transcripts
   return(output)
 }

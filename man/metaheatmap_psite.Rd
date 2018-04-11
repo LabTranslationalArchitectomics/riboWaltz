@@ -21,10 +21,10 @@ The name of the elements of the list are used for labelling the raws of the
 heatmap.}
 
 \item{scale_factors}{A numeric vector of scale factors for merging the
-replicates (if any). The vector must contain at least a set of values, one
-for each replicates, named after the strings listed in \code{sample}. No
-specific order is required. Default is NULL, meaning that all the scale
-factors are set to 1.}
+replicates (if any). The vector must contain at least one value for each
+replicates, named after the strings listed in \code{sample}. No specific
+order is required. Default is NULL, meaning that all the scale factors are
+set to 1.}
 
 \item{length_range}{Either "all", an integer or an integer vector. Default is
 "all", meaning that all the read lengths are included in the analysis.
@@ -56,10 +56,10 @@ FALSE.}
 \item{colour}{A character string specifying the colour of the plot. Default
 is "black".}
 
-\item{plot_title}{Either "auto", NULL or any character string. The default is
-"auto", meaning that the title of the plot is the name of the sample
-followed by the number of the transcripts and the read lengths considered
-for generating the metaprofile.}
+\item{plot_title}{Any character string specifying the title of the plot. When
+"auto", the title of the plot reports the number of the transcripts and the
+length(s) of the reads considered for generating the metaprofile. Default
+is NULL, meaning that no title will be added to the plot.}
 }
 \value{
 A list containing a ggplot2 object, a data table with the associated

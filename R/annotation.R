@@ -38,13 +38,14 @@
 create_annotation <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA) {
   
   if(length(gtfpath) != 0 & length(txdb) != 0){
+    cat("\n")
     warning("gtfpath and txdb are both specified. Only gtfpath will be considered\n")
     txdb = NULL
   }
   
   if(length(gtfpath) == 0 & length(txdb) == 0){
     cat("\n")
-    stop("\nERROR: neither gtfpath nor txdb is specified \n\n")
+    stop("neither gtfpath nor txdb is specified\n\n")
   }
   
   if(length(gtfpath) != 0){

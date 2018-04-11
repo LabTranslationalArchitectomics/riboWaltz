@@ -45,7 +45,7 @@ psite_per_cds <- function(data, annotation, start_nts = 0, stop_nts = 0) {
                              psite_from_stop <= -stop_nts &
                              psite_from_start %% 3 == 0]
     setkey(data[[n]], "transcript")
-    psite_cds[ , (n) := (data[[n]][CJ(levels(transcript)), .N, by = .EACHI]$N)] 
+    psite_cds[, (n) := (data[[n]][CJ(levels(transcript)), .N, by = .EACHI]$N)] 
     
   }
   return(psite_cds)

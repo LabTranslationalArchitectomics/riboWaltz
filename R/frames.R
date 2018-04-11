@@ -18,9 +18,9 @@
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
-#' @param plot_title A character string specifying the title of the plot. When
+#' @param plot_title Any character string specifying the title of the plot. If
 #'   "auto", the title of the plot reports the region specified by \code{region}
-#'   (if any) and the length of the reads used for generating the barplot.
+#'   (if any) and the length(s) of the reads used for generating the barplot.
 #'   Default is NULL, meaning that no title will be added to the plot.
 #' @return A list containing a ggplot2 object and a data table with the
 #'   associated data.
@@ -45,15 +45,35 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
     sample <- names(data)
   }
   
-  if(!region%in%c("all", "cds", "5utr", "3utr")){
-    warning("region is invalid. Set to default \"all\"\n")
-    region="all"
-  }
-  
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-    warning("length_range is invalid. Set to default \"all\"\n")
+    cat("\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n")
     length_range = "all"
   }
+  
+  if(!identical(length_range, "all")){
+    for(samp in sample){
+      len_check <- unique(data[[samp]]$length)
+      if(sum(length_range %in% len_check) == 0) {
+        cat("\n")
+        warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
+        sample <- sample[sample != samp]
+      }
+    }
+  }
+  
+  if(length(sample) == 0){
+    cat("\n")
+    stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
+  }
+  
+  if(!region %in% c("all", "cds", "5utr", "3utr")){
+    cat("\n")
+    warning("region is invalid. Set to default \"all\"\n")
+    region = "all"
+  }
+  
+  length_temp <- vector()
   
   for (samp in sample) {
     
@@ -87,9 +107,13 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
       final_frame_dt <- frame_dt
     }
     
-    if(identical(length_range, "all")){
-      length_range <- sort(unique(data[[samp]]$length))
-    }
+    length_temp <- unique(c(length_temp, data[[samp]]$length))
+  }
+  
+  if(!identical(length_range, "all")){
+    length_range <- sort(intersect(length_range, length_temp))
+  } else {
+    length_range <- sort(length_temp)
   }
   
   plot <- ggplot(final_frame_dt, aes(x = frame, y = percentage)) +
@@ -115,11 +139,14 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
       if(region == "3utr") { plottitle_region <- "Region: 3' UTR. " }
     }
     
-    if(min(length_range) == max(length_range)) {
-      plottitle_range <- paste0("Read length: ", min(length_range), " nts")
+    minlr <- min(length_range)
+    maxlr <- max(length_range)
+    
+    if(minlr == maxlr) {
+      plottitle_range <- paste0("Read length: ", minlr, " nts")
     } else {
-      if(identical(length_range, min(length_range) : max(length_range)) | identical(length_range, seq(min(length_range), max(length_range), 1))){
-        plottitle_range <- paste0("Read lengths: ", min(length_range), " - ", max(length_range), " nts")
+      if(identical(length_range, minlr:maxlr) | identical(length_range, seq(minlr, maxlr, 1))){
+        plottitle_range <- paste0("Read lengths: ", minlr, "-", maxlr, " nts")
       } else {
         nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
         sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ", ", "-")[-length(nextl)]
@@ -173,7 +200,7 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
 #'   "all", meaning that all the read lengths are included in the analysis.
 #'   Otherwise, only the read lengths matching the specified value(s) are kept.
 #'   If specified, this parameter prevails over \code{cl}.
-#' @param plot_title A character string specifying the title of the plot. When
+#' @param plot_title Any character string specifying the title of the plot. When
 #'   "auto", the title of the plot reports the region specified by \code{region}
 #'   (if any). Default is NULL, meaning that no title will be added to the plot.
 #' @return A list containing a ggplot2 object and a data table with the
@@ -194,24 +221,43 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
 #' @import ggplot2
 #' @export
 frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
-                                  length_range = NULL, plot_title = NULL){
+                                  length_range = "all", plot_title = NULL){
+  
   if(length(sample) == 0) {
     sample <- names(data)
   }
   
-  if(!region%in%c("all", "cds", "5utr", "3utr")){
-    warning("region is invalid. Set to default \"all\"\n")
-    region = "all"
+  if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
+    cat("\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n")
+    length_range = "all"
   }
   
-  if(length(length_range) != 0){
-    if(!inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-      length_range = NULL
-      warning("class of length_range is neither numeric nor integer. Default confidence interval will be used\n")
-    } else {
-      minl <- min(length_range)
-      maxl <- max(length_range)
+  if(!identical(length_range, "all")){
+    for(samp in sample){
+      len_check <- unique(data[[samp]]$length)
+      if(sum(length_range %in% len_check) == 0) {
+        cat("\n")
+        warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
+        sample <- sample[sample != samp]
+      }
     }
+  }
+  
+  if(length(sample) == 0){
+    cat("\n")
+    stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
+  }
+  
+  if(!identical(length_range, "all")){
+    minl <- min(length_range)
+    maxl <- max(length_range)
+  }
+
+  if(!region%in%c("all", "cds", "5utr", "3utr")){
+    cat("\n")
+    warning("region is invalid. Set to default \"all\"\n")
+    region = "all"
   }
   
   for (samp in sample) {
@@ -221,7 +267,7 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
       dt <- data[[samp]][start_pos != 0 & stop_pos != 0
                          ][, frame := psite_from_start %% 3]
       
-      if(length(length_range) == 0){
+      if(identical(length_range, "all")){
         minl <- quantile(dt$length, (1 - cl/100) / 2)
         maxl <- quantile(dt$length, 1 - (1 - cl/100) / 2)
       }
@@ -291,7 +337,7 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
     final_frame_dt <- final_frame_dt[order(length, frame, sample)]
   }
   
-  if(identical(plot_title, "auto")){
+  if(identical(plot_title, "auto") & !identical(region, "all")){
     if(region == "5utr") { plottitle <- "Region: 5' UTR" }
     if(region == "cds") { plottitle <- "Region: CDS" }
     if(region == "3utr") { plottitle <- "Region: 3' UTR" }
@@ -299,7 +345,7 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
       labs(title = plottitle) +
       theme(plot.title = element_text(hjust = 0.5))
   } else {
-    if(length(plot_title) != 0){
+    if(length(plot_title) != 0 & !identical(plot_title, "auto")){
     plot <- plot +
       labs(title = plot_title) + 
       theme(plot.title = element_text(hjust = 0.5))

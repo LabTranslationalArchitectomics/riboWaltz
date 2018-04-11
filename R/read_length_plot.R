@@ -29,12 +29,14 @@
 #' @export
 rlength_distr <- function(data, sample, cl = 100) {
   dt <- data[[sample]]
-  dist <- table(factor(dt$length, levels = c(min(dt$length) : max(dt$length))))
-  dist <- data.table(length = names(dist), count = as.vector((dist/sum(dist)) * 100))
   
   xmin <- quantile(dt$length, (1 - cl/100)/2)
   xmax <- quantile(dt$length, 1 - (1 - cl/100)/2)
   
+  setkey(dt, length)
+  dist <- dt[CJ(min(dt$length) : max(dt$length)), list(count = .N), by = length
+             ][, count := (count / sum(count)) * 100]
+
   p <- ggplot(dist, aes(as.numeric(length), count)) +
     geom_bar(stat = "identity", fill = "gray80") +
     labs(title = sample, x = "Read length", y = "Count (%)") +

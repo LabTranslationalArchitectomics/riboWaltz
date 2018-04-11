@@ -23,9 +23,9 @@ meaning that the all the regions are considered.}
 "all", meaning that all the read lengths are included in the analysis.
 Otherwise, only the read lengths matching the specified value(s) are kept.}
 
-\item{plot_title}{A character string specifying the title of the plot. When
+\item{plot_title}{Any character string specifying the title of the plot. If
 "auto", the title of the plot reports the region specified by \code{region}
-(if any) and the length of the reads used for generating the barplot.
+(if any) and the length(s) of the reads used for generating the barplot.
 Default is NULL, meaning that no title will be added to the plot.}
 }
 \value{

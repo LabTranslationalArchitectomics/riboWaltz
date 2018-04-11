@@ -83,7 +83,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
                 ][percentage == 0, around_site := "F"]
     offset_temp5 <- site_sub[, list(offset_from_5 = as.numeric(names(which.max(table(site_dist_end5))))), by = length]
     offset_temp3 <- site_sub[, list(offset_from_3 = as.numeric(names(which.max(table(site_dist_end3))))), by = length]
-    merge_allx <- function(x, y) merge(x, y, all.x=TRUE)
+    merge_allx <- function(x, y) merge(x, y, all.x = TRUE, by = "length")
     offset_temp  <-  Reduce(merge_allx, list(offset_temp, offset_temp5, offset_temp3))
     
     # adjusted offset
@@ -111,7 +111,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
       line_plot <- "from3"
       cat(sprintf("best offset: %i nts from the 3' end\n", best_offset))
       adj_tab <- site_sub[, list(adj_offset_from_3 = adj_off(.SD, "site_dist_end3", 0, best_offset)), by = length]
-      offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE)
+      offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE, by = "length")
       offset_temp[is.na(adj_offset_from_3), adj_offset_from_3 := best_offset
                   ][, adj_offset_from_5 := -adj_offset_from_3 + length - 1]
     } else {
@@ -125,7 +125,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
         line_plot <- "from5"
         cat(sprintf("best offset: %i nts from the 5' end\n", -best_offset))
         adj_tab <- site_sub[, list(adj_offset_from_5 = adj_off(.SD, "site_dist_end5", 1, best_offset)), by = length]
-        offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE)
+        offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE, by = "length")
         offset_temp[is.na(adj_offset_from_5), adj_offset_from_5 := best_offset
                     ][, adj_offset_from_5 := abs(best_offset)
                       ][, adj_offset_from_3 := abs(adj_offset_from_5 - length + 1)]
@@ -311,15 +311,17 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
       length(bsgenome) != 0) &
      length(gtfpath) == 0 & length(txdb) == 0){
     cat("\n")
-    stop("\n genome annotation file not specified (both GTF path and TxDb object are missing) \n\n")
+    stop("genome annotation file not specified (both GTF path and TxDb object are missing)\n\n")
   }
   
   if(length(fastapath) != 0 & length(bsgenome) != 0){
+    cat("\n")
     warning("both fastapath and bsgenome are specified. Only fastapath will be considered\n")
     bsgenome = NULL
   }
   
   if(length(gtfpath) != 0 & length(txdb) != 0){
+    cat("\n")
     warning("both gtfpath and txdb are specified. Only gtfpath will be considered\n")
     txdb = NULL
   }
@@ -327,6 +329,7 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
   if((length(gtfpath) != 0 | length(txdb) != 0) &
      ((length(fastapath) == 0 & length(bsgenome) == 0) |
       (length(fastapath) != 0 & (fasta_genome == FALSE | fasta_genome == F)))){
+    cat("\n")
     warning("a genome annotation file is specified but no sequences from genome assembly are provided\n")
   }
   
@@ -397,6 +400,8 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
                                                           start = dt$psite,
                                                           end = dt$psite + 2))]
     }
+    
+    dt <- dt[order(transcript)]
     
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
