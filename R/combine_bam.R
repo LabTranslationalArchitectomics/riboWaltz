@@ -48,9 +48,9 @@
 #'   \code{\link{rlength_distr}}) is returned instead.
 #' @return A list of data tables or a GRangesList object.
 #' @examples
-#' path_bam <- "location_of_BAM_files"
-#' annotation_dt <- datatable_with_transcript_annotation
-#' bamtolist(bamfolder = path_bam, annotation = annotation_dt)
+#' ## path_bam <- "location_of_BAM_files"
+#' ## annotation_dt <- datatable_with_transcript_annotation
+#' ## bamtolist(bamfolder = path_bam, annotation = annotation_dt)
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
@@ -174,9 +174,9 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
 #'   argument is NULL, which implies the folder is set as a subdirectory of
 #'   \code{bamfolder}, called \emph{bed}.
 #' @examples
-#' path_bam <- "location_of_BAM_files"
-#' path_bed <- "location_of_output_directory"
-#' bamtobed(bamfolder = path_bam, bedfolder = path_bed)
+#' ## path_bam <- "location_of_BAM_files"
+#' ## path_bed <- "location_of_output_directory"
+#' ## bamtobed(bamfolder = path_bam, bedfolder = path_bed)
 #' @export
 bamtobed <- function(bamfolder, bedfolder = NULL) {
   if (length(bedfolder) == 0) {
@@ -238,9 +238,9 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #'   \code{\link{rlength_distr}}) is returned instead.
 #' @return A list of data tables or a GRangesList object.
 #' @examples
-#' path_bed <- "location_of_BED_files"
-#' annotation_dt <- datatable_with_transcript_annotation
-#' bedtolist(bedfolder = path_bed, annotation = annotation_dt)
+#' ## path_bed <- "location_of_BED_files"
+#' ## annotation_dt <- datatable_with_transcript_annotation
+#' ## bedtolist(bedfolder = path_bed, annotation = annotation_dt)
 #' @import data.table
 #' @export
 bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,

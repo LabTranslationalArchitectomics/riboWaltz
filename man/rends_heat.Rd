@@ -63,11 +63,9 @@ data(mm81cdna)
 
 ## Visualise the metaheatmaps for all the read lengths
 heatend_whole <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 100)
-heatend_whole[["plot"]]
 
 ## Visualise the metaheatmaps for a sub-range of read lengths (the middle
-95\%) reducing the flanking regions around the start and the stop codon
+## 95\%) reducing the flanking regions around the start and the stop codon
 heatend_sub95 <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 95,
 utr5l = 30, cdsl = 40, utr3l = 30)
-heatend_sub95[["plot"]]
 }

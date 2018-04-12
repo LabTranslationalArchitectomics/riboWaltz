@@ -79,26 +79,23 @@ data(reads_psite_list)
 
 ## Generate the metaheatmap for all the read lengths
 metaheat_whole <- metaheatmap_psite(reads_psite_list, mm81cdna, sample = list("Whole"=c("Samp1")))
-metaheat_whole[["plot"]]
 
 ## Generate the metaheatmap employing reads of 27, 28 and 29 nucleotides and
-a subset of transcripts (for example with at least one P-site mapping on the
-translation initiation site)
+## a subset of transcripts (for example with at least one P-site mapping on the
+## translation initiation site)
 sample_name <- "Samp1"
 sub_reads_psite_list <- subset(reads_psite_list[[sample_name]], psite_from_start == 0)
 transcript_names <- as.character(sub_reads_psite_list$transcript)
 metaheat_sub <- metaheatmap_psite(reads_psite_list, mm81cdna, sample = list("sub"=sample_name),
 length_range = 27:29, transcripts = transcript_names, plot_title = "auto")
-metaheat_sub[["plot"]]
 
 ## Generate two metaheatmaps displaied in the same plot. In this exampe one
-data table includes all the read lengths while in the other one contains only
-reads of 28 nucleotides
+## data table includes all the read lengths while in the other one contains only
+## reads of 28 nucleotides
 sample_name <- "Samp1"
 metaheat_df <- list()
 metaheat_df[["subsample_28nt"]] <- subset(reads_psite_list[[sample_name]], length == 28)
 metaheat_df[["whole_sample"]] <- reads_psite_list[[sample_name]]
 names_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
 metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = names_list)
-metaheat_comparison[["plot"]]
 }

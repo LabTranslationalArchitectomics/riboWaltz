@@ -29,13 +29,11 @@
 #'
 #' ## Generate the barplot for all the read lengths
 #' frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
-#' frame_whole[["plot"]]
 #'
 #' ## Generate the barplot restricting the analysis to the coding sequence and
-#' to the reads of 28 nucleotides
+#' ## to the reads of 28 nucleotides
 #' frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 #' length_range = 28)
-#' frame_sub[["plot"]]
 #' @import data.table
 #' @import ggplot2
 #' @export
@@ -194,7 +192,7 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
 #'   respectively) that must be included in the analysis. Default is "all",
 #'   meaning that the all the regions are considered.
 #' @param cl An integer value in \emph{[1,100]} specifying the confidence level
-#'   for restricting the analysis to a sub-range of read lengths. Default is 95.
+#'   for restricting the analysis to a sub-range of read lengths. Default is 100.
 #'   This parameter has no effect if \code{length_range} is specified.
 #' @param length_range Either "all", an integer or an integer vector. Default is
 #'   "all", meaning that all the read lengths are included in the analysis.
@@ -210,17 +208,15 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
 #'
 #' ## Generate the heatmap for all the read lengths
 #' frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
-#' frame_len_whole[["plot"]]
 #'
 #' ## Generate the heatmap for a sub-range of read lengths (the middle 90%) and
-#' restricting the analysis to the coding sequence
+#' ## restricting the analysis to the coding sequence
 #' frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 #' region = "cds", cl = 90)
-#' frame_len_sub[["plot"]]
 #' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
+frame_psite_length <- function(data, sample = NULL, region = "all", cl = 100,
                                   length_range = "all", plot_title = NULL){
   
   if(length(sample) == 0) {
@@ -290,7 +286,7 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 95,
                          ][, frame := psite_from_start %% 3
                            ]
       
-      if(length(length_range) == 0){
+      if(identical(length_range, "all")){
         minl <- quantile(dt$length, (1 - cl/100) / 2)
         maxl <- quantile(dt$length, 1 - (1 - cl/100) / 2)
       }

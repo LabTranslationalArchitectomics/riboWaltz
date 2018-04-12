@@ -30,9 +30,9 @@
 #'   the \code{GenomicFeatures} package.
 #' @return A data table.
 #' @examples
-#' gtf_file <- location_of_GTF_file
-#' path_bed <- location_of_output_directory
-#' bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
+#' ## gtf_file <- location_of_GTF_file
+#' ## path_bed <- location_of_output_directory
+#' ## bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
 #' @import data.table
 #' @export
 create_annotation <-  function(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA) {

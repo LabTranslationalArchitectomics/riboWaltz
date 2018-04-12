@@ -29,6 +29,16 @@
 #'   \emph{3'UTR} and transcripts with coding sequence length not divisible by 3
 #'   are automatically discarded.
 #' @return A data table or a GRanges object.
+#' @examples
+#' data(reads_psite_list)
+#' data(mm81cdna)
+#'
+#' ## Compute the coverage based on the number of ribosome footprint per codon,
+#' ## setting the minimum overlap between reads and triplets to 3 nts
+#' ## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, min_overlap = 3)
+#'
+#' ## Compute the coverage based on the number of P-sites per codon
+#' ##coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, psite = TRUE)
 #' @import data.table
 #' @export
 codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,
@@ -69,7 +79,7 @@ codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,
   
   gr_interval <- GenomicRanges::GRanges(seqnames = bin_coverage_tab$transcript,
                                         IRanges(bin_coverage_tab$start + 1,  width = bin),
-                                        strand="+")
+                                        strand = "+")
   
   cat("2. acquiring region information\n")
   bin_coverage_tab[, region := "5utr"

@@ -45,11 +45,9 @@ data(reads_psite_list)
 
 ## Generate the barplot for all the read lengths
 frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
-frame_whole[["plot"]]
 
 ## Generate the barplot restricting the analysis to the coding sequence and
-to the reads of 28 nucleotides
+## to the reads of 28 nucleotides
 frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 length_range = 28)
-frame_sub[["plot"]]
 }

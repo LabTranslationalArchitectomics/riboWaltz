@@ -66,7 +66,7 @@ stop codon are set to 0. Multiple options for treating the read lengths are
 available.
 }
 \examples{
-path_bed <- "location_of_BED_files"
-annotation_dt <- datatable_with_transcript_annotation
-bedtolist(bedfolder = path_bed, annotation = annotation_dt)
+## path_bed <- "location_of_BED_files"
+## annotation_dt <- datatable_with_transcript_annotation
+## bedtolist(bedfolder = path_bed, annotation = annotation_dt)
 }

@@ -4,7 +4,7 @@
 \alias{frame_psite_length}
 \title{Compute the number of P-sites per frame stratified by read length.}
 \usage{
-frame_psite_length(data, sample = NULL, region = "all", cl = 95,
+frame_psite_length(data, sample = NULL, region = "all", cl = 100,
   length_range = "all", plot_title = NULL)
 }
 \arguments{
@@ -20,7 +20,7 @@ respectively) that must be included in the analysis. Default is "all",
 meaning that the all the regions are considered.}
 
 \item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
-for restricting the analysis to a sub-range of read lengths. Default is 95.
+for restricting the analysis to a sub-range of read lengths. Default is 100.
 This parameter has no effect if \code{length_range} is specified.}
 
 \item{length_range}{Either "all", an integer or an integer vector. Default is
@@ -45,11 +45,9 @@ data(reads_psite_list)
 
 ## Generate the heatmap for all the read lengths
 frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
-frame_len_whole[["plot"]]
 
 ## Generate the heatmap for a sub-range of read lengths (the middle 90\%) and
-restricting the analysis to the coding sequence
+## restricting the analysis to the coding sequence
 frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 region = "cds", cl = 90)
-frame_len_sub[["plot"]]
 }

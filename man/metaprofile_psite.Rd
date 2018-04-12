@@ -73,12 +73,11 @@ metaprof_whole <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1"
 metaprof_whole[["plot"]]
 
 ## Generate the metaprofile employing reads of 27, 28 and 29 nucleotides and
-a subset of transcripts (for example with at least one P-site mapping on
-the translation initiation site)
+## a subset of transcripts (for example with at least one P-site mapping on
+## the translation initiation site)
 sample_name <- "Samp1"
 sub_reads_psite_list <- subset(reads_psite_list[[sample_name]], psite_from_start == 0)
 transcript_names <- as.character(sub_reads_psite_list$transcript)
 metaprof_sub <- metaprofile_psite(reads_psite_list, mm81cdna, sample = sample_name,
 length_range = 27:29, transcripts = transcript_names)
-metaprof_sub[["plot"]]
 }

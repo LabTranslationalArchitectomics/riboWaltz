@@ -33,8 +33,7 @@ data(reads_list)
 lendist_whole <- rlength_distr(reads_list, sample = "Samp1", cl = 100)
 lendist_whole[["plot"]]
 
-## Visualise the metaheatmaps for a sub-range of read lengths (the middle
-95\%)
+## Visualise the metaheatmaps for a sub-range of read lengths (the middle 95\%)
 lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
 lendist_sub95[["plot"]]
 }

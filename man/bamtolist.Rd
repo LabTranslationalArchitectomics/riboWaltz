@@ -68,7 +68,7 @@ CDS then its start and the stop codon are set to 0. Multiple options for
 treating the read lengths are available.
 }
 \examples{
-path_bam <- "location_of_BAM_files"
-annotation_dt <- datatable_with_transcript_annotation
-bamtolist(bamfolder = path_bam, annotation = annotation_dt)
+## path_bam <- "location_of_BAM_files"
+## annotation_dt <- datatable_with_transcript_annotation
+## bamtolist(bamfolder = path_bam, annotation = annotation_dt)
 }

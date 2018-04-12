@@ -43,14 +43,13 @@
 #' data(reads_list)
 #'
 #' ## Compute the P-site offset automatically selecting the otimal read
-#' extremity for the correction step and not plotting any metaprofile
+#' ## extremity for the correction step and not plotting any metaprofile
 #' psite(reads_list, flanking = 6, extremity="auto")
 #'
 #' ## Compute the P-site offset specifying the extremity used in the correction
-#' step and plotting the metaprofiles only for a sub-range of read lengths (the
-#' middle 95%). The plots will be placed in the current working directory.
+#' ## step and plotting the metaprofiles only for a sub-range of read lengths (the
+#' ## middle 95%). The plots will be placed in the current working directory.
 #' psite_offset <- psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
-#' psite_offset
 #' @import data.table
 #' @import ggplot2
 #' @export
@@ -401,7 +400,7 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
                                                           end = dt$psite + 2))]
     }
     
-    dt <- dt[order(transcript)]
+    dt <- dt[order(transcript, end5)]
     
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,

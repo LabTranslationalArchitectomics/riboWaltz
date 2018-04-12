@@ -46,7 +46,7 @@ sequences and four columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and
 \emph{5' UTR}, \emph{CDS} and \emph{3' UTR}, respectively.
 }
 \examples{
-gtf_file <- location_of_GTF_file
-path_bed <- location_of_output_directory
-bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
+## gtf_file <- location_of_GTF_file
+## path_bed <- location_of_output_directory
+## bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
 }

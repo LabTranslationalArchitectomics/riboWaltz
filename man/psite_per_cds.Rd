@@ -41,6 +41,6 @@ data(mm81cdna)
 psite_cds <- psite_per_cds(reads_psite_list, mm81cdna)
 
 ## Compute the number of P-sites in frame on the coding sequence exluding
-the first 15 nucleotides and the last 10 nucleotides.
+## the first 15 nucleotides and the last 10 nucleotides.
 psite_cds <- psite_per_cds(reads_psite_list, mm81cdna, start_nts = 15, stop_nts = 10)
 }
