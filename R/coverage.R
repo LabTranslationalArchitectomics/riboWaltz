@@ -100,11 +100,11 @@ codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,
 
     if(psite == T || psite == TRUE){
       gr_read <- GenomicRanges::GRanges(seqnames = dt$transcript,
-                                        IRanges(dt$psite, dt$psite),
+                                        IRanges::IRanges(dt$psite, dt$psite),
                                         strand="+")
     } else {
       gr_read <- GenomicRanges::GRanges(seqnames = dt$transcript,
-                                        IRanges(dt$end5, dt$end3),
+                                        IRanges::IRanges(dt$end5, dt$end3),
                                         strand="+")
     }
     
