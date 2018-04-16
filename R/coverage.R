@@ -78,7 +78,7 @@ codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,
                                                  ]
   
   gr_interval <- GenomicRanges::GRanges(seqnames = bin_coverage_tab$transcript,
-                                        IRanges(bin_coverage_tab$start + 1,  width = bin),
+                                        IRanges::IRanges(bin_coverage_tab$start + 1,  width = bin),
                                         strand = "+")
   
   cat("2. acquiring region information\n")

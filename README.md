@@ -25,6 +25,7 @@ __riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
 
 * Biostrings (>= 2.46.0)
 * data.table (>= 1.10.4.3)
+* GenomicAlignments (>= 1.14.1)
 * GenomicFeatures (>= 1.24.5)
 * GenomicRanges (>= 1.24.3)
 * ggplot2 (>= 2.2.1)
