@@ -33,11 +33,7 @@ Imports:
 	GenomicRanges (>= 1.24.3),
 	ggplot2 (>= 2.2.1),
 	ggrepel (>= 0.6.5)
-Remotes:
-	bioc::3.6/Biostrings,
-	bioc::3.6/GenomicAlignments,
-	bioc::3.6/GenomicFeatures,
-	bioc::3.6/GenomicRanges
+biocViews:
 RoxygenNote: 6.0.1
 Suggests:
     knitr,
