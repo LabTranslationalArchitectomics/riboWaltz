@@ -30,7 +30,8 @@ Imports:
 	GenomicFeatures (>= 1.24.5),
     GenomicRanges (>= 1.24.3),
     ggplot2 (>= 2.2.1),
-    ggrepel (>= 0.6.5),
+    ggrepel (>= 0.6.5)
+biocViews:
 Depends:
     R (>= 3.3.0)
 RoxygenNote: 6.0.1

@@ -49,9 +49,13 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 
 ------------------------------------------------------------------------
 
-## Usage
+## Help
 
-The following paragraphs explain how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameters within the functions please refer to their documenation by running  *?name_function* in the R console.
+ The following paragraph explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running *help(package = riboWaltz)* or *?function_name* in the R console. A complete reference manual can be found [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).   
+
+------------------------------------------------------------------------
+
+## Usage
 
 ### Acquiring input files
 
@@ -180,7 +184,7 @@ The following paragraphs explain how to make use of riboWalz by introducing all 
   |  ENSMUST00000000001.4  |  102  |  105  |  -13  |  -367  |  5utr  |  2  |
   |  ENSMUST00000000001.4  |  105  |  108  |  -12  |  -366  |  5utr  |  2  |
   
- ### P-sites per transcript region
+### P-sites per region
 
   The dataset containing the position of the identified P-sites and the associated information can also be used to compute the percentage of P-sites falling in the three annotated regions of the transcripts (5' UTR, CDS and 3'UTR) expoiting the `region_psite` function that generates a barplot of the resulting values. Moreover, the function calculates and plots the percentage of region length (reported in column "RNAs"). 
 
