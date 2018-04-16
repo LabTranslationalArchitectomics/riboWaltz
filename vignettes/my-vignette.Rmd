@@ -75,7 +75,9 @@ library(riboWaltz)
 
 ## Help
 
- The following paragraph explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running *help(package = riboWaltz)* or *?function_name* in the R console. A complete reference manual can be found at https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf
+ The following paragraph explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running *help(package = riboWaltz)* or *?function_name* in the R console. A complete reference manual can be found at:
+ 
+ https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf.
  
  
 ## Usage

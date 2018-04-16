@@ -23,17 +23,17 @@ Description: riboWaltz is an R package designed for the analysis of
     discoveries.
 License: MIT
 LazyData: TRUE
-Imports:
-	Biostrings (>= 2.46.0),
-	data.table (>= 1.10.4.3),
-	GenomicAlignments (>= 1.14.1),
-	GenomicFeatures (>= 1.24.5),
-    GenomicRanges (>= 1.24.3),
-    ggplot2 (>= 2.2.1),
-    ggrepel (>= 0.6.5)
-biocViews:
 Depends:
     R (>= 3.3.0)
+Imports:
+	data.table (>= 1.10.4.3),
+    ggplot2 (>= 2.2.1),
+    ggrepel (>= 0.6.5)
+Remotes:
+	bioc::3.6/Biostrings,
+	bioc::3.6/GenomicAlignments,
+	bioc::3.6/GenomicFeatures,
+	bioc::3.6/GenomicRanges
 RoxygenNote: 6.0.1
 Suggests:
     knitr,
