@@ -26,13 +26,13 @@ LazyData: TRUE
 Depends:
     R (>= 3.3.0)
 Imports:
-	Biostrings (>= 2.46),
-	data.table (>= 1.10.4),
-	GenomicAlignments (>= 1.14),
-	GenomicFeatures (>= 1.24),
-	GenomicRanges (>= 1.24),
-	ggplot2 (>= 2.2),
-	ggrepel (>= 0.6)
+	Biostrings (>= 2.46.0),
+	data.table (>= 1.10.4.3),
+	GenomicAlignments (>= 1.14.1),
+	GenomicFeatures (>= 1.24.5),
+	GenomicRanges (>= 1.24.3),
+	ggplot2 (>= 2.2.1),
+	ggrepel (>= 0.6.5)
 biocViews:
 RoxygenNote: 6.0.1
 Suggests:
