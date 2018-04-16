@@ -5,6 +5,12 @@ cache: packages
 r:
 - 3.3
 
+bioc_packages:
+  - Biostrings
+  - GenomicAlignments
+  - GenomicFeatures
+  - GenomicRanges
+
 notifications:
   email:
     on_success: never
