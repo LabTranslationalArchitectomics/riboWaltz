@@ -5,10 +5,7 @@ cache: packages
 r:
 - 3.3
 
-install:
-- ./travis-tool.sh install_deps
-- ./travis-tool.sh install_bioc_deps
-
-env:
-  global:
-    - BIOC_USE_DEVEL="FALSE"
+notifications:
+  email:
+    on_success: never
+    on_failure: never
