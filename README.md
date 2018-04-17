@@ -30,6 +30,7 @@ __riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
 * GenomicRanges (>= 1.24.3)
 * ggplot2 (>= 2.2.1)
 * ggrepel (>= 0.6.5)
+* IRanges (>= 2.12.0)
 
 ------------------------------------------------------------------------
 

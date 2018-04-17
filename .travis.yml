@@ -3,9 +3,7 @@ sudo: false
 cache: packages
 
 r:
-- 3.3.0
-
-bioc_required: true
+bioc-release
 
 r-packages:
   - data.table
@@ -16,6 +14,7 @@ bioc_packages:
   - GenomicAlignments
   - GenomicFeatures
   - GenomicRanges
+  - IRanges
 
 notifications:
   email:
