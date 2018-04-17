@@ -2,8 +2,7 @@ language: R
 sudo: false
 cache: packages
 
-r:
-bioc-release
+r: bioc-release
 
 r-packages:
   - data.table
@@ -20,3 +19,5 @@ notifications:
   email:
     on_success: never
     on_failure: never
+    
+warnings_are_errors: false
