@@ -257,7 +257,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #'   biocLite.R script (check the list of data packages available in the
 #'   Bioconductor repositories for your version of R/Bioconductor by the
 #'   \code{\link[BSgenome]{available.genomes}} function of the BSgenome
-#'   package)). This parameter also requires an annotation object (see
+#'   package). This parameter also requires an annotation object (see
 #'   \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 #'   the specified BSgenome data pakage are in agreement with the sequences used
 #'   in the alignment step. Note: either \code{fastapath} or \code{bsgenome}

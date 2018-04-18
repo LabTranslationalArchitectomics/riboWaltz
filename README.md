@@ -47,7 +47,7 @@ Otherwise, load _devtools_ and install __riboWaltz__ typing
   
 Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
-    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes=TRUE)
+    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes = TRUE)
 
 ------------------------------------------------------------------------
 

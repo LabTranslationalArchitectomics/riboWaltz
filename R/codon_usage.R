@@ -37,7 +37,7 @@
 #'   biocLite.R script (check the list of data packages available in the
 #'   Bioconductor repositories for your version of R/Bioconductor by the
 #'   \code{\link[BSgenome]{available.genomes}} function of the BSgenome
-#'   package)). This parameter also requires an annotation object (see
+#'   package). This parameter also requires an annotation object (see
 #'   \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 #'   the specified BSgenome data pakage are in agreement with the sequences used
 #'   in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
@@ -103,7 +103,7 @@ codon_usage_psite <- function(data, annotation, sample, fastapath = NULL, fasta_
                               bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
                               dataSource = NA, organism = NA,
                               transcripts = NULL, codon_values = NULL,
-                              scatter_label = F, aminoacid = F) {
+                              scatter_label = FALSE, aminoacid = FALSE) {
   
   if(length(codon_values) != 0){
     rownames(codon_values) <- as.character(codon_values$codon)

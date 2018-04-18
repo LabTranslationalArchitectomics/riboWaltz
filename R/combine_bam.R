@@ -270,7 +270,7 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     i <- i + 1
     cat(sprintf("reading %s\n", n))
     sampname <- list_name[i]
-    filename <- paste(bamfolder, n, sep = "/")
+    filename <- paste(bedfolder, n, sep = "/")
     dt <- fread(filename, sep="\t", header = FALSE)
     names(dt) <- c("transcript", "end5", "end3", "length", "strand")
 
