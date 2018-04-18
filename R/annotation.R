@@ -6,6 +6,7 @@
 #' sequences and four columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and
 #' \emph{l_utr3} reporting the length of the transcripts and of their annotated
 #' \emph{5' UTR}, \emph{CDS} and \emph{3' UTR}, respectively.
+#' 
 #' @param gtfpath A character string specifying the path to te GTF file,
 #'   including its name and extension. Please make sure the GTF derives from the
 #'   same release of the sequences used in the alignment step. Note that either
