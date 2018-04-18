@@ -23,14 +23,18 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
 
 __riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
 
-* Biostrings (>= 2.46.0)
-* data.table (>= 1.10.4.3)
-* GenomicAlignments (>= 1.14.1)
-* GenomicFeatures (>= 1.24.5)
-* GenomicRanges (>= 1.24.3)
-* ggplot2 (>= 2.2.1)
-* ggrepel (>= 0.6.5)
-* IRanges (>= 2.12.0)
+* CRAN
+    + data.table (>= 1.10.4.3)
+    + ggplot2 (>= 2.2.1)
+    + ggrepel (>= 0.6.5)
+* Bioconductor
+    + Biostrings (>= 2.46.0)
+    + GenomicAlignments (>= 1.14.1)
+    + GenomicFeatures (>= 1.24.5)
+    + GenomicRanges (>= 1.24.3)
+    + IRanges (>= 2.12.0)
+
+All the dependencies are automatically installed running the code in the next section.
 
 ------------------------------------------------------------------------
 
@@ -51,9 +55,27 @@ Please note: to install __riboWaltz__ generating the vignette replace the last c
 
 ------------------------------------------------------------------------
 
+## Loading
+
+To load __riboWaltz__ type
+
+	library(riboWaltz)
+	
+------------------------------------------------------------------------
+
 ## Help
 
- The following paragraph explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running *help(package = riboWaltz)* or *?function_name* in the R console. A complete reference manual can be found [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).   
+The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running
+ 
+	?function_name
+
+or
+
+	help(package = riboWaltz)
+ 
+in the R console.
+ 
+A complete reference manual can be found [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).   
 
 ------------------------------------------------------------------------
 

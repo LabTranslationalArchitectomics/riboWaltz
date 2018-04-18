@@ -22,25 +22,27 @@ text-align: justify}
 
 ## Description
 
-Ribosome profiling is a powerful technique used to study translation at the genome-wide level, generating unique information concerning ribosome positions along RNAs. Optimal localization of ribosomes requires the proper identification of the ribosome P-site in each ribosome protected fragment, a crucial step to determine trinucleotide periodicity of translating ribosomes and draw correct conclusions concerning where ribosomes are located. To determine the P-site within ribosome footprints at nucleotide resolution, the precise estimation of its offset with respect to the protected fragment is necessary.
+  Ribosome profiling is a powerful technique used to study translation at the genome-wide level, generating unique information concerning ribosome positions along RNAs. Optimal localization of ribosomes requires the proper identification of the ribosome P-site in each ribosome protected fragment, a crucial step to determine trinucleotide periodicity of translating ribosomes and draw correct conclusions concerning where ribosomes are located. To determine the P-site within ribosome footprints at nucleotide resolution, the precise estimation of its offset with respect to the protected fragment is necessary.
 
-__riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data. Taking advantage of a two-step algorithm where offset information is passed through populations of reads with different length in order to maximize offset coherence, __riboWaltz__ computes with high precision the P-site offset. __riboWaltz__ also provides a variety of graphical representations, laying the foundations for further accurate RiboSeq analyses and improved interpretation of positional information.
-
+  __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data. Taking advantage of a two-step algorithm where offset information is passed through populations of reads with different length in order to maximize offset coherence, __riboWaltz__ computes with high precision the P-site offset. __riboWaltz__ also provides a variety of graphical representations, laying the foundations for further accurate RiboSeq analyses and improved interpretation of positional information.
 
 
 ## Dependencies
 
-__riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
+  __riboWaltz__ requires R version >= 3.3.0 and the following packages to work:
 
-* Biostrings (>= 2.46.0)
-* data.table (>= 1.10.4.3)
-* GenomicAlignments (>= 1.14.1)
-* GenomicFeatures (>= 1.24.5)
-* GenomicRanges (>= 1.24.3)
-* ggplot2 (>= 2.2.1)
-* ggrepel (>= 0.6.5)
-* IRanges (>= 2.12.0)
+* CRAN
+    + data.table (>= 1.10.4.3)
+    + ggplot2 (>= 2.2.1)
+    + ggrepel (>= 0.6.5)
+* Bioconductor
+    + Biostrings (>= 2.46.0)
+    + GenomicAlignments (>= 1.14.1)
+    + GenomicFeatures (>= 1.24.5)
+    + GenomicRanges (>= 1.24.3)
+    + IRanges (>= 2.12.0)
 
+  All the dependencies are automatically installed running the code in the next section.
 
 
 ## Installation
@@ -76,11 +78,24 @@ library(riboWaltz)
 
 ## Help
 
- The following paragraph explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running *help(package = riboWaltz)* or *?function_name* in the R console. A complete reference manual can be found at:
- 
- https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf.
- 
- 
+  The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running
+
+```{r, eval = FALSE}
+?function_name
+```
+
+  or
+
+```{r, eval = FALSE}
+help(package = riboWaltz)
+```
+
+  in the R console.
+  
+  
+  A complete reference manual can be found [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).
+
+
 ## Usage
 
 ### Acquiring input files
