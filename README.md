@@ -63,7 +63,7 @@ To load __riboWaltz__ type
 	
 ------------------------------------------------------------------------
 
-## Help
+## Getting help
 
 The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running
  
@@ -108,7 +108,25 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 
 #### Selection of read lengths
 
-  Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths included in both `bamtolist` and `bedtolist` (for additional details please referes to their documentation running ?bamtolist or ?bedtolist): i) all read lengths are included in the analysis (all-inclusive mode) ii) only read lengths specified by the user are included (manual mode); iii) only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
+  Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths specified by the parameter *filter* included in both `bamtolist` (used in the examples below) and `bedtolist`:
+  
+1. all read lengths are included in the analysis (all-inclusive mode, default)
+    
+			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file, 
+									filter = "none")
+
+2. only read lengths specified by the user are included (manual mode)
+
+			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+									filter = "custom", custom_range = 27:30)
+ 
+
+3. only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
+
+			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+									filter = "periodicity", periodicity_th = 50)
+
+For additional details please referes to the documentation provided by ?bamtolist or ?bedtolist.
 	
 ### Annotation data table
   
@@ -215,7 +233,7 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 	example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
 	example_psite_region[["plot"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region.png" width="350" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region.png" width="300" />
 </p>
 
 ### In-frame P-sites
