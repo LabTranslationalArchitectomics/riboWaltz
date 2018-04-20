@@ -112,18 +112,18 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
   
 1. all read lengths are included in the analysis (all-inclusive mode, default)
     
-			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file, 
+		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file, 
 									length_filter_mode = "none")
 
 2. only read lengths specified by the user are included (manual mode)
 
-			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
 									length_filter_mode = "custom", length_filter_vector = 27:30)
  
 
 3. only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
 
-			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
 									length_filter_mode = "periodicity", periodicity_threshold = 50)
 
 For additional details please referes to the documentation provided by ?bamtolist or ?bedtolist.
