@@ -113,17 +113,17 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 1. all read lengths are included in the analysis (all-inclusive mode, default)
     
 		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-								length_filter_mode = "none")
+		                        length_filter_mode = "none")
 
 2. only read lengths specified by the user are included (manual mode)
 
 		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-								length_filter_mode = "custom", length_filter_vector = 27:30)
+		                        length_filter_mode = "custom", length_filter_vector = 27:30)
 
 3. only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
 
 		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-								length_filter_mode = "periodicity", periodicity_threshold = 50)
+		                        length_filter_mode = "periodicity", periodicity_threshold = 50)
 
 For additional details please referes to the documentation provided by ?bamtolist or ?bedtolist.
 	
@@ -276,8 +276,8 @@ For additional details please referes to the documentation provided by ?bamtolis
   The `metaprofile_psite` function generates metaprofiles (sum of single, transcript-specific profiles) based on the P-sites previously identified. This plots are useful to verify the so-called 3-nt periodicity of ribosomes along transcripts at genome-wide scale. The contribution from many replicates can be combined in a single plot, taking into account possible scale factors coming from any normalization of the data chosen by the user. It is possible to use the whole transcriptome (as in the example below), restrict the analysis to a subset of transcripts and even look at single RNAs.
 
     example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-											 utr5l = 20, cdsl = 40, utr3l = 20,
-											 plot_title = "auto")
+	                                     utr5l = 20, cdsl = 40, utr3l = 20,
+	                                     plot_title = "auto")
     example_metaprofile[["plot"]]
 ![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile.png)
 
@@ -331,7 +331,7 @@ For additional details please referes to the documentation provided by ?bamtolis
   If such a data table is provided, `codon_usage_psite` returns a second graphical output: a scatter plot where each codon is represented by a dot. The following image shows the comparison between the empirical codon usage reported in the previous figure and the codon usage bias in mouse contained in the data table *cub_mouse* (as for the fasta file, cub_mouse is not included among the example data of the package):
   
 	codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-						   fastapath = path_to_fasta, codon_usage = cub_mouse)
+	                                         fastapath = path_to_fasta, codon_usage = cub_mouse)
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_scatter.png" width="300" />
 </p>
