@@ -98,7 +98,7 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
   |  ENSMUST00000000001.4  |  140  |  167  |  28  |  142  |  1206  |
   |  ENSMUST00000000001.4  |  142  |  170  |  29  |  142  |  1206  |
   
-  Alternatively, the BAM file can be first converted into BED files and then into a list of data tables or into a GRangesList object through the functions `bamtobed` and `bedtolist`. The `bamtobed` function calls the bamtobed utility of the BEDTools suite (for the installation follow the instructions at http://bedtools.readthedocs.io/en/latest/content/installation.html). The BEDTools suite has been developed for command line environments, so `bamtobed` can be only run on UNIX, LINUX and Apple OS X operating systems. Once the bed files are produced, it is possible to switch to any other machine without further restrictions. To run `bamtobed`, only the path to the BAM file(s) is required, possibly coupled with the location of the directory where the BED files should be saved. The command for running `bamtobed` appear as follow
+  Alternatively, the BAM file can be first converted into BED files and then into a list of data tables or into a GRangesList object through the functions `bamtobed` and `bedtolist`. The `bamtobed` function calls the bamtobed utility of the BEDTools suite (for the installation follow the instructions at http://bedtools.readthedocs.io/en/latest/content/installation.html). The BEDTools suite has been developed for command line environments, so `bamtobed` can be only run on UNIX, LINUX and Apple OS X operating systems. Once the bed files are produced, it is possible to switch to any other machine without further restrictions. To run `bamtobed`, only the path to the BAM file(s) is required, possibly coupled with the location of the directory where the BED files should be saved. The command for running `bamtobed` appears as follow
 
     bamtobed(bamfolder=path_to_bam, bedfolder = path_to_bed)
 
@@ -108,23 +108,23 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 
 #### Selection of read lengths
 
-  Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths specified by the parameter *filter* included in both `bamtolist` (used in the examples below) and `bedtolist`:
+  Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths specified by the parameter *length_filter_mode* included in both `bamtolist` (used in the examples below) and `bedtolist`:
   
 1. all read lengths are included in the analysis (all-inclusive mode, default)
     
 			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file, 
-									filter = "none")
+									length_filter_mode = "none")
 
 2. only read lengths specified by the user are included (manual mode)
 
 			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-									filter = "custom", custom_range = 27:30)
+									length_filter_mode = "custom", length_filter_vector = 27:30)
  
 
 3. only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
 
 			reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-									filter = "periodicity", periodicity_th = 50)
+									length_filter_mode = "periodicity", periodicity_threshold = 50)
 
 For additional details please referes to the documentation provided by ?bamtolist or ?bedtolist.
 	

@@ -21,20 +21,20 @@
 #'   alignment based on a reference FASTA of all the transcript sequences). When
 #'   this parameter is TRUE (the default) no reads mapping on the negative
 #'   strand should be present and they are therefore removed.
-#' @param filter Either "none" (the default), "custom" or "periodicity". It
+#' @param length_filter_mode Either "none" (the default), "custom" or "periodicity". It
 #'   specifies how to handle the selection of the read length. "none": all read
 #'   lengths are included in the analysis; "custom": only read lengths specified
-#'   by the user are included (see \code{custom_range}); "periodicity": only
-#'   read lengths satisfying a periodicity threshold (see \code{periodicity_th})
+#'   by the user are included (see \code{length_filter_vector}); "periodicity": only
+#'   read lengths satisfying a periodicity threshold (see \code{periodicity_threshold})
 #'   are included in the analysis. This mode enables the removal of all the
 #'   reads without periodicity.
-#' @param custom_range An integer or an integer vector specifying either the
+#' @param length_filter_vector An integer or an integer vector specifying either the
 #'   read length or multiple read lengths to be kept, respectively. This
-#'   parameter is considered only when \code{filter} is set to "custom".
-#' @param periodicity_th An integer in \emph{[10, 100]}. Only the read lengths
+#'   parameter is considered only when \code{length_filter_mode} is set to "custom".
+#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read lengths
 #'   satisfying this threshold (i.e. with a higher percentage of read
 #'   extremities falling in the same frame) are kept. This parameter is
-#'   considered only when \code{filter} is set to "periodicity". Default is 50.
+#'   considered only when \code{length_filter_mode} is set to "periodicity". Default is 50.
 #' @param list_name A character string vector specifying the desired names for
 #'   the data tables of the output list. Its length must coincides with the
 #'   number of BAM files within \code{bamfolder}. Please pay attention to the
@@ -54,7 +54,7 @@
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
-                      filter = "none", custom_range = NULL, periodicity_th = 50,
+                      length_filter_mode = "none", length_filter_vector = NULL, periodicity_threshold = 50,
                       list_name = NULL, granges = FALSE) {
   names <- list.files(path = bamfolder, pattern = ".bam$")
   if (length(list_name) == 0) {
@@ -70,8 +70,8 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     }
   }
   
-  if(filter == "custom" & !inherits(custom_range, "numeric") & !inherits(custom_range, "integer")){
-    stop("custom_range must be integer\n\n")
+  if(length_filter_mode == "custom" & !inherits(length_filter_vector, "numeric") & !inherits(length_filter_vector, "integer")){
+    stop("length_filter_vector must be integer\n\n")
   }
 
   sample_reads_list <- list()
@@ -99,14 +99,14 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     dt[annotation, on = 'transcript', c("start_pos", "stop_pos") := list(i.l_utr5 + 1, i.l_utr5 + i.l_cds)]
     dt[start_pos == 1 & stop_pos == 0, start_pos := 0]
     
-    if (identical(filter, "custom")) {
+    if (identical(length_filter_mode, "custom")) {
       nreads <- nrow(dt)
-      dt <- dt[length %in% custom_range]
+      dt <- dt[length %in% length_filter_vector]
       cat(sprintf("%s (%s %%) reads have been removed\n\n", 
                   format(nreads - nrow(dt), nsmall = 2), 
                   format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
     } else {
-      if(identical(filter, "periodicity")){
+      if(identical(length_filter_mode, "periodicity")){
         nreads <- nrow(dt)
         
         subdt5 <- dt[start_pos != 0 &
@@ -115,7 +115,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
         subdt5[, end5_frame := as.factor((end5 - start_pos) %% 3)]
         t_end5 <- subdt5[, .N, by = list(length, end5_frame)
                          ][, end5_perc := (N / sum(N)) * 100, , by = length]
-        keep_length5 <- unique(t_end5[end5_perc >= periodicity_th, length])
+        keep_length5 <- unique(t_end5[end5_perc >= periodicity_threshold, length])
         
         subdt3 <- dt[start_pos != 0 &
                        (end3 - start_pos) >= 0 &
@@ -123,7 +123,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
         subdt3[, end3_frame := as.factor((end3 - start_pos) %% 3)]
         t_end3 <- subdt3[, .N, by = list(length, end3_frame)
                          ][, end3_perc := (N / sum(N)) * 100, , by = length]
-        keep_length3 <- unique(t_end3[end3_perc >= periodicity_th, length])
+        keep_length3 <- unique(t_end3[end3_perc >= periodicity_threshold, length])
         
         keep_length <- intersect(keep_length5, keep_length3)
         dt <- dt[length %in% keep_length]
@@ -211,20 +211,20 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #'   alignment based on a reference FASTA of all the transcript sequences). When
 #'   this parameter is TRUE (the default) no reads mapping on the negative
 #'   strand should be present and they are therefore removed.
-#' @param filter Either "none" (the default), "custom" or "periodicity". It
+#' @param length_filter_mode Either "none" (the default), "custom" or "periodicity". It
 #'   specifies how to handle the selection of the read length. "none": all read
 #'   lengths are included in the analysis; "custom": only read lengths specified
-#'   by the user are included (see \code{custom_range}); "periodicity": only
-#'   read lengths satisfying a periodicity threshold (see \code{periodicity_th})
+#'   by the user are included (see \code{length_filter_vector}); "periodicity": only
+#'   read lengths satisfying a periodicity threshold (see \code{periodicity_threshold})
 #'   are included in the analysis. This mode enables the removal of all the
 #'   reads without periodicity.
-#' @param custom_range An integer or an integer vector specifying either the
+#' @param length_filter_vector An integer or an integer vector specifying either the
 #'   read length or multiple read lengths to be kept, respectively. This
-#'   parameter is considered only when \code{filter} is set to "custom".
-#' @param periodicity_th An integer in \emph{[10, 100]}. Only the read lengths
+#'   parameter is considered only when \code{length_filter_mode} is set to "custom".
+#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read lengths
 #'   satisfying this threshold (i.e. with a higher percentage of read
 #'   extremities falling in the same frame) are kept. This parameter is
-#'   considered only when \code{filter} is set to "periodicity". Default is 50.
+#'   considered only when \code{length_filter_mode} is set to "periodicity". Default is 50.
 #' @param list_name A character string vector specifying the desired names for
 #'   the data tables of the output list. Its length must coincides with the
 #'   number of BED files within \code{bedfolder}. Please pay attention to the
@@ -244,7 +244,7 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @import data.table
 #' @export
 bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
-                      filter = "none", custom_range = NULL, periodicity_th = 50,
+                      length_filter_mode = "none", length_filter_vector = NULL, periodicity_threshold = 50,
                       list_name = NULL, granges = FALSE) {
   names <- list.files(path = bedfolder, pattern = ".bed")
   if (length(list_name) == 0) {
@@ -260,8 +260,8 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     }
   }
   
-  if(filter == "custom" & !inherits(custom_range, "numeric") & !inherits(custom_range, "integer")){
-    stop("'custom_range' must be an integer.\n\n")
+  if(length_filter_mode == "custom" & !inherits(length_filter_vector, "numeric") & !inherits(length_filter_vector, "integer")){
+    stop("'length_filter_vector' must be an integer.\n\n")
   }
   
   sample_reads_list <- list()
@@ -288,14 +288,14 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     dt[annotation, on = 'transcript', c("start_pos", "stop_pos") := list(i.l_utr5 + 1, i.l_utr5 + i.l_cds)]
     dt[start_pos == 1 & stop_pos == 0, start_pos := 0]
     
-    if (identical(filter, "custom")) {
+    if (identical(length_filter_mode, "custom")) {
       nreads <- nrow(dt)
-      dt <- dt[length %in% custom_range]
+      dt <- dt[length %in% length_filter_vector]
       cat(sprintf("%s (%s %%) reads have been removed\n\n", 
                   format(nreads - nrow(dt), nsmall = 2), 
                   format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
     } else {
-      if(identical(filter, "periodicity")){
+      if(identical(length_filter_mode, "periodicity")){
         nreads <- nrow(dt)
         
         subdt5 <- dt[start_pos != 0 &
@@ -304,7 +304,7 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
         subdt5[, end5_frame := as.factor((end5 - start_pos) %% 3)]
         t_end5 <- subdt5[, .N, by = list(length, end5_frame)
                          ][, end5_perc := (N / sum(N)) * 100, , by = length]
-        keep_length5 <- unique(t_end5[end5_perc >= periodicity_th, length])
+        keep_length5 <- unique(t_end5[end5_perc >= periodicity_threshold, length])
         
         subdt3 <- dt[start_pos != 0 &
                        (end3 - start_pos) >=0 &
@@ -312,7 +312,7 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
         subdt3[, end3_frame := as.factor((end3 - start_pos) %% 3)]
         t_end3 <- subdt3[, .N, by = list(length, end3_frame)
                          ][, end3_perc := (N / sum(N)) * 100, , by = length]
-        keep_length3 <- unique(t_end3[end3_perc >= periodicity_th, length])
+        keep_length3 <- unique(t_end3[end3_perc >= periodicity_threshold, length])
         
         keep_length <- intersect(keep_length5, keep_length3)
         dt <- dt[length %in% keep_length]
