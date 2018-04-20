@@ -112,18 +112,18 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
   
 1. all read lengths are included in the analysis (all-inclusive mode, default)
     
-	reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-							length_filter_mode = "none")
+		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+								length_filter_mode = "none")
 
 2. only read lengths specified by the user are included (manual mode)
 
-	reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-							length_filter_mode = "custom", length_filter_vector = 27:30)
+		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+								length_filter_mode = "custom", length_filter_vector = 27:30)
 
 3. only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
 
-	reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-							length_filter_mode = "periodicity", periodicity_threshold = 50)
+		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
+								length_filter_mode = "periodicity", periodicity_threshold = 50)
 
 For additional details please referes to the documentation provided by ?bamtolist or ?bedtolist.
 	
@@ -276,7 +276,7 @@ For additional details please referes to the documentation provided by ?bamtolis
   The `metaprofile_psite` function generates metaprofiles (sum of single, transcript-specific profiles) based on the P-sites previously identified. This plots are useful to verify the so-called 3-nt periodicity of ribosomes along transcripts at genome-wide scale. The contribution from many replicates can be combined in a single plot, taking into account possible scale factors coming from any normalization of the data chosen by the user. It is possible to use the whole transcriptome (as in the example below), restrict the analysis to a subset of transcripts and even look at single RNAs.
 
     example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                             utr5l = 20, cdsl = 40, utr3l = 20,
+											 utr5l = 20, cdsl = 40, utr3l = 20,
 											 plot_title = "auto")
     example_metaprofile[["plot"]]
 ![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile.png)
