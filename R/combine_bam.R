@@ -21,20 +21,23 @@
 #'   alignment based on a reference FASTA of all the transcript sequences). When
 #'   this parameter is TRUE (the default) no reads mapping on the negative
 #'   strand should be present and they are therefore removed.
-#' @param length_filter_mode Either "none" (the default), "custom" or "periodicity". It
-#'   specifies how to handle the selection of the read length. "none": all read
-#'   lengths are included in the analysis; "custom": only read lengths specified
-#'   by the user are included (see \code{length_filter_vector}); "periodicity": only
-#'   read lengths satisfying a periodicity threshold (see \code{periodicity_threshold})
-#'   are included in the analysis. This mode enables the removal of all the
-#'   reads without periodicity.
-#' @param length_filter_vector An integer or an integer vector specifying either the
-#'   read length or multiple read lengths to be kept, respectively. This
-#'   parameter is considered only when \code{length_filter_mode} is set to "custom".
-#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read lengths
-#'   satisfying this threshold (i.e. with a higher percentage of read
+#' @param length_filter_mode Either "none" (the default), "custom" or
+#'   "periodicity". It specifies how to handle the selection of the read length.
+#'   "none": all read lengths are included in the analysis; "custom": only read
+#'   lengths specified by the user are included (see
+#'   \code{length_filter_vector}); "periodicity": only read lengths satisfying a
+#'   periodicity threshold (see \code{periodicity_threshold}) are included in
+#'   the analysis. This mode enables the removal of all the reads without
+#'   periodicity.
+#' @param length_filter_vector An integer or an integer vector specifying either
+#'   the read length or multiple read lengths to be kept, respectively. This
+#'   parameter is considered only when \code{length_filter_mode} is set to
+#'   "custom".
+#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read
+#'   lengths satisfying this threshold (i.e. with a higher percentage of read
 #'   extremities falling in the same frame) are kept. This parameter is
-#'   considered only when \code{length_filter_mode} is set to "periodicity". Default is 50.
+#'   considered only when \code{length_filter_mode} is set to "periodicity".
+#'   Default is 50.
 #' @param list_name A character string vector specifying the desired names for
 #'   the data tables of the output list. Its length must coincides with the
 #'   number of BAM files within \code{bamfolder}. Please pay attention to the
@@ -54,8 +57,9 @@
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
-                      length_filter_mode = "none", length_filter_vector = NULL, periodicity_threshold = 50,
-                      list_name = NULL, granges = FALSE) {
+                      length_filter_mode = "none", length_filter_vector = NULL,
+                      periodicity_threshold = 50, list_name = NULL,
+                      granges = FALSE) {
   names <- list.files(path = bamfolder, pattern = ".bam$")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bam")))
@@ -87,13 +91,11 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
 
     if(transcript_align == TRUE | transcript_align == T){
       nreads <- nrow(dt)
-      cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
+      cat(sprintf("reads (total): %s M\n", format(round((nreads / 1e+06), 2), nsmall = 2)))
       dt <- dt[as.character(transcript) %in% as.character(annotation$transcript) & strand == "+"]
-      cat(sprintf("positive strand: %s %%\n", 
-                  format(round((nrow(dt) / nreads) * 100, 2), nsmall = 2) ))
-      cat(sprintf("negative strand: %s %%\n", 
-                  format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
-      cat(sprintf("reads (kept): %f M\n\n", (nrow(dt) / 1e+06)))
+      cat(sprintf("%s M  (%s %%) reads removed: mapping on the negative strand\n", 
+                  format(round((nreads - nrow(dt))/ 1e+06, 2), nsmall = 2), 
+                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
     }
     
     dt[annotation, on = 'transcript', c("start_pos", "stop_pos") := list(i.l_utr5 + 1, i.l_utr5 + i.l_cds)]
@@ -102,9 +104,10 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     if (identical(length_filter_mode, "custom")) {
       nreads <- nrow(dt)
       dt <- dt[length %in% length_filter_vector]
-      cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                  format(nreads - nrow(dt), nsmall = 2), 
+      cat(sprintf("%s M  (%s %%) reads removed: length_filter_mode applied\n", 
+                  format(round((nreads - nrow(dt))/ 1e+06, 2), nsmall = 2), 
                   format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1e+06), 2), nsmall = 2)))
     } else {
       if(identical(length_filter_mode, "periodicity")){
         nreads <- nrow(dt)
@@ -128,9 +131,10 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
         keep_length <- intersect(keep_length5, keep_length3)
         dt <- dt[length %in% keep_length]
         
-        cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                    format(nreads - nrow(dt), nsmall = 2), 
-                    format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
+        cat(sprintf("%s M  (%s %%) reads removed: length_filter_mode applied\n", 
+                    format(round((nreads - nrow(dt))/ 1e+06, 2), nsmall = 2), 
+                    format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
+        cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1e+06), 2), nsmall = 2)))
       }
     }
     
@@ -211,20 +215,23 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #'   alignment based on a reference FASTA of all the transcript sequences). When
 #'   this parameter is TRUE (the default) no reads mapping on the negative
 #'   strand should be present and they are therefore removed.
-#' @param length_filter_mode Either "none" (the default), "custom" or "periodicity". It
-#'   specifies how to handle the selection of the read length. "none": all read
-#'   lengths are included in the analysis; "custom": only read lengths specified
-#'   by the user are included (see \code{length_filter_vector}); "periodicity": only
-#'   read lengths satisfying a periodicity threshold (see \code{periodicity_threshold})
-#'   are included in the analysis. This mode enables the removal of all the
-#'   reads without periodicity.
-#' @param length_filter_vector An integer or an integer vector specifying either the
-#'   read length or multiple read lengths to be kept, respectively. This
-#'   parameter is considered only when \code{length_filter_mode} is set to "custom".
-#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read lengths
-#'   satisfying this threshold (i.e. with a higher percentage of read
+#' @param length_filter_mode Either "none" (the default), "custom" or
+#'   "periodicity". It specifies how to handle the selection of the read length.
+#'   "none": all read lengths are included in the analysis; "custom": only read
+#'   lengths specified by the user are included (see
+#'   \code{length_filter_vector}); "periodicity": only read lengths satisfying a
+#'   periodicity threshold (see \code{periodicity_threshold}) are included in
+#'   the analysis. This mode enables the removal of all the reads without
+#'   periodicity.
+#' @param length_filter_vector An integer or an integer vector specifying either
+#'   the read length or multiple read lengths to be kept, respectively. This
+#'   parameter is considered only when \code{length_filter_mode} is set to
+#'   "custom".
+#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read
+#'   lengths satisfying this threshold (i.e. with a higher percentage of read
 #'   extremities falling in the same frame) are kept. This parameter is
-#'   considered only when \code{length_filter_mode} is set to "periodicity". Default is 50.
+#'   considered only when \code{length_filter_mode} is set to "periodicity".
+#'   Default is 50.
 #' @param list_name A character string vector specifying the desired names for
 #'   the data tables of the output list. Its length must coincides with the
 #'   number of BED files within \code{bedfolder}. Please pay attention to the
@@ -244,8 +251,9 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @import data.table
 #' @export
 bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
-                      length_filter_mode = "none", length_filter_vector = NULL, periodicity_threshold = 50,
-                      list_name = NULL, granges = FALSE) {
+                      length_filter_mode = "none", length_filter_vector = NULL,
+                      periodicity_threshold = 50, list_name = NULL,
+                      granges = FALSE) {
   names <- list.files(path = bedfolder, pattern = ".bed")
   if (length(list_name) == 0) {
     list_name <- unlist((strsplit(names, ".bed")))
@@ -276,13 +284,11 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
 
     if(transcript_align == TRUE | transcript_align == T){
       nreads <- nrow(dt)
-      cat(sprintf("reads (total): %f M\n", (nreads / 1e+06)))
+      cat(sprintf("reads (total): %s M\n", format(round((nreads / 1e+06), 2), nsmall = 2)))
       dt <- dt[as.character(transcript) %in% as.character(annotation$transcript) & strand == "+"]
-      cat(sprintf("positive strand: %s %%\n", 
-                  format(round((nrow(dt) / nreads) * 100, 2), nsmall = 2) ))
-      cat(sprintf("negative strand: %s %%\n", 
-                  format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
-      cat(sprintf("reads (kept): %f M\n\n", (nrow(dt) / 1e+06)))
+      cat(sprintf("%s M  (%s %%) reads removed: mapping on the negative strand\n", 
+                  format(round((nreads - nrow(dt))/ 1e+06, 2), nsmall = 2), 
+                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
     }
     
     dt[annotation, on = 'transcript', c("start_pos", "stop_pos") := list(i.l_utr5 + 1, i.l_utr5 + i.l_cds)]
@@ -291,9 +297,10 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     if (identical(length_filter_mode, "custom")) {
       nreads <- nrow(dt)
       dt <- dt[length %in% length_filter_vector]
-      cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                  format(nreads - nrow(dt), nsmall = 2), 
+      cat(sprintf("%s M  (%s %%) reads removed: length_filter_mode applied\n", 
+                  format(round((nreads - nrow(dt))/ 1e+06, 2), nsmall = 2), 
                   format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1e+06), 2), nsmall = 2)))
     } else {
       if(identical(length_filter_mode, "periodicity")){
         nreads <- nrow(dt)
@@ -317,9 +324,10 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
         keep_length <- intersect(keep_length5, keep_length3)
         dt <- dt[length %in% keep_length]
         
-        cat(sprintf("%s (%s %%) reads have been removed\n\n", 
-                    format(nreads - nrow(dt), nsmall = 2), 
-                    format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
+        cat(sprintf("%s M  (%s %%) reads removed: length_filter_mode applied\n", 
+                    format(round((nreads - nrow(dt))/ 1e+06, 2), nsmall = 2), 
+                    format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
+        cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1e+06), 2), nsmall = 2)))
       }
     }
     

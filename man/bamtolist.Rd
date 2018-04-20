@@ -22,22 +22,25 @@ alignment based on a reference FASTA of all the transcript sequences). When
 this parameter is TRUE (the default) no reads mapping on the negative
 strand should be present and they are therefore removed.}
 
-\item{length_filter_mode}{Either "none" (the default), "custom" or "periodicity". It
-specifies how to handle the selection of the read length. "none": all read
-lengths are included in the analysis; "custom": only read lengths specified
-by the user are included (see \code{length_filter_vector}); "periodicity": only
-read lengths satisfying a periodicity threshold (see \code{periodicity_threshold})
-are included in the analysis. This mode enables the removal of all the
-reads without periodicity.}
+\item{length_filter_mode}{Either "none" (the default), "custom" or
+"periodicity". It specifies how to handle the selection of the read length.
+"none": all read lengths are included in the analysis; "custom": only read
+lengths specified by the user are included (see
+\code{length_filter_vector}); "periodicity": only read lengths satisfying a
+periodicity threshold (see \code{periodicity_threshold}) are included in
+the analysis. This mode enables the removal of all the reads without
+periodicity.}
 
-\item{length_filter_vector}{An integer or an integer vector specifying either the
-read length or multiple read lengths to be kept, respectively. This
-parameter is considered only when \code{length_filter_mode} is set to "custom".}
+\item{length_filter_vector}{An integer or an integer vector specifying either
+the read length or multiple read lengths to be kept, respectively. This
+parameter is considered only when \code{length_filter_mode} is set to
+"custom".}
 
-\item{periodicity_threshold}{An integer in \emph{[10, 100]}. Only the read lengths
-satisfying this threshold (i.e. with a higher percentage of read
+\item{periodicity_threshold}{An integer in \emph{[10, 100]}. Only the read
+lengths satisfying this threshold (i.e. with a higher percentage of read
 extremities falling in the same frame) are kept. This parameter is
-considered only when \code{length_filter_mode} is set to "periodicity". Default is 50.}
+considered only when \code{length_filter_mode} is set to "periodicity".
+Default is 50.}
 
 \item{list_name}{A character string vector specifying the desired names for
 the data tables of the output list. Its length must coincides with the
