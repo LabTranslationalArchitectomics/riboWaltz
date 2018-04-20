@@ -276,8 +276,8 @@ For additional details please referes to the documentation provided by ?bamtolis
   The `metaprofile_psite` function generates metaprofiles (sum of single, transcript-specific profiles) based on the P-sites previously identified. This plots are useful to verify the so-called 3-nt periodicity of ribosomes along transcripts at genome-wide scale. The contribution from many replicates can be combined in a single plot, taking into account possible scale factors coming from any normalization of the data chosen by the user. It is possible to use the whole transcriptome (as in the example below), restrict the analysis to a subset of transcripts and even look at single RNAs.
 
     example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-	                                     utr5l = 20, cdsl = 40, utr3l = 20,
-	                                     plot_title = "auto")
+	                                       utr5l = 20, cdsl = 40, utr3l = 20,
+	                                       plot_title = "auto")
     example_metaprofile[["plot"]]
 ![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile.png)
 
@@ -314,7 +314,7 @@ For additional details please referes to the documentation provided by ?bamtolis
   To understand what codons display higher or lower ribosome density, __riboWaltz__ provides the user with the analysis of the empirical codon usage, i.e. the frequency of in-frame P-sites along the coding sequence codon by codon, normalized for the frequency in sequences of each codon. The empirical condon usage is provided by the `codon_usage_psite` function which also returns a bar plot reporting the computed values, highlighting the start and the stop codon and labeling each bar with the corresponding amino acid. To this aim, the path to the fasta file employed during the the alignment step must be provided by the user through the *fastapath* option. The syntax for generating the bar plot is the following (note that due to its dimension, the fasta file used by the author is not included among the example data of the package).
   
    	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-						   fastapath = path_to_fasta)
+	                                         fastapath = path_to_fasta)
 ![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
   
   To unravel possible defects in ribosome elongation at specific codons or aa-tRNAs use is it possible to exploit `codon_usage_psite` to compare empirical usage from two conditions or organisms or to asses potenial differences between the empirical codon usage and the more diffused codon usage bias based on codon frequencies. To this aim a set of 64 values can be passed to the function by the user through the option *codon_usage*. The structure of the required data table (here called *cub_mouse* and reporting the codon usage bias in mouse downloaded from http://www.kazusa.or.jp/codon) is as follow:
