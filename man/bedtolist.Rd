@@ -4,9 +4,9 @@
 \alias{bedtolist}
 \title{Convert BED files into a list of data tables or a GRangesList.}
 \usage{
-bedtolist(bedfolder, annotation, transcript_align = TRUE, filter = "none",
-  custom_range = NULL, periodicity_th = 50, list_name = NULL,
-  granges = FALSE)
+bedtolist(bedfolder, annotation, transcript_align = TRUE,
+  length_filter_mode = "none", length_filter_vector = NULL,
+  periodicity_threshold = 50, list_name = NULL, granges = FALSE)
 }
 \arguments{
 \item{bedfolder}{A character string indicating the path to the folder
@@ -22,22 +22,22 @@ alignment based on a reference FASTA of all the transcript sequences). When
 this parameter is TRUE (the default) no reads mapping on the negative
 strand should be present and they are therefore removed.}
 
-\item{filter}{Either "none" (the default), "custom" or "periodicity". It
+\item{length_filter_mode}{Either "none" (the default), "custom" or "periodicity". It
 specifies how to handle the selection of the read length. "none": all read
 lengths are included in the analysis; "custom": only read lengths specified
-by the user are included (see \code{custom_range}); "periodicity": only
-read lengths satisfying a periodicity threshold (see \code{periodicity_th})
+by the user are included (see \code{length_filter_vector}); "periodicity": only
+read lengths satisfying a periodicity threshold (see \code{periodicity_threshold})
 are included in the analysis. This mode enables the removal of all the
 reads without periodicity.}
 
-\item{custom_range}{An integer or an integer vector specifying either the
+\item{length_filter_vector}{An integer or an integer vector specifying either the
 read length or multiple read lengths to be kept, respectively. This
-parameter is considered only when \code{filter} is set to "custom".}
+parameter is considered only when \code{length_filter_mode} is set to "custom".}
 
-\item{periodicity_th}{An integer in \emph{[10, 100]}. Only the read lengths
+\item{periodicity_threshold}{An integer in \emph{[10, 100]}. Only the read lengths
 satisfying this threshold (i.e. with a higher percentage of read
 extremities falling in the same frame) are kept. This parameter is
-considered only when \code{filter} is set to "periodicity". Default is 50.}
+considered only when \code{length_filter_mode} is set to "periodicity". Default is 50.}
 
 \item{list_name}{A character string vector specifying the desired names for
 the data tables of the output list. Its length must coincides with the
