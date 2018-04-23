@@ -65,7 +65,7 @@ To load __riboWaltz__ type
 
 ## Getting help
 
-The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documenation by running
+The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documentation by running
  
 	?function_name
 
@@ -125,11 +125,11 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
 		                        length_filter_mode = "periodicity", periodicity_threshold = 50)
 
-For additional details please referes to the documentation provided by ?bamtolist or ?bedtolist.
+For additional details please refers to the documentation provided by ?bamtolist or ?bedtolist.
 	
 ### Annotation data table
   
-  A reference annotation file is required to attach to the data tables two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript, two crucial information for localizing the reads within the three region of the transcrips (5' UTR, the CDS and the 3' UTR) and computing the P-site offsets. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transript in the annotation data table are composed by the ENST ID and version, dot separated. During the generation of the annotation file, the input GTF is converted in a TxDb object and than in a data table. Therefore, a TxDb object can also be directly used as input of `create_annotation`. Here an example of the output:
+  A reference annotation file is required to attach to the data tables two additional columns containing the position of the start and the stop codons with respect to the beginning of the transcript, two crucial information for localizing the reads within the three region of the transcripts (5' UTR, the CDS and the 3' UTR) and computing the P-site offsets. To do this, the annotation file must contain at least five columns reporting the name of the transcripts and the length of the whole transcript and of the annotated 5' UTR, the CDS and the 3' UTR. The annotation file can be either provided by the user or generated starting from a GTF file by using the `create_annotation` function. In the latter case, the name of the transcript in the annotation data table are composed by the ENST ID and version, dot separated. During the generation of the annotation file, the input GTF is converted in a TxDb object and than in a data table. Therefore, a TxDb object can also be directly used as input of `create_annotation`. Here an example of the output:
   
   |  transcript  |  l_tr  |  l_utr5  |  l_cds  |  l_utr3  |
   |:------:|:---------:|:------:|:---------:|:------:|
@@ -142,7 +142,7 @@ For additional details please referes to the documentation provided by ?bamtolis
   
 ### Overview of the data
 
-  Two graphical outputs can be produced before the identification of the P-site offset, in order to have an overview of the whole read sets. The first plot shows the distribution of the length of the reads for a specified sample and can be exploited to identify one or more populaton of reads i.e. one or more conformation of the ribosomes bound to the mRNAs. This plot is provided by `rlength_distr`. This function, as all the other contained in __riboWaltz__ producing a graphical output, returns a list containing both the data to generate the plot and the plot itself. For more details about the data tables for generating the plot and for an example of their structure please refer to the vignette of the package and to the documentation of its functions
+  Two graphical outputs can be produced before the identification of the P-site offset, in order to have an overview of the whole read sets. The first plot shows the distribution of the length of the reads for a specified sample and can be exploited to identify one or more population of reads i.e. one or more conformation of the ribosomes bound to the mRNAs. This plot is provided by `rlength_distr`. This function, as all the other contained in __riboWaltz__ producing a graphical output, returns a list containing both the data to generate the plot and the plot itself. For more details about the data tables for generating the plot and for an example of their structure please refer to the vignette of the package and to the documentation of its functions
   
   Note that a wide range of read lengths can make hard to read the plot. This issue can be easily solved specifying by the *cl* option a confidence level that restricts the distribution to a more narrow range of lengths
 
@@ -154,14 +154,14 @@ For additional details please referes to the documentation provided by ?bamtolis
 
   The second plot consists of 4 metaheatmaps that show the abundance of the 3' the and 5' end of the reads mapping around the start and the stop codons, stratified by their length. This plot, generated by `rends_heat`, is particularly useful for understanding which extremity of the reads is the best choice for the computation of the P-site offset. Even if __riboWaltz__ is able to automatically recognize the best read end to use for the P-site identification, in some cases it may be necessary to provide this information. Also in this case it is possible to restrict the output to a subset of read lengths specified by a confidence level *cl*.
   
-  Note that as for all the metaprofiles generated by __riboWaltz__, the data table associated to the plot contains three main columns: the first one indicating the distance (in nucleotides) from either the start or the stop codon, the second one reporting the value of the plot corresponding to that position and the third one specifying if the line of the data table refers either to the inital or to the final region of the coding sequence. If the metaprofile is stratified for the length of the reads, an additional column with this information is present. Only for `rends_heat' the data table includes an additional column that specifies the extremity of the reads involved in the plot.
+  Note that as for all the metaprofiles generated by __riboWaltz__, the data table associated to the plot contains three main columns: the first one indicating the distance (in nucleotides) from either the start or the stop codon, the second one reporting the value of the plot corresponding to that position and the third one specifying if the line of the data table refers either to the initial or to the final region of the coding sequence. If the metaprofile is stratified for the length of the reads, an additional column with this information is present. Only for `rends_heat' the data table includes an additional column that specifies the extremity of the reads involved in the plot.
 
     example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 85,
                                        utr5l = 25, cdsl = 40, utr3l = 25)
     example_ends_heatmap[["plot"]]
 ![example_ends_heatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_ends_heatmap.png)
 
-  In our example, looking at the reads aligning around the translation initiation site (TIS) it is clearly visible a different trend of the signal coming from the 5' and the 3' extremity. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to TIS), while the 3' end often alignes on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works without any restriction (see below).
+  In our example, looking at the reads aligning around the translation initiation site (TIS) it is clearly visible a different trend of the signal coming from the 5' and the 3' extremity. In fact, the distance between the 5' end and the TIS varies depending on the read length (shorter the reads, closer are the 5' ends to TIS), while the 3' end often aliges on a specific nucleotide. This may suggest that the more stable extremity (i.e. the best option for the identification of the P-site offset) is the latter one and this information can be passed to the function `psite`. Nevertheless, in our example we are going to employ the automatic selection of the extremity to show how __riboWaltz__ works without any restriction (see below).
   
 ### P-site offset
 
@@ -189,7 +189,7 @@ For additional details please referes to the documentation provided by ?bamtolis
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length31.png" width="750" />
 </p>
 
-  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the exsisting data tables the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added. These information are required for facilitating further analyses and in particular to compute the number of in-frame Psites, the percentage of P-sites falling in the three transcript regions, verify the trinucleotide periodicity of the reads along the coding sequence and generating metplots, as discussed below.
+  The initial dataset must be updated with new information resulting from the identification of the P-site offset. The function `psite_info` to attaches to the existing data tables the localization of the P-site along the transcript and its position with respect to the start and stop codons. The associated region of the transcript (5' UTR, CDS, 3' UTR) and, optionally, the sequence of the triplet covered by the P-site are also added. These information are required for facilitating further analyses and in particular to compute the number of in-frame P-sites, the percentage of P-sites falling in the three transcript regions, verify the trinucleotide periodicity of the reads along the coding sequence and generating metplots, as discussed below.
 
     reads_psite_list <- psite_info(reads_list, psite_offset)
 	
@@ -206,7 +206,7 @@ For additional details please referes to the documentation provided by ?bamtolis
 
 #### Sequence data
 
-  Optionally, a file containing transcript or genome sequence information in FASTA format can be provided as input for `psite_info` to perform P-site specific codon sequence analysis. By specifying a genome build, the corresponding BSGenome object in R will be used for sequence retrieval. Genome sequences and genome builds must be coupled with a TxDb object or a GTF file providing genomic annotation. For further datails please refer to the documentation of `psite_info` running ?psite_info. 
+  Optionally, a file containing transcript or genome sequence information in FASTA format can be provided as input for `psite_info` to perform P-site specific codon sequence analysis. By specifying a genome build, the corresponding BSGenome object in R will be used for sequence retrieval. Genome sequences and genome builds must be coupled with a TxDb object or a GTF file providing genomic annotation. For further details please refer to the documentation of `psite_info` running ?psite_info. 
   
 ### Codon coverage
 
@@ -227,7 +227,7 @@ For additional details please referes to the documentation provided by ?bamtolis
   
 ### P-sites per region
 
-  The dataset containing the position of the identified P-sites and the associated information can also be used to compute the percentage of P-sites falling in the three annotated regions of the transcripts (5' UTR, CDS and 3'UTR) expoiting the `region_psite` function that generates a barplot of the resulting values. Moreover, the function calculates and plots the percentage of region length (reported in column "RNAs"). 
+  The dataset containing the position of the identified P-sites and the associated information can also be used to compute the percentage of P-sites falling in the three annotated regions of the transcripts (5' UTR, CDS and 3' UTR) exploiting the `region_psite` function that generates a barplot of the resulting values. Moreover, the function calculates and plots the percentage of region length (reported in column "RNAs"). 
 
 	example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
 	example_psite_region[["plot"]]
@@ -237,7 +237,7 @@ For additional details please referes to the documentation provided by ?bamtolis
 
 ### In-frame P-sites
 
-  For generating a data tables containing, for each transcript, the number of ribosome protected fragments with in-frame P-site mapping on the CDS the function `psite_per_cds` can be exploited. The resulting data table can be emploied to estimate transcript-specific translation levels and perform differential analysis comparing multiple conditions.
+  For generating a data tables containing, for each transcript, the number of ribosome protected fragments with in-frame P-site mapping on the CDS the function `psite_per_cds` can be exploited. The resulting data table can be employed to estimate transcript-specific translation levels and perform differential analysis comparing multiple conditions.
 	
 	psite_cds <- psite_per_cds(reads_psite_list, mm81cdna)
 	
@@ -276,8 +276,8 @@ For additional details please referes to the documentation provided by ?bamtolis
   The `metaprofile_psite` function generates metaprofiles (sum of single, transcript-specific profiles) based on the P-sites previously identified. This plots are useful to verify the so-called 3-nt periodicity of ribosomes along transcripts at genome-wide scale. The contribution from many replicates can be combined in a single plot, taking into account possible scale factors coming from any normalization of the data chosen by the user. It is possible to use the whole transcriptome (as in the example below), restrict the analysis to a subset of transcripts and even look at single RNAs.
 
     example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-	                                       utr5l = 20, cdsl = 40, utr3l = 20,
-	                                       plot_title = "auto")
+	                                        utr5l = 20, cdsl = 40, utr3l = 20,
+	                                        plot_title = "auto")
     example_metaprofile[["plot"]]
 ![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile.png)
 
@@ -311,13 +311,13 @@ For additional details please referes to the documentation provided by ?bamtolis
 
 ### Codon usage
 
-  To understand what codons display higher or lower ribosome density, __riboWaltz__ provides the user with the analysis of the empirical codon usage, i.e. the frequency of in-frame P-sites along the coding sequence codon by codon, normalized for the frequency in sequences of each codon. The empirical condon usage is provided by the `codon_usage_psite` function which also returns a bar plot reporting the computed values, highlighting the start and the stop codon and labeling each bar with the corresponding amino acid. To this aim, the path to the fasta file employed during the the alignment step must be provided by the user through the *fastapath* option. The syntax for generating the bar plot is the following (note that due to its dimension, the fasta file used by the author is not included among the example data of the package).
+  To understand what codons display higher or lower ribosome density, __riboWaltz__ provides the user with the analysis of the empirical codon usage, i.e. the frequency of in-frame P-sites along the coding sequence codon by codon, normalized for the frequency in sequences of each codon. The empirical codon usage is provided by the `codon_usage_psite` function which also returns a bar plot reporting the computed values, highlighting the start and the stop codon and labeling each bar with the corresponding amino acid. To this aim, the path to the FASTA file employed during the the alignment step must be provided by the user through the *fastapath* option. The syntax for generating the bar plot is the following (note that due to its dimension, the FASTA file used by the author is not included among the example data of the package).
   
    	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 	                                         fastapath = path_to_fasta)
 ![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
   
-  To unravel possible defects in ribosome elongation at specific codons or aa-tRNAs use is it possible to exploit `codon_usage_psite` to compare empirical usage from two conditions or organisms or to asses potenial differences between the empirical codon usage and the more diffused codon usage bias based on codon frequencies. To this aim a set of 64 values can be passed to the function by the user through the option *codon_usage*. The structure of the required data table (here called *cub_mouse* and reporting the codon usage bias in mouse downloaded from http://www.kazusa.or.jp/codon) is as follow:
+  To unravel possible defects in ribosome elongation at specific codons or aa-tRNAs use is it possible to exploit `codon_usage_psite` to compare empirical usage from two conditions or organisms or to asses potential differences between the empirical codon usage and the more diffused codon usage bias based on codon frequencies. To this aim a set of 64 values can be passed to the function by the user through the option *codon_usage*. The structure of the required data table (here called *cub_mouse* and reporting the codon usage bias in mouse downloaded from http://www.kazusa.or.jp/codon) is as follow:
 
   |  codon  |  usage_index  |
   |:------:|:------:|
@@ -328,7 +328,7 @@ For additional details please referes to the documentation provided by ?bamtolis
   |  UUC  |  21.8  |
   |  UCC  |  18.1  |
   
-  If such a data table is provided, `codon_usage_psite` returns a second graphical output: a scatter plot where each codon is represented by a dot. The following image shows the comparison between the empirical codon usage reported in the previous figure and the codon usage bias in mouse contained in the data table *cub_mouse* (as for the fasta file, cub_mouse is not included among the example data of the package):
+  If such a data table is provided, `codon_usage_psite` returns a second graphical output: a scatter plot where each codon is represented by a dot. The following image shows the comparison between the empirical codon usage reported in the previous figure and the codon usage bias in mouse contained in the data table *cub_mouse* (as for the FASTA file, cub_mouse is not included among the example data of the package):
   
 	codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 	                                         fastapath = path_to_fasta, codon_usage = cub_mouse)
