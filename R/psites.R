@@ -229,23 +229,28 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #' of the annotated coding sequence (if any) and the region of the transcript
 #' (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript
 #' is not associated to any annotated CDS then the positions of the P-site from
-#' both the start and the stop codon is set to NA. If either a FASTA file or a
-#' BSgenome data package with the nucleotide  sequences is provided, an
-#' additional column reporting the three nucleotides covered by the P-site is
-#' attached.
+#' both the start and the stop codon is set to NA. One or more additional
+#' columns reporting the three nucleotides covered by the P-site, the A-site or
+#' the E-site can be attached by providing either a FASTA file or a BSgenome
+#' data package with the nucleotide sequences.
 #'
 #' @param data A list of data tables from either \code{\link{bamtolist}} or
 #'   \code{\link{bedtolist}}.
 #' @param offset A data table from \code{\link{psite}}.
+#' @param site Either NULL, "psite, "asite", "esite" or a vector with a
+#'   combination of the three character strings. When this parameter is not NULL
+#'   (the default), it specifies which of the column(s) reporting the three
+#'   nucleotides covered by the P-site ("psite"), A-site ("asite") or E-site
+#'   ("esite") must be added. Note: either \code{fastapath} or \code{bsgenome}
+#'   is required to generate the additional column(s).
 #' @param fastapath An optional character string specifying the path to the
 #'   FASTA file used in the alignment step, including its name and extension.
 #'   This file can contain reference nucleotide sequences either of a genome
 #'   assembly or of all the transcripts (see \code{fasta_genome}). Please make
 #'   sure the sequences derive from the same release of the annotation file used
 #'   in the \code{\link{create_annotation}} function. Note: either
-#'   \code{fastapath} or \code{bsgenome} is required to generate an
-#'   additional column reporting the three nucletotides covered by the P-sites.
-#'   Default is NULL.
+#'   \code{fastapath} or \code{bsgenome} is required to generate the additional
+#'   column(s) specified by \code{site}. Default is NULL.
 #' @param fasta_genome A locigal value whether or not the FASTA file specified
 #'   by \code{fastapath} contains nucleotide sequences of a genome assembly.
 #'   FALSE means that the nucleotide sequences of all the transcripts are
@@ -260,9 +265,9 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #'   package). This parameter also requires an annotation object (see
 #'   \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 #'   the specified BSgenome data pakage are in agreement with the sequences used
-#'   in the alignment step. Note: either \code{fastapath} or \code{bsgenome}
-#'   is required to generate an additional column reporting the three
-#'   nucletotides covered by the P-sites. Default is NULL.
+#'   in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
+#'   required to generate the additional column(s) specified by \code{site}.
+#'   Default is NULL.
 #' @param gtfpath A character string specifying the path to te GTF file,
 #'   including its name and extension. Please make sure the GTF derives from the
 #'   same release of what is specified by \code{fastapath} or by
@@ -306,72 +311,84 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
                           bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
                           dataSource = NA, organism = NA, granges = FALSE) {
   
-  if(((length(fastapath) != 0 & (fasta_genome == TRUE | fasta_genome == T)) |
-      length(bsgenome) != 0) &
-     length(gtfpath) == 0 & length(txdb) == 0){
+  if(!(all(site %in% c("psite", "asite", "esite"))) & length(site) != 0){
     cat("\n")
-    stop("genome annotation file not specified (both GTF path and TxDb object are missing)\n\n")
-  }
-  
-  if(length(fastapath) != 0 & length(bsgenome) != 0){
-    cat("\n")
-    warning("both fastapath and bsgenome are specified. Only fastapath will be considered\n")
-    bsgenome = NULL
-  }
-  
-  if(length(gtfpath) != 0 & length(txdb) != 0){
-    cat("\n")
-    warning("both gtfpath and txdb are specified. Only gtfpath will be considered\n")
-    txdb = NULL
-  }
-  
-  if((length(gtfpath) != 0 | length(txdb) != 0) &
-     ((length(fastapath) == 0 & length(bsgenome) == 0) |
-      (length(fastapath) != 0 & (fasta_genome == FALSE | fasta_genome == F)))){
-    cat("\n")
-    warning("a genome annotation file is specified but no sequences from genome assembly are provided\n")
-  }
-  
-  if(length(gtfpath) != 0 | length(txdb) != 0){
-    if(length(gtfpath) != 0){
-      path_to_gtf <- gtfpath
-      txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
-    } else {
-      if(txdb %in% rownames(installed.packages())){
-        library(txdb, character.only = TRUE)
-      } else {
-        source("https://bioconductor.org/biocLite.R")
-        biocLite(txdb, suppressUpdates = TRUE)
-        library(txdb, character.only = TRUE)
-      }
-      txdbanno <- get(txdb)
+    stop("parameter site must be either NULL, \"psite\", \"asite\", \"esite\" or a combination of the three strings \n\n")
+  } else {
+    if(length(site) != 0 & length(fastapath) == 0 & length(bsgenome) == 0){
+      cat("\n")
+      stop("parameter site is specified but both fastapath and bsgenome are missing \n\n")
     }
   }
   
-  if(length(fastapath) != 0 | length(bsgenome) != 0){
-    if(length(fastapath) != 0) {
-      if(fasta_genome == TRUE | fasta_genome == T){
-        temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-        exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names=TRUE))
-        exon <- as.data.table(exon[unique(names(exon))])
-        sub_exon <- exon[seqnames %in% names(temp_sequences)]
-        seq_dt <- sub_exon[, list(seq = paste(Biostrings::subseq(temp_sequences[as.character(seqnames)],
-                                                                 start = start,
-                                                                 end = end), collapse="")),
-                           by = group_name]
-        sequences <- Biostrings::DNAStringSet(seq_dt$seq)
+  if(length(site) != 0){
+    if(((length(fastapath) != 0 & (fasta_genome == TRUE | fasta_genome == T)) |
+        length(bsgenome) != 0) &
+       length(gtfpath) == 0 & length(txdb) == 0){
+      cat("\n")
+      stop("genome annotation file not specified (both GTF path and TxDb object are missing)\n\n")
+    }
+    
+    if(length(fastapath) != 0 & length(bsgenome) != 0){
+      cat("\n")
+      warning("both fastapath and bsgenome are specified. Only fastapath will be considered\n")
+      bsgenome = NULL
+    }
+    
+    if(length(gtfpath) != 0 & length(txdb) != 0){
+      cat("\n")
+      warning("both gtfpath and txdb are specified. Only gtfpath will be considered\n")
+      txdb = NULL
+    }
+    
+    if((length(gtfpath) != 0 | length(txdb) != 0) &
+       ((length(fastapath) == 0 & length(bsgenome) == 0) |
+        (length(fastapath) != 0 & (fasta_genome == FALSE | fasta_genome == F)))){
+      cat("\n")
+      warning("a genome annotation file is specified but no sequences from genome assembly are provided\n")
+    }
+    
+    if(length(gtfpath) != 0 | length(txdb) != 0){
+      if(length(gtfpath) != 0){
+        path_to_gtf <- gtfpath
+        txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
       } else {
-        sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+        if(txdb %in% rownames(installed.packages())){
+          library(txdb, character.only = TRUE)
+        } else {
+          source("https://bioconductor.org/biocLite.R")
+          biocLite(txdb, suppressUpdates = TRUE)
+          library(txdb, character.only = TRUE)
+        }
+        txdbanno <- get(txdb)
       }
-    } else {
-      if(bsgenome %in% installed.genomes()){
-        library(bsgenome, character.only = TRUE)
+    }
+    
+    if((length(fastapath) != 0 | length(bsgenome) != 0)){
+      if(length(fastapath) != 0) {
+        if(fasta_genome == TRUE | fasta_genome == T){
+          temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+          exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names=TRUE))
+          exon <- as.data.table(exon[unique(names(exon))])
+          sub_exon <- exon[seqnames %in% names(temp_sequences)]
+          seq_dt <- sub_exon[, list(seq = paste(Biostrings::subseq(temp_sequences[as.character(seqnames)],
+                                                                   start = start,
+                                                                   end = end), collapse="")),
+                             by = group_name]
+          sequences <- Biostrings::DNAStringSet(seq_dt$seq)
+        } else {
+          sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+        }
       } else {
-        source("http://www.bioconductor.org/biocLite.R")
-        biocLite(bsgenome, suppressUpdates = TRUE)
-        library(bsgenome, character.only = TRUE)
+        if(bsgenome %in% installed.genomes()){
+          library(bsgenome, character.only = TRUE)
+        } else {
+          source("http://www.bioconductor.org/biocLite.R")
+          biocLite(bsgenome, suppressUpdates = TRUE)
+          library(bsgenome, character.only = TRUE)
+        }
+        sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
       }
-      sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
     }
   }
   
@@ -393,11 +410,23 @@ psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
        ][psite_from_start >= 0 & psite_from_stop <= 0, psite_region := "cds"
          ][psite_from_stop > 0, psite_region := "3utr"
            ][stop_pos == 0, psite_region := NA]
-    if(length(fastapath) != 0 | length(bsgenome) != 0){
-      cat("3. adding nucleotide sequence\n")
-      dt[, psite_codon := as.character(Biostrings::subseq(sequences[as.character(dt$transcript)],
-                                                          start = dt$psite,
-                                                          end = dt$psite + 2))]
+    if(length(site) != 0){
+      cat("3. adding nucleotide sequence(s)\n")
+      if("psite" %in% site){
+        dt[, p_site_codon := as.character(Biostrings::subseq(sequences[as.character(dt$transcript)],
+                                                             start = dt$psite,
+                                                             end = dt$psite + 2))]
+      }
+      if("asite" %in% site){
+        dt[, a_site_codon := as.character(Biostrings::subseq(sequences[as.character(dt$transcript)],
+                                                             start = dt$psite + 3,
+                                                             end = dt$psite + 5))]
+      }
+      if("esite" %in% site){
+        dt[, e_site_codon := as.character(Biostrings::subseq(sequences[as.character(dt$transcript)],
+                                                             start = dt$psite - 3,
+                                                             end = dt$psite - 1))]
+      }
     }
     
     dt <- dt[order(transcript, end5)]
