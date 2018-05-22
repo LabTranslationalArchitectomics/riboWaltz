@@ -307,9 +307,10 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #' reads_psite_list <- psite_info(reads_list, psite_offset)
 #' @import data.table
 #' @export
-psite_info <- function(data, offset, fastapath = NULL, fasta_genome = TRUE,
-                          bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
-                          dataSource = NA, organism = NA, granges = FALSE) {
+psite_info <- function(data, offset, site = NULL, fastapath = NULL, 
+                       fasta_genome = TRUE, bsgenome = NULL, gtfpath = NULL,
+                       txdb = NULL, dataSource = NA, organism = NA,
+                       granges = FALSE) {
   
   if(!(all(site %in% c("psite", "asite", "esite"))) & length(site) != 0){
     cat("\n")

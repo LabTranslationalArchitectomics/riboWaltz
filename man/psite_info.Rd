@@ -4,15 +4,22 @@
 \alias{psite_info}
 \title{Update reads information according to the inferred P-sites.}
 \usage{
-psite_info(data, offset, fastapath = NULL, fasta_genome = TRUE,
-  bsgenome = NULL, gtfpath = NULL, txdb = NULL, dataSource = NA,
-  organism = NA, granges = FALSE)
+psite_info(data, offset, site = NULL, fastapath = NULL,
+  fasta_genome = TRUE, bsgenome = NULL, gtfpath = NULL, txdb = NULL,
+  dataSource = NA, organism = NA, granges = FALSE)
 }
 \arguments{
 \item{data}{A list of data tables from either \code{\link{bamtolist}} or
 \code{\link{bedtolist}}.}
 
 \item{offset}{A data table from \code{\link{psite}}.}
+
+\item{site}{Either NULL, "psite, "asite", "esite" or a vector with a
+combination of the three character strings. When this parameter is not NULL
+(the default), it specifies which of the column(s) reporting the three
+nucleotides covered by the P-site ("psite"), A-site ("asite") or E-site
+("esite") must be added. Note: either \code{fastapath} or \code{bsgenome}
+is required to generate the additional column(s).}
 
 \item{fastapath}{An optional character string specifying the path to the
 FASTA file used in the alignment step, including its name and extension.
@@ -76,13 +83,6 @@ the \code{GenomicFeatures} package.}
 Default is FALSE, meaning that a list of data tables (the required input
 for the downstream analyses and graphical outputs provided by riboWaltz) is
 returned instead.}
-
-\item{site}{Either NULL, "psite, "asite", "esite" or a vector with a
-combination of the three character strings. When this parameter is not NULL
-(the default), it specifies which of the column(s) reporting the three
-nucleotides covered by the P-site ("psite"), A-site ("asite") or E-site
-("esite") must be added. Note: either \code{fastapath} or \code{bsgenome}
-is required to generate the additional column(s).}
 }
 \value{
 A list of data tables or a GRangesList object.
