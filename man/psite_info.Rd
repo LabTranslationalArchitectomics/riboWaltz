@@ -20,9 +20,8 @@ This file can contain reference nucleotide sequences either of a genome
 assembly or of all the transcripts (see \code{fasta_genome}). Please make
 sure the sequences derive from the same release of the annotation file used
 in the \code{\link{create_annotation}} function. Note: either
-\code{fastapath} or \code{bsgenome} is required to generate an
-additional column reporting the three nucletotides covered by the P-sites.
-Default is NULL.}
+\code{fastapath} or \code{bsgenome} is required to generate the additional
+column(s) specified by \code{site}. Default is NULL.}
 
 \item{fasta_genome}{A locigal value whether or not the FASTA file specified
 by \code{fastapath} contains nucleotide sequences of a genome assembly.
@@ -39,9 +38,9 @@ Bioconductor repositories for your version of R/Bioconductor by the
 package). This parameter also requires an annotation object (see
 \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 the specified BSgenome data pakage are in agreement with the sequences used
-in the alignment step. Note: either \code{fastapath} or \code{bsgenome}
-is required to generate an additional column reporting the three
-nucletotides covered by the P-sites. Default is NULL.}
+in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
+required to generate the additional column(s) specified by \code{site}.
+Default is NULL.}
 
 \item{gtfpath}{A character string specifying the path to te GTF file,
 including its name and extension. Please make sure the GTF derives from the
@@ -77,6 +76,13 @@ the \code{GenomicFeatures} package.}
 Default is FALSE, meaning that a list of data tables (the required input
 for the downstream analyses and graphical outputs provided by riboWaltz) is
 returned instead.}
+
+\item{site}{Either NULL, "psite, "asite", "esite" or a vector with a
+combination of the three character strings. When this parameter is not NULL
+(the default), it specifies which of the column(s) reporting the three
+nucleotides covered by the P-site ("psite"), A-site ("asite") or E-site
+("esite") must be added. Note: either \code{fastapath} or \code{bsgenome}
+is required to generate the additional column(s).}
 }
 \value{
 A list of data tables or a GRangesList object.
@@ -89,10 +95,10 @@ respect to the 1st nucleotide of the transcript, the start and the stop codon
 of the annotated coding sequence (if any) and the region of the transcript
 (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript
 is not associated to any annotated CDS then the positions of the P-site from
-both the start and the stop codon is set to NA. If either a FASTA file or a
-BSgenome data package with the nucleotide  sequences is provided, an
-additional column reporting the three nucleotides covered by the P-site is
-attached.
+both the start and the stop codon is set to NA. One or more additional
+columns reporting the three nucleotides covered by the P-site, the A-site or
+the E-site can be attached by providing either a FASTA file or a BSgenome
+data package with the nucleotide sequences.
 }
 \examples{
 data(reads_list)
