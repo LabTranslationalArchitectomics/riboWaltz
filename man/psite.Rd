@@ -8,8 +8,8 @@ psite(data, flanking = 6, start = TRUE, extremity = "auto",
   plot = FALSE, plotdir = NULL, plotformat = "png", cl = 99)
 }
 \arguments{
-\item{data}{A list of data tables from either \code{\link{bamtolist}} or
-\code{\link{bedtolist}}.}
+\item{data}{A list of data tables from \code{\link{bamtolist}},
+\code{\link{bedtolist}} or \code{\link{length_filter}}.}
 
 \item{flanking}{An integer that specifies how many nucleotides, at least, of
 the reads mapping on the reference codon must flank the reference codon in

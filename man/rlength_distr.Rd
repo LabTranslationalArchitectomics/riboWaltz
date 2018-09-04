@@ -7,8 +7,8 @@
 rlength_distr(data, sample, cl = 100)
 }
 \arguments{
-\item{data}{A list of data tables from either \code{\link{bamtolist}} or
-\code{\link{bedtolist}}.}
+\item{data}{A list of data tables from \code{\link{bamtolist}},
+\code{\link{bedtolist}} or \code{\link{length_filter}}.}
 
 \item{sample}{A character string specifying the name of the sample of
 interest.}

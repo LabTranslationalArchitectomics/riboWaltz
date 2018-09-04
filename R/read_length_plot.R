@@ -4,8 +4,8 @@
 #' is possible to visualise the distribution for all the read lengths or to
 #' restrict the graphical output to a sub-range of read lengths.
 #'
-#' @param data A list of data tables from either \code{\link{bamtolist}} or
-#'   \code{\link{bedtolist}}.
+#' @param data A list of data tables from \code{\link{bamtolist}},
+#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
 #' @param sample A character string specifying the name of the sample of
 #'   interest.
 #' @param cl An integer value in \emph{[1,100]} specifying the confidence level

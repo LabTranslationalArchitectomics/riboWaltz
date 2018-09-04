@@ -87,6 +87,13 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
     cat("\n")
     stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
   }
+
+  if(length(scale_factors) != 0) {
+    if(!all(sample %in% names(scale_factors))){
+      cat("\n")
+      stop("scale factor for one or more specified sample is missing\n\n")
+    }
+  }
   
   l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 
                                              l_cds >= 2 * (cdsl + 1) &
@@ -122,11 +129,11 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
                            ][, reg := "stop"]
     samp_tab <- rbind(start_tab, stop_tab)
     
-    if (length(scale_factors) != 0 & length(scale_factors) == length(sample)) {
+    if(length(scale_factors) != 0) {
       samp_tab[, reads := reads * scale_factors[samp]]
     }
 
-    if (exists("final_tab_psm")) {
+    if(exists("final_tab_psm")) {
       final_tab_psm[, reads := reads + samp_tab$reads]
     } else {
       final_tab_psm <- samp_tab
@@ -313,6 +320,13 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
     stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
   }
   
+  if(length(scale_factors) != 0) {
+    if(!all(sample %in% names(scale_factors))){
+      cat("\n")
+      stop("scale factor for one or more specified sample is missing\n\n")
+    }
+  }
+  
   l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 
                                              l_cds >= 2 * (cdsl + 1) &
                                              l_utr3 >= utr3l, transcript])
@@ -348,7 +362,7 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
                            ][, reg := "stop"]
       samp_tab <- rbind(start_tab, stop_tab)
 
-      if (length(scale_factors) != 0 & length(scale_factors) == length(sample)) {
+      if (length(scale_factors) != 0) {
         samp_tab[, reads := reads * scale_factors[samp]]
       }
       

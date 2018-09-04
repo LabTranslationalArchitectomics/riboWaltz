@@ -106,26 +106,21 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 
     reads_list <- bedtolist(bedfolder = path_to_bed, annotation = annotation_file)
 
-#### Selection of read lengths
+### Selection of read lengths
 
-  Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths specified by the parameter *length_filter_mode* included in both `bamtolist` (used in the examples below) and `bedtolist`:
+  Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of the read length according to the aim of the experiment. For this reason, __riboWaltz__ has multiple options for treating read lengths specified by the function `length_filter`:
   
-1. all read lengths are included in the analysis (all-inclusive mode, default)
-    
-		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-		                        length_filter_mode = "none")
+1. only read lengths specified by the user are kept (manual mode)
 
-2. only read lengths specified by the user are included (manual mode)
+		filtered_list <- length_filter(data = reads_list, length_filter_mode = "custom",
+									   length_filter_vector = 27:30)
 
-		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-		                        length_filter_mode = "custom", length_filter_vector = 27:30)
+2. only read lengths satisfying a periodicity threshold are kept (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity
 
-3. only read lengths satisfying a periodicity threshold are included in the analysis (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity.
+		filtered_list <- length_filter(data = reads_list, length_filter_mode = "periodicity",
+									   periodicity_threshold = 70)
 
-		reads_list <- bamtolist(bamfolder = path_to_bam, annotation = annotation_file,
-		                        length_filter_mode = "periodicity", periodicity_threshold = 50)
-
-For additional details please refers to the documentation provided by ?bamtolist or ?bedtolist.
+For additional details please refers to the documentation provided by ?length_filter.
 	
 ### Annotation data table
   
@@ -340,7 +335,7 @@ For additional details please refers to the documentation provided by ?bamtolist
 
 ### Contact
 
-fabio.lauria@unitn.it
+fab.lauria.88@gmail.com
 
 t.tebaldi@unitn.it
 

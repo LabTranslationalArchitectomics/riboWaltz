@@ -10,8 +10,8 @@
 #' showing the P-sites offsets computed throughout the two steps of the
 #' algorithm.
 #'
-#' @param data A list of data tables from either \code{\link{bamtolist}} or
-#'   \code{\link{bedtolist}}.
+#' @param data A list of data tables from \code{\link{bamtolist}},
+#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
 #' @param flanking An integer that specifies how many nucleotides, at least, of
 #'   the reads mapping on the reference codon must flank the reference codon in
 #'   both directions. Default is 6.
@@ -234,8 +234,8 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #' the E-site can be attached by providing either a FASTA file or a BSgenome
 #' data package with the nucleotide sequences.
 #'
-#' @param data A list of data tables from either \code{\link{bamtolist}} or
-#'   \code{\link{bedtolist}}.
+#' @param data A list of data tables from \code{\link{bamtolist}},
+#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
 #' @param offset A data table from \code{\link{psite}}.
 #' @param site Either NULL, "psite, "asite", "esite" or a vector with a
 #'   combination of the three character strings. When this parameter is not NULL
@@ -251,7 +251,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
 #'   in the \code{\link{create_annotation}} function. Note: either
 #'   \code{fastapath} or \code{bsgenome} is required to generate the additional
 #'   column(s) specified by \code{site}. Default is NULL.
-#' @param fasta_genome A locigal value whether or not the FASTA file specified
+#' @param fasta_genome A logical value whether or not the FASTA file specified
 #'   by \code{fastapath} contains nucleotide sequences of a genome assembly.
 #'   FALSE means that the nucleotide sequences of all the transcripts are
 #'   provided instead. When this parameter is TRUE (the default), an annotation

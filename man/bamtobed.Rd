@@ -20,8 +20,8 @@ argument is NULL, which implies the folder is set as a subdirectory of
 Converts one or several BAM files into a list of BED files containing for
 each read the name of the reference sequence (i.e. of the transcript) on
 which it aligns, the leftmost and rightmost position of the read, its length
-and the associated strand. Please note that thus function calls the bamtobed
-utility of the BEDTools suite.
+and the associated strand. Please note: this function calls the
+\code{\link{bamtobed}} utility of the BEDTools suite.
 }
 \examples{
 ## path_bam <- "location_of_BAM_files"

@@ -85,7 +85,7 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
   final_melt_table <- rbind(melt_table, RNA_table)
   final_melt_table <- final_melt_table[, region := factor(region,
                                                           levels = c("5utr", "cds", "3utr"),
-                                                          labels = c("5' UTR  ","CDS  ","3' UTR"))
+                                                          labels = c("5' UTR","CDS","3' UTR"))
                    ][order(region)]
   
   bs <- 25
@@ -93,12 +93,14 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
     geom_bar(stat = "identity",color = "white",width = 0.65, alpha = 0.9, size = 0.025 * bs) +
     scale_fill_manual(name = "", values = colour) +
     theme_bw(base_size = bs) +
-    theme(legend.position = "top", legend.key = element_blank()) +
+    theme(legend.key = element_blank()) +
     theme(axis.title.x = element_blank()) +
     scale_x_discrete(breaks = unique(final_melt_table$sample)) +
     facet_grid( . ~ class, scales = "free", space="free_x") +
     theme(strip.background = element_blank(), strip.text = element_blank()) +
-    scale_y_continuous("P-sites (%)", sec.axis = sec_axis(~ . * 1 , name = "Length (%)"))
+    scale_y_continuous("P-sites (%)", sec.axis = sec_axis(~ . * 1 , name = "Length (%)")) + 
+    theme(legend.position = "top", legend.margin=margin(10,0,0,0), legend.box.margin=margin(-5,-5,-5,-5)) +
+    theme(legend.text = element_text(margin = margin(l = -10, unit = "pt")))
   
   output <- list()
   output[["plot"]] <- bp

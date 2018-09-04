@@ -9,8 +9,8 @@ psite_info(data, offset, site = NULL, fastapath = NULL,
   dataSource = NA, organism = NA, granges = FALSE)
 }
 \arguments{
-\item{data}{A list of data tables from either \code{\link{bamtolist}} or
-\code{\link{bedtolist}}.}
+\item{data}{A list of data tables from \code{\link{bamtolist}},
+\code{\link{bedtolist}} or \code{\link{length_filter}}.}
 
 \item{offset}{A data table from \code{\link{psite}}.}
 
@@ -30,7 +30,7 @@ in the \code{\link{create_annotation}} function. Note: either
 \code{fastapath} or \code{bsgenome} is required to generate the additional
 column(s) specified by \code{site}. Default is NULL.}
 
-\item{fasta_genome}{A locigal value whether or not the FASTA file specified
+\item{fasta_genome}{A logical value whether or not the FASTA file specified
 by \code{fastapath} contains nucleotide sequences of a genome assembly.
 FALSE means that the nucleotide sequences of all the transcripts are
 provided instead. When this parameter is TRUE (the default), an annotation

@@ -4,43 +4,22 @@
 \alias{bedtolist}
 \title{Convert BED files into a list of data tables or a GRangesList.}
 \usage{
-bedtolist(bedfolder, annotation, transcript_align = TRUE,
-  length_filter_mode = "none", length_filter_vector = NULL,
-  periodicity_threshold = 50, list_name = NULL, granges = FALSE)
+bedtolist(bedfolder, annotation, transcript_align = TRUE, list_name = NULL,
+  rm_version = FALSE, granges = FALSE)
 }
 \arguments{
 \item{bedfolder}{A character string indicating the path to the folder
-containing the BED files.}
+containing the BED files from \code{\link{bamtobed}}.}
 
 \item{annotation}{A data table from \code{\link{create_annotation}}. Please
 make sure that the name of the reference sequences in the annotation data
 table coincides with those in the BED files.}
 
-\item{transcript_align}{A locigal value whether or not the BED files within
+\item{transcript_align}{A logical value whether or not the BED files within
 \code{bedfolder} refers to a transcriptome alignment (intended as an
 alignment based on a reference FASTA of all the transcript sequences). When
 this parameter is TRUE (the default) no reads mapping on the negative
 strand should be present and they are therefore removed.}
-
-\item{length_filter_mode}{Either "none" (the default), "custom" or
-"periodicity". It specifies how to handle the selection of the read length.
-"none": all read lengths are included in the analysis; "custom": only read
-lengths specified by the user are included (see
-\code{length_filter_vector}); "periodicity": only read lengths satisfying a
-periodicity threshold (see \code{periodicity_threshold}) are included in
-the analysis. This mode enables the removal of all the reads without
-periodicity.}
-
-\item{length_filter_vector}{An integer or an integer vector specifying either
-the read length or multiple read lengths to be kept, respectively. This
-parameter is considered only when \code{length_filter_mode} is set to
-"custom".}
-
-\item{periodicity_threshold}{An integer in \emph{[10, 100]}. Only the read
-lengths satisfying this threshold (i.e. with a higher percentage of read
-extremities falling in the same frame) are kept. This parameter is
-considered only when \code{length_filter_mode} is set to "periodicity".
-Default is 50.}
 
 \item{list_name}{A character string vector specifying the desired names for
 the data tables of the output list. Its length must coincides with the
@@ -50,9 +29,15 @@ file, the second string to the second one and so on. By default this
 argument is NULL, implying that the data tables are named after the name of
 the BED file, leaving their path and extension out.}
 
+\item{rm_version}{A logical value whether ot not to remove the version of the
+transcripts from the end of their ID, usually separated by a dot. This
+option might be useful to make the transcripts IDs in the BED files match
+with those in the annotation table. Default is FALSE.}
+
 \item{granges}{A logical value whether or not to return a GRangesList object.
 Default is FALSE, meaning that a list of data tables (the required input
-for \code{\link{psite}}, \code{\link{rends_heat}} and
+for \code{\link{length_filter}}, \code{\link{psite}} and
+\code{\link{psite_info}}, \code{\link{rends_heat}} and
 \code{\link{rlength_distr}}) is returned instead.}
 }
 \value{
@@ -65,11 +50,10 @@ list of GRanges objects. In both cases two additional columns are attached to
 the data structures, reporting the leftmost and rightmost position of the CDS
 of the reference sequence with respect to its 1st nuclotide. Please note: if
 a transcript is not associated to any annotated CDS then its start and the
-stop codon are set to 0. Multiple options for treating the read lengths are
-available.
+stop codon are set to 0.
 }
 \examples{
-## path_bed <- "location_of_BED_files"
+## path_bed <- "path/to/BED/files"
 ## annotation_dt <- datatable_with_transcript_annotation
 ## bedtolist(bedfolder = path_bed, annotation = annotation_dt)
 }
