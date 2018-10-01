@@ -65,7 +65,7 @@ To load __riboWaltz__ type
 
 ## Getting help
 
-The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documentation by running
+The next section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documentation by running
  
 	?function_name
 
@@ -113,12 +113,12 @@ A complete reference manual can be found [here](https://github.com/LabTranslatio
 1. only read lengths specified by the user are kept (manual mode)
 
 		filtered_list <- length_filter(data = reads_list, length_filter_mode = "custom",
-									   length_filter_vector = 27:30)
+						length_filter_vector = 27:30)
 
 2. only read lengths satisfying a periodicity threshold are kept (periodicity threshold mode). The user can change the desired threshold (the default is 50%). This mode enables the removal of all the reads without periodicity
 
 		filtered_list <- length_filter(data = reads_list, length_filter_mode = "periodicity",
-									   periodicity_threshold = 70)
+						periodicity_threshold = 70)
 
 For additional details please refers to the documentation provided by ?length_filter.
 	
@@ -337,6 +337,6 @@ For additional details please refers to the documentation provided by ?length_fi
 
 fab.lauria.88@gmail.com
 
-t.tebaldi@unitn.it
+toma.tebaldi@gmail.com
 
 gabriella.viero@cnr.it

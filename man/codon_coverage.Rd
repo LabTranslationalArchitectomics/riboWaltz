@@ -57,5 +57,5 @@ data(mm81cdna)
 ## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, min_overlap = 3)
 
 ## Compute the coverage based on the number of P-sites per codon
-##coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, psite = TRUE)
+## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, psite = TRUE)
 }

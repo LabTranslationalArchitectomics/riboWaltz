@@ -271,7 +271,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   norm_table <- norm_table[, class := "cds"
                            ][codon == "AUG", class := "start"
                              ][codon %in% c("UAA", "UGA", "UAG"), class := "stop"
-                               ][, class := factor(class, levels = c("start", "cds", "stop"), labels=c("Start codon ", "cds", "Stop codon"))
+                               ][, class := factor(class, levels = c("start", "cds", "stop"), labels=c("Start codon", "cds", "Stop codon"))
                                  ][cod_aa, on = "codon"
                                    ][, value := count / seq_freq[codon]
                                      ][, value := value - min(value)
@@ -286,12 +286,13 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   bs <- 30
   bp <- ggplot(norm_table,aes(x = codon, y = value, fill = class)) +
     geom_bar(stat = "identity", alpha = 0.9) +
-    scale_fill_manual(name = "", breaks=c("Start codon ","Stop codon"), values = c("#104ec1", "gray60", "darkred")) +
+    scale_fill_manual(name = "", breaks=c("Start codon","Stop codon"), values = c("#104ec1", "gray60", "darkred")) +
     theme_bw(base_size = bs) +
-    theme(legend.position = "top") +
+    theme(legend.position = "top", legend.margin=margin(10,0,0,0), legend.box.margin=margin(-7,-5,-20,-5)) +
+    theme(legend.text = element_text(margin = margin(l = -10, unit = "pt"))) +
     scale_x_discrete("Codon") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5, size = bs * 0.5)) +
-    geom_text(aes(label = aa), vjust = -0.5) +
+    geom_text(aes(label = aa), vjust = -0.5, size = bs/6) +
     theme(axis.text.x = element_text(colour = colour_codon)) +
     scale_y_continuous("Usage index", limits = c(0,1.05), breaks = c(0,0.5,1))
   
@@ -300,27 +301,27 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   output[["dt"]] <- norm_table[, c("codon", "class", "value",  "aa")]
 
   if(length(codon_values) != 0){
-    colnames(codon_values) <- c("codon", "comp_values")
+    codon_values <- codon_values[, list(codon, value)]
+    setnames(codon_values, old = c("codon", "value"), new =  c("codon", "comp_values"))
     codon_values[, codon := gsub("T", "U", codon)]
-    norm_table <- norm_table[comp_values, on = "codon"
+    norm_table <- norm_table[codon_values, on = "codon"
                              ][, comp_values := comp_values - min(comp_values)
                                ][, comp_values := comp_values / max(comp_values)]
                
     correlation <- round(cor(norm_table$value, norm_table$comp_values), 3)
     
-    bs <- 25
+    bs <- 22.5
     pcomp <- ggplot(norm_table,aes(x = value, y = comp_values, colour = class)) +
       geom_smooth(method = "lm", se=T, color="gray80", fill="gray80", linetype = 1, formula = y ~ x, level = 0.99,  fullrange = TRUE) +
       geom_point(alpha = 0.9, size = bs * 0.14) +
-      ggrepel::geom_text_repel(aes(value, comp_values, label = codon), show.legend = F) +
-      scale_colour_manual(name = "", breaks = c("Start codon ","Stop codon"), values = c("#104ec1", "gray40", "darkred")) +
+      scale_colour_manual(name = "", breaks = c("Start codon","Stop codon"), values = c("#104ec1", "gray40", "darkred")) +
       theme_bw(base_size = bs) +
-      theme(legend.position = "top") +
+      theme(legend.position = "top", legend.margin=margin(10,0,0,0), legend.box.margin=margin(-7,-5,-20,-5)) +
+      theme(legend.text = element_text(margin = margin(l = -10, unit = "pt"))) +
       scale_x_continuous("Codon usage index", limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       scale_y_continuous("Codon usage", limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       coord_cartesian(xlim = c(-0.05,1.05), ylim = c(-0.05,1.05)) +
-      geom_text(aes(x = 1, y = 0), label = paste0("R=",correlation), vjust = -0.2, size = bs * 0.2, hjust = 1, color = "black")
-    pcomp
+      annotate("text", x = 1, y = 0, label = paste0("R=",correlation), vjust = -0.2, size = bs * 0.2, hjust = 1, color = "black")
     
     if (scatter_label == T || scatter_label == TRUE) {
       if (aminoacid == T || aminoacid == TRUE) {

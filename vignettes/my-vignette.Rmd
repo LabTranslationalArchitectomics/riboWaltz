@@ -3,7 +3,7 @@ title: "riboWaltz"
 author: "Fabio Lauria (fab.lauria.88@gmail.com)
 
 
-Toma Tebaldi (t.tebaldi@unitn.it)
+Toma Tebaldi (toma.tebaldi@gmail.com)
 
 
 Gabriella Viero (gabriella.viero@cnr.it)"
@@ -78,7 +78,7 @@ library(riboWaltz)
 
 ## Getting help
 
-  The following section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documentation by running
+  The next section explains how to make use of riboWalz by introducing all the functions included in the package and reporting most of the data structures and graphical outputs obtained with the default options. For additional examples and further details about the usage of each parameter in the functions please refer to their documentation by running
 
 ```{r, eval = FALSE}
 ?function_name

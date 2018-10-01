@@ -79,9 +79,13 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 2)))
     dt <- dt[as.character(transcript) %in% as.character(annotation$transcript)]
     if(nreads != nrow(dt)){
-      cat(sprintf("%s M  (%s %%) reads removed: referece transcript ID not found in the annotation table\n", 
-                  format(round((nreads - nrow(dt)) / 1000000, 2), nsmall = 2), 
-                  format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
+      if(nrow(dt) == 0){
+        stop("%s M  (%s %%) reads removed: referece transcript ID not found in the annotation table\n\n")
+      } else{
+        cat(sprintf("%s M  (%s %%) reads removed: referece transcript ID not found in the annotation table\n", 
+                    format(round((nreads - nrow(dt)) / 1000000, 2), nsmall = 2), 
+                    format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) )) 
+      }
     }
     
     if(transcript_align == TRUE | transcript_align == T){
@@ -227,9 +231,13 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 2)))
     dt <- dt[as.character(transcript) %in% as.character(annotation$transcript)]
     if(nreads != nrow(dt)){
-      cat(sprintf("%s M  (%s %%) reads removed: referece transcript ID not found in the annotation table\n", 
-                  format(round((nreads - nrow(dt)) / 1000000, 2), nsmall = 2), 
-                  format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) ))
+      if(nrow(dt) == 0){
+        stop("%s M  (%s %%) reads removed: referece transcript ID not found in the annotation table\n\n")
+      } else{
+        cat(sprintf("%s M  (%s %%) reads removed: referece transcript ID not found in the annotation table\n", 
+                    format(round((nreads - nrow(dt)) / 1000000, 2), nsmall = 2), 
+                    format(round(((nreads - nrow(dt)) / nreads) * 100, 2), nsmall = 2) )) 
+      }
     }
     
     if(transcript_align == TRUE | transcript_align == T){
