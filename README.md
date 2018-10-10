@@ -21,7 +21,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 ***riboWaltz: Optimization of ribosome P-site positioning in ribosome profiling data.*** 
 *PLoS Comput Biol. 2018 Aug 13;14(8):e1006169.* 
 
-[![doi](https://img.shields.io/badge/DOI-10.1186%2Fs12864--015--1643--9-green.svg?style=flat)](http://dx.doi.org/10.1371/journal.pcbi.1006169)
+[![doi](https://img.shields.io/badge/DOI-10.1371%2journal.pcbi.1006169-green.svg?style=flat)](http://dx.doi.org/10.1371/journal.pcbi.1006169)
 
 ------------------------------------------------------------------------
 
