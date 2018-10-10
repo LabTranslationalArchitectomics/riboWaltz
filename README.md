@@ -13,6 +13,18 @@ __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnos
 
 ------------------------------------------------------------------------
 
+## Reference
+
+Please cite the following article when using __riboWaltz__:
+
+Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
+***riboWaltz: Optimization of ribosome P-site positioning in ribosome profiling data.*** 
+*PLoS Comput Biol. 2018 Aug 13;14(8):e1006169.* 
+
+[![doi](https://img.shields.io/badge/DOI-10.1186%2Fs12864--015--1643--9-green.svg?style=flat)](http://dx.doi.org/10.1371/journal.pcbi.1006169)
+
+------------------------------------------------------------------------
+
 ## License
 
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg?maxAge=2592000?style=flat)](https://opensource.org/licenses/MIT)
