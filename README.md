@@ -228,7 +228,7 @@ For additional details please refers to the documentation provided by ?length_fi
 	
  `cds_coverage` returns a data table containing, for each transcript: i) its name; ii) its length; iii) the number of in-frame P-sites mapping on its annotated coding region for all samples:
   
-    |  transcript  |  length  |  Samp1  |
+  |  transcript  |  length  |  Samp1  |
   |:------:|:-----:|:------:|
   |  ENSMUST00000000001.4  |  1065  |  31  |
   |  ENSMUST00000000003.11  |  525  |  0  |
