@@ -4,21 +4,20 @@
 \name{mm81cdna}
 \alias{mm81cdna}
 \title{Annotation}
-\format{A data table with 109,712 rows and 5 variables (the lengths are
-  expressed in nucleotides):
+\format{A data table with 109,712 rows and 5 variables:
 \describe{
   \item{transcript}{Name of the transcript (ENST ID and version, dot
   separated)}
-  \item{l_tr}{Length of the transcript}
-  \item{l_utr5}{Length of the annotated 5' UTR (if any)}
-  \item{l_cds}{Length of the annotated CDS (if any)}
-  \item{l_utr3}{Length of the annotated 3' UTR (if any)}
+  \item{l_tr}{Length of the transcript, in nucleotides}
+  \item{l_utr5}{Length of the annotated 5' UTR (if any), in nucleotides}
+  \item{l_cds}{Length of the annotated CDS (if any), in nucleotides}
+  \item{l_utr3}{Length of the annotated 3' UTR (if any), in nucleotides}
 }}
 \usage{
 mm81cdna
 }
 \description{
-A dataset containing basic information about 109,712 mouse mRNA (using the
-Ensembl v81 transcript annotation).
+A dataset containing basic information about 109,712 mouse mRNA (Ensembl v81
+transcript annotation).
 }
 \keyword{datasets}

@@ -1,33 +1,38 @@
-#' Plot read length distributions.
+#' Read length distributions.
 #'
-#' For a specified sample this function plots the read length distribution. It
-#' is possible to visualise the distribution for all the read lengths or to
-#' restrict the graphical output to a sub-range of read lengths.
+#' This function generates read length distributions.
 #'
-#' @param data A list of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
-#' @param sample A character string specifying the name of the sample of
-#'   interest.
-#' @param cl An integer value in \emph{[1,100]} specifying the confidence level
-#'   for restricting the plot to a sub-range of read lengths. By default it is
-#'   set to 100, meaning that the whole distribution is displayed.
-#' @return A list containing a ggplot2 object, and a data table with the
-#'   associated data.
+#' @param data List of data tables from \code{\link{bamtolist}},
+#'   \code{\link{bedtolist}}, \code{\link{length_filter}} or
+#'   \code{\link{psite_info}}.
+#' @param sample Character string specifying the name of the sample of interest.
+#' @param transcripts Character string vector listing the name of transcripts to
+#'   be included in the analysis. Default is NULL i.e. all transcripts are used.
+#' @param cl Integer value in [1,100] specifying a confidence level for
+#'   restricting the plot to a sub-range of read lengths i.e. to the cl% of
+#'   read lengths associated to the highest signals. Default is 100.
+#' @return List containing a ggplot2 object ("plot") and the data table with the
+#'   associated data ("dt").
 #' @examples
 #' data(reads_list)
 #'
-#' ## Visualise distribution for all the read lengths
+#' ## Generate the length distribution for all read lengths:
 #' lendist_whole <- rlength_distr(reads_list, sample = "Samp1", cl = 100)
 #' lendist_whole[["plot"]]
 #'
-#' ## Visualise the metaheatmaps for a sub-range of read lengths (the middle 95%)
+#' ## Generate the length distribution for a sub-range of read lengths:
 #' lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
 #' lendist_sub95[["plot"]]
 #' @import data.table
 #' @import ggplot2
 #' @export
-rlength_distr <- function(data, sample, cl = 100) {
-  dt <- data[[sample]]
+rlength_distr <- function(data, sample, transcripts = NULL, cl = 100) {
+
+  if(length(transcripts) == 0) {
+    dt <- data[[sample]]
+  } else {
+    dt <- data[[sample]][transcript %in% transcripts]
+  }
   
   xmin <- quantile(dt$length, (1 - cl/100)/2)
   xmax <- quantile(dt$length, 1 - (1 - cl/100)/2)
@@ -43,7 +48,7 @@ rlength_distr <- function(data, sample, cl = 100) {
     theme(plot.title = element_text(hjust = 0.5)) +
     scale_x_continuous(limits = c(xmin - 0.5, xmax + 0.5), breaks = seq(xmin + ((xmin) %% 2), xmax, by = max(c(1, floor((xmax - xmin)/7)))))
   
-  output<-list()
+  output <- list()
   output[["plot"]] <- p
   output[["dt"]] <- dist
   return(output)

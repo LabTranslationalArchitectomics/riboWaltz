@@ -1,44 +1,44 @@
-#' Compute the percentage of P-sites per frame.
+#' Percentage of P-sites per reading frame.
 #'
-#' For one or several samples this function computes the percentage of P-sites
-#' falling on the three reading frames of the transcripts and generates a
-#' barplot of the resulting values. This analysis is performed for the annotated
-#' 5' UTR, coding sequence and 3' UTR, separately. It is possible to compute the
-#' percentage of P-sites per frame using all the read lengths or to restrict the
-#' analysis to a sub-range of read lengths.
+#' This function computes the percentage of P-sites falling in the three
+#' possible translation reading frames and generates a bar plot of the resulting
+#' values. It only handles annotated 5' UTRs, coding sequences and 3' UTRs,
+#' separately.
 #'
-#' @param data A list of data tables from \code{\link{psite_info}}.
-#' @param sample A character string vector specifying the name of the sample(s)
-#'   of interest. By default this argument is NULL, meaning that all the samples
-#'   in \code{data} are included in the analysis.
-#' @param region Either "all" or a character string among "5utr", "cds", "3utr"
-#'   specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
-#'   respectively) that must be included in the analysis. Default is "all",
-#'   meaning that the all the regions are considered.
-#' @param length_range Either "all", an integer or an integer vector. Default is
-#'   "all", meaning that all the read lengths are included in the analysis.
-#'   Otherwise, only the read lengths matching the specified value(s) are kept.
-#' @param plot_title Any character string specifying the title of the plot. If
+#' @param data List of data tables from \code{\link{psite_info}}.
+#' @param sample Character string vector specifying the name of the sample(s) of
+#'   interest. Default is NULL i.e. all samples in \code{data} are processed.
+#' @param transcripts Character string vector listing the name of transcripts to
+#'   be included in the analysis. Default is NULL i.e. all transcripts are used.
+#' @param region Character string specifying the region(s) of the transcripts to
+#'   be analysed. It can be either "5utr", "cds", "3utr" for 5' UTRs, CDSs and
+#'   3' UTRs, respectively. Default is "all" i.e. all regions are considered.
+#'   According to this parameter the bar plots are differently arranged to
+#'   optimise the organization and the visualization of the data.
+#' @param length_range Integer or an integer vector specyfying the read
+#'   length(s) to be included in the analysis. Default is "all" i.e. all read
+#'   lengths are used.
+#' @param plot_title Character string specifying the title of the plot. If
 #'   "auto", the title of the plot reports the region specified by \code{region}
-#'   (if any) and the length(s) of the reads used for generating the barplot.
-#'   Default is NULL, meaning that no title will be added to the plot.
-#' @return A list containing a ggplot2 object and a data table with the
-#'   associated data.
+#'   (if any) and the considered read length(s). Default is NULL i.e. no title
+#'   is plotted.
+#' @return A list containing a ggplot2 object ("plot") and the data table with
+#'   the associated data ("dt").
 #' @examples
 #' data(reads_psite_list)
 #'
-#' ## Generate the barplot for all the read lengths
+#' ## Generate the bar plot for all read lengths:
 #' frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
 #'
-#' ## Generate the barplot restricting the analysis to the coding sequence and
-#' ## to the reads of 28 nucleotides
+#' ## Generate the bar plot restricting the analysis to coding sequences and
+#' ## reads of 28 nucleotides:
 #' frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 #' length_range = 28)
 #' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite <- function(data, sample = NULL, region = "all", length_range = "all",
-                        plot_title = NULL){
+frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
+                        length_range = "all", plot_title = NULL){
   if(length(sample) == 0) {
     sample <- names(data)
   }
@@ -51,7 +51,14 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
   
   if(!identical(length_range, "all")){
     for(samp in sample){
-      len_check <- unique(data[[samp]]$length)
+      
+      if(length(transcripts) == 0) {
+        dt <- data[[samp]]
+      } else {
+        dt <- data[[samp]][transcript %in% transcripts]
+      }
+      
+      len_check <- unique(dt$length)
       if(sum(length_range %in% len_check) == 0) {
         cat("\n")
         warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
@@ -81,8 +88,12 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
       dt <- data[[samp]][length %in% length_range]
     }
     
+    if (length(transcripts) != 0) {
+      dt <- dt[transcript %in% transcripts]
+    }
+    
     if (region == "all") {
-      frame_dt <- dt[start_pos != 0 & stop_pos !=0
+      frame_dt <- dt[cds_start != 0 & cds_stop !=0
                ][, frame := psite_from_start %% 3
                  ][, list(count = .N), by = list(region = psite_region, frame)
                    ][, percentage := (count / sum(count)) * 100, by = region
@@ -90,7 +101,7 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
                        ][, region := factor(region, levels = c("5utr", "cds", "3utr"), labels = c("5' UTR", "CDS", "3' UTR"))]
     } else {
       frame_dt <- dt[psite_region == region
-                     ][start_pos != 0 & stop_pos !=0
+                     ][cds_start != 0 & cds_stop !=0
                        ][, frame := psite_from_start %% 3
                          ][, list(count = .N), by = frame
                            ][, percentage := (count / sum(count)) * 100
@@ -178,46 +189,50 @@ frame_psite <- function(data, sample = NULL, region = "all", length_range = "all
   return(ret_list)
 }
 
-#' Compute the number of P-sites per frame stratified by read length.
+#' Percentage of P-sites per reading frame stratified by read length.
 #'
-#' Similar to \code{\link{frame_psite}} but the results are stratified by the
-#' length of the reads.
+#' Similar to \code{\link{frame_psite}}, but the results are stratified by read
+#' lengths and plotted as heatmaps.
 #'
-#' @param data A list of data tables from \code{\link{psite_info}}.
-#' @param sample A character string vector specifying the name of the sample(s)
-#'   of interest. By default this argument is NULL, meaning that all the samples
-#'   in \code{data} are included in the analysis.
-#' @param region Either "all" or a character string among "5utr", "cds", "3utr"
-#'   specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
-#'   respectively) that must be included in the analysis. Default is "all",
-#'   meaning that the all the regions are considered.
-#' @param cl An integer value in \emph{[1,100]} specifying the confidence level
-#'   for restricting the analysis to a sub-range of read lengths. Default is 100.
+#' @param data List of data tables from \code{\link{psite_info}}.
+#' @param sample Character string vector specifying the name of the sample(s) of
+#'   interest. Default is NULL i.e. all samples in \code{data} are processed.
+#' @param transcripts Character string vector listing the name of transcripts to
+#'   be included in the analysis. Default is NULL i.e. all transcripts are used.
+#' @param region Character string specifying the region(s) of the transcripts to
+#'   be analysed. It can be either "5utr", "cds", "3utr" for 5' UTRs, CDSs and
+#'   3' UTRs, respectively. Default is "all" i.e. all regions are considered.
+#'   According to this parameter the heatmaps are differently arranged to
+#'   optimise the organization and the visualization of the data.
+#' @param cl Integer value in [1,100] specifying a confidence level for
+#'   restricting the analysis to a sub-range of read lengths i.e. to the cl% of
+#'   read lengths associated to the highest signals. Default is 100.
 #'   This parameter has no effect if \code{length_range} is specified.
-#' @param length_range Either "all", an integer or an integer vector. Default is
-#'   "all", meaning that all the read lengths are included in the analysis.
-#'   Otherwise, only the read lengths matching the specified value(s) are kept.
-#'   If specified, this parameter prevails over \code{cl}.
-#' @param plot_title Any character string specifying the title of the plot. When
+#' @param length_range Integer or an integer vector specyfying the read
+#'   length(s) to be included in the analysis. Default is "all" i.e. all read
+#'   lengths are used. If specified, this parameter prevails over \code{cl}.
+#' @param plot_title Character string specifying the title of the plot. If
 #'   "auto", the title of the plot reports the region specified by \code{region}
-#'   (if any). Default is NULL, meaning that no title will be added to the plot.
-#' @return A list containing a ggplot2 object and a data table with the
-#'   associated data.
+#'   (if any) and the considered read length(s). Default is NULL i.e. no title
+#'   is displayed.
+#' @return A list containing a ggplot2 object ("plot") and the data table with
+#'   the associated data ("dt").
 #' @examples
 #' data(reads_psite_list)
 #'
-#' ## Generate the heatmap for all the read lengths
+#' ## Generate the heatmap for all read lengths:
 #' frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
 #'
-#' ## Generate the heatmap for a sub-range of read lengths (the middle 90%) and
-#' ## restricting the analysis to the coding sequence
+#' ## Generate the heatmap restricting the analysis to coding sequences and a 
+#' ## sub-range of read lengths:
 #' frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 #' region = "cds", cl = 90)
 #' @import data.table
 #' @import ggplot2
 #' @export
-frame_psite_length <- function(data, sample = NULL, region = "all", cl = 100,
-                                  length_range = "all", plot_title = NULL){
+frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
+                               region = "all", cl = 100, length_range = "all",
+                               plot_title = NULL){
   
   if(length(sample) == 0) {
     sample <- names(data)
@@ -231,7 +246,14 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 100,
   
   if(!identical(length_range, "all")){
     for(samp in sample){
-      len_check <- unique(data[[samp]]$length)
+      
+      if(length(transcripts) == 0) {
+        dt <- data[[samp]]
+      } else {
+        dt <- data[[samp]][transcript %in% transcripts]
+      }
+      
+      len_check <- unique(dt$length)
       if(sum(length_range %in% len_check) == 0) {
         cat("\n")
         warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
@@ -258,10 +280,16 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 100,
   
   for (samp in sample) {
     
+    if(length(transcripts) == 0) {
+      dt <- data[[samp]]
+    } else {
+      dt <- data[[samp]][transcript %in% transcripts]
+    }
+    
     if (region == "all") {
       
-      dt <- data[[samp]][start_pos != 0 & stop_pos != 0
-                         ][, frame := psite_from_start %% 3]
+      dt <- dt[cds_start != 0 & cds_stop != 0
+               ][, frame := psite_from_start %% 3]
       
       if(identical(length_range, "all")){
         minl <- quantile(dt$length, (1 - cl/100) / 2)
@@ -282,9 +310,8 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 100,
 
     } else {
       
-      dt <- data[[samp]][psite_region == region
-                         ][, frame := psite_from_start %% 3
-                           ]
+      dt <- dt[psite_region == region
+               ][, frame := psite_from_start %% 3]
       
       if(identical(length_range, "all")){
         minl <- quantile(dt$length, (1 - cl/100) / 2)
@@ -322,7 +349,7 @@ frame_psite_length <- function(data, sample = NULL, region = "all", cl = 100,
     theme_bw(base_size = 20) +
     theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
           panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
-    theme(legend.position = "top") +
+    theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
     scale_y_continuous(limits = c(minl - 0.5, maxl + 0.5), breaks = seq(minl + ((minl) %% 2), maxl, by = max(2, floor((maxl - minl) / 7))))
   
   if (region == "all") {

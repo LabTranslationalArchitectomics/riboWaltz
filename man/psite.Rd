@@ -2,71 +2,96 @@
 % Please edit documentation in R/psites.R
 \name{psite}
 \alias{psite}
-\title{Identify the ribosome P-site position within the reads.}
+\title{Ribosome P-sites position within reads.}
 \usage{
 psite(data, flanking = 6, start = TRUE, extremity = "auto",
-  plot = FALSE, plotdir = NULL, plotformat = "png", cl = 99)
+  plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99)
 }
 \arguments{
-\item{data}{A list of data tables from \code{\link{bamtolist}},
+\item{data}{List of data tables from \code{\link{bamtolist}},
 \code{\link{bedtolist}} or \code{\link{length_filter}}.}
 
-\item{flanking}{An integer that specifies how many nucleotides, at least, of
-the reads mapping on the reference codon must flank the reference codon in
-both directions. Default is 6.}
+\item{flanking}{Integer value specifying for the selected reads the minimum
+number of nucleotides that must flank the reference codon in both
+directions. Default is 6.}
 
-\item{start}{A logical value whether ot not to compute the P-site offsets
-starting from the reads aligning on the translation initiation site. FALSE
-implies that the reads mapping on the last triplet before the stop codon
-are used instead. Default is TRUE.}
+\item{start}{Logical value whether to use the translation initiation site as
+reference codon. Default is TRUE. If FALSE, the second to last codon is
+used instead.}
 
-\item{extremity}{A character string specifing which extremity of the reads
-should be used in the correction step of the algorithm. It can be either
-"5end" or "3end" for the 5' and the 3' extremity, respectively. Default is
-"auto", meaning that the best extremity is automatically selected.}
+\item{extremity}{Either "5end", "3end" or "auto". It specifies if the
+correction step should be based on 5' extremities ("5end") or 3'
+extremities ("3end"). Default is "auto" i.e. the optimal extremity is
+automatically selected.}
 
-\item{plot}{A logical value whether or not to plot the occupancy metaprofiles
-showing the P-sites offsets computed throughout the two steps of the
-algorithm. Default is FALSE.}
+\item{plot}{Logical value whether to plot the occupancy metaprofiles
+displaying the P-site offsets computed in both steps of the algorithm.
+Default is FALSE.}
 
-\item{plotdir}{A character string specifying the (existing or not) location
-of the directory where the occupancy metaprofiles shuold be stored. This
-parameter is considered only if \code{plot} is TRUE. By default this
-argument is NULL, which implies it is set as a subfolder of the working
-directory, called \emph{offset_plot}.}
+\item{plot_dir}{Character string specifying the directory where read
+length-specific occupancy metaprofiles shuold be stored. If the specified
+folder doesn't exist, it is automatically created. If NULL (the default),
+the metaprofiles are stored in a new subfolder of the working directory,
+called \emph{offset_plot}. This parameter is considered only if \code{plot}
+is TRUE.}
 
-\item{plotformat}{Either "png" (the default) or "pdf", this parameter
-specifies the file format of the generated metaprofiles. It is considered
-only if \code{plot} is TRUE.}
+\item{plot_format}{Either "png" (the default) or "pdf". This parameter
+specifies the file format storing the length-specific occupancy
+metaprofiles. It is considered only if \code{plot} is TRUE.}
 
-\item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
-for restricting the generation of the occupancy metaprofiles to a sub-range
-of read lengths. By default it is set to 99. This parameter is considered
-only if \code{plot} is TRUE.}
+\item{cl}{Integer value in [1,100] specifying a confidence level for
+generating occupancy metaprofiles for to a sub-range of read lengths i.e.
+for the cl% of read lengths associated to the highest signals. Default is
+99. This parameter is considered only if \code{plot} is TRUE.}
 }
 \value{
 A data table.
 }
 \description{
-This function identifies within each read the position of the ribosome
-P-site, determined by the localisation of its first nucleotide. The function
-processes the samples separately starting from the reads aligning on the
-reference codon (selected by the user between the start codon and the second
-to last codon) of any annotated coding sequence. It then returns the position
-of the P-site specifically inferred for all the read lengths. It also allows
-to plot a collection of read length-specific occupancy metaprofiles
-showing the P-sites offsets computed throughout the two steps of the
-algorithm.
+This function identifies the exact position of the ribosome P-site within
+each read, determined by the localisation of its first nucleotide (see
+\code{Details}). It returns a data table containing, for all samples and read
+lengths: i) the percentage of reads in the whole dataset, ii) the percentage
+of reads aligning on the start codon (if any); iii) the distance of the
+P-site from the two extremities of the reads before and after the correction
+step; iv) the name of the sample. Optionally, this function plots a
+collection of read length-specific occupancy metaprofiles displaying the
+P-site offsets computed through the process.
+}
+\details{
+The P-site offset (PO) is defined as the distance between the
+  extremities of a read and the first nucleotide of the P-site itself. The
+  function processes all samples separately starting from reads mapping on
+  the reference codon (either the start codon or the second to last codon,
+  see \code{start}) of any annotated coding sequences. Read lengths-specific
+  POs are inferred in two steps. First, reads mapping on the reference codon
+  are grouped according to their length, each group corresponding to a bin.
+  Reads whose extremities are too close to the reference codon are discarded
+  (see \code{flanking}). For each bin temporary 5' and 3' POs are defined as
+  the distances between the first nucleotide of the reference codon and the
+  nucleotide corresponding to the global maximum found in the profiles of the
+  5' and the 3' end at the left and at the right of the reference codon,
+  respectively. After the identification of the P-site for all reads aligning
+  on the reference codon, the POs corresponding to each length are assigned
+  to each read of the dataset. Second, the most frequent temporary POs
+  associated to the optimal extremity (see \code{extremity}) and the
+  predominant bins are exploited as reference values for correcting the
+  temporary POs of smaller bins. Briefly, the correction step defines for
+  each length bin a new PO based on the local maximum, whose distance from
+  the reference codon is the closest to the most frequent temporary POs. For
+  further details please refer to the \strong{riboWaltz} article (available
+  \href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169}{here}).
 }
 \examples{
 data(reads_list)
 
-## Compute the P-site offset automatically selecting the otimal read
-## extremity for the correction step and not plotting any metaprofile
+## Compute the P-site offset automatically selecting the optimal read
+## extremity for the correction step and not plotting any metaprofile:
 psite(reads_list, flanking = 6, extremity="auto")
 
 ## Compute the P-site offset specifying the extremity used in the correction
-## step and plotting the metaprofiles only for a sub-range of read lengths (the
-## middle 95\%). The plots will be placed in the current working directory.
-psite_offset <- psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
+## step and plotting the length-specific occupancy metaprofiles for a 
+## sub-range of read lengths (the middle 95\%). The plots will be placed in 
+## the current working directory:
+psite_offset <- psite(reads_list, flanking = 6, extremity = "3end", plot = TRUE, cl = 95)
 }

@@ -2,51 +2,54 @@
 % Please edit documentation in R/annotation.R
 \name{create_annotation}
 \alias{create_annotation}
-\title{Create an annotation data table.}
+\title{Annotation data table.}
 \usage{
 create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA,
   organism = NA)
 }
 \arguments{
-\item{gtfpath}{A character string specifying the path to te GTF file,
-including its name and extension. Please make sure the GTF derives from the
-same release of the sequences used in the alignment step. Note that either
-\code{gtfpath} or \code{txdb} must be specified.}
+\item{gtfpath}{A character string specifying the path to a GTF file,
+including its name and extension. Please make sure the GTF file derives
+from the same release of the sequences used in the alignment step. Note
+that either \code{gtfpath} or \code{txdb} must be specified. Default is
+NULL.}
 
-\item{txdb}{A character string specifying the name of the annotation package
-for TxDb object(s) to be loaded. If it is not already present in your
-system, it will be installed through the biocLite.R script (check the list
-of TxDb annotation packages available in the Bioconductor repositories at
-http://bioconductor.org/packages/release/BiocViews.html#___TxDb )). Please
-make sure the annotation package derives from the same release of the
-sequences used in the alignment step. Note that either \code{gtfpath} or
-\code{txdb} must be specified.}
+\item{txdb}{Character string specifying the TxDb annotation package to be
+loaded. If not already present in the system, it is automatically installed
+through the biocLite.R script (check
+\href{http://bioconductor.org/packages/release/BiocViews.html#___TxDb}{here}
+ the list of available TxDb annotation packages). Please make sure the TxDb
+annotation package derives from the same release of the sequences used in
+the alignment step. Note that either \code{gtfpath} or \code{txdb} must be
+specified. Default is NULL.}
 
-\item{dataSource}{An optional character string describing the origin of the
-GTF data file. For more information about this parameter please refer to
-the description of \emph{dataSource} of the
+\item{dataSource}{Optional character string describing the origin of the GTF
+data file. This parameter is considered only if \code{gtfpath} is
+specified. For more information about this parameter please refer to the
+description of \emph{dataSource} of the
 \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 \code{GenomicFeatures} package.}
 
-\item{organism}{A optional character string reporting the genus and species
-of the organism when \code{gtfpath} is specified.  For more information
-about this parameter please refer to the description of \emph{dataSource}
-of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
-the \code{GenomicFeatures} package.}
+\item{organism}{Optional character string reporting the genus and species of
+the organism of the GTF data file. This parameter is considered only if
+\code{gtfpath} is specified. For more information about this parameter
+please refer to the description of \emph{organism} of the
+\code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
+\code{GenomicFeatures} package.}
 }
 \value{
 A data table.
 }
 \description{
-Starting from a GTF file or a TxDb object this function generates a dada
-table containing a basic annotation of the transcripts. The data table
-includes a column named \emph{transcript} reporting the name of the reference
-sequences and four columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and
-\emph{l_utr3} reporting the length of the transcripts and of their annotated
-\emph{5' UTR}, \emph{CDS} and \emph{3' UTR}, respectively.
+This function generates transcript basic annotation data tables starting from
+GTF files or TxDb objects. Annotation data tables include a column named
+\emph{transcript} reporting the name of the reference transcripts and four
+columns named \emph{l_tr}, \emph{l_utr5}, \emph{l_cds} and \emph{l_utr3}
+reporting the length of the transcripts and of their annotated 5' UTRs, CDSs
+and 3' UTRs, respectively. Please note: if a transcript region is not
+annotated its length is set to 0.
 }
 \examples{
-## gtf_file <- location_of_GTF_file
-## path_bed <- location_of_output_directory
-## bamtobed(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
+## gtf_file <- "path/to/GTF/file.GTF"
+## create_annotation(gtfpath = gtf_file, dataSource = "gencode6", organism = "Mus musculus")
 }

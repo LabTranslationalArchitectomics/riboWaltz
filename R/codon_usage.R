@@ -40,7 +40,7 @@
 #' @param bsgenome Character string specifying the BSgenome data package with
 #'   the genome sequences to be loaded. If not already present in the system, it
 #'   is automatically installed through the biocLite.R script (check the list of
-#'   available BSgenome data packages by the
+#'   available BSgenome data packages by running the
 #'   \code{\link[BSgenome]{available.genomes}} function of the BSgenome
 #'   package). This parameter must be coupled with an annotation object (see
 #'   \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
@@ -314,7 +314,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     geom_bar(stat = "identity", alpha = 0.9) +
     scale_fill_manual(name = "", breaks=c("Start codon","Stop codon"), values = c("#104ec1", "gray60", "darkred")) +
     theme_bw(base_size = bs) +
-    theme(legend.position = "top", legend.margin=margin(10,0,0,0), legend.box.margin=margin(-7,-5,-20,-5)) +
+    theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
     theme(legend.text = element_text(margin = margin(l = -10, unit = "pt"))) +
     scale_x_discrete("Codon") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5, size = bs * 0.5)) +
@@ -342,7 +342,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       geom_point(alpha = 0.9, size = bs * 0.14) +
       scale_colour_manual(name = "", breaks = c("Start codon","Stop codon"), values = c("#104ec1", "gray40", "darkred")) +
       theme_bw(base_size = bs) +
-      theme(legend.position = "top", legend.margin=margin(10,0,0,0), legend.box.margin=margin(-7,-5,-20,-5)) +
+      theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
       theme(legend.text = element_text(margin = margin(l = -10, unit = "pt"))) +
       scale_x_continuous("Codon usage index", limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       scale_y_continuous("Codon usage", limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +

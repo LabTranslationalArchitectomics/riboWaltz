@@ -1,41 +1,39 @@
-#' Filter the reads according to their length.
+#' Read length filtering.
 #'
-# This function provides multiple options for filtering the reads by their
-# length. The read lengths to keep can be either specified by the user or
-# automatichally inferred on the basis of the associated trinucleotide
-# periodicity along the CDS.
+# This function provides multiple options for filtering the reads according to
+# their length. Read lengths to keep are either specified by the user or
+# automatichally selected on the basis of the trinucleotide periodicity of reads
+# mapping on the CDS.
 #'
-#' @param data A list of data tables from either \code{\link{bamtolist}} or
-#'   \code{\link{bedtolist}}.
+#' @param data List of data tables from \code{\link{bamtolist}},
+#'   \code{\link{bedtolist}} or \code{\link{psite_info}}.
 #' @param length_filter_mode Either "custom" or "periodicity". It specifies how
-#'   to handle the selection of the read. "custom": only read lengths specified
-#'   by the user are kept (see \code{length_filter_vector}); "periodicity": only
-#'   read lengths satisfying a periodicity threshold (see
-#'   \code{periodicity_threshold}) are kept. This mode enables the removal of
-#'   all the reads with low or no periodicity.
-#' @param length_filter_vector An integer or an integer vector specifying either
-#'   a read length or a range of read lengths to keep, respectively. This
-#'   parameter is considered only when \code{length_filter_mode} is set to
-#'   "custom".
-#' @param periodicity_threshold An integer in \emph{[10, 100]}. Only the read
-#'   lengths satisfying this threshold (i.e. with a higher percentage of read
-#'   extremities falling in one of the three reading frame along the CDS) are
-#'   kept. This parameter is considered only when \code{length_filter_mode} is
-#'   set to "periodicity". Default is 50.
-#' @param granges A logical value whether or not to return a GRangesList object.
-#'   Default is FALSE, meaning that a list of data tables (the required input
-#'   for \code{\link{psite}} and \code{\link{psite_info}},
-#'   \code{\link{rends_heat}} and \code{\link{rlength_distr}}) is returned
-#'   instead.
+#'   read length selection should be performed. "custom": only read lengths
+#'   specified by the user are kept (see \code{length_filter_vector});
+#'   "periodicity": only read lengths satisfying a periodicity threshold (see
+#'   \code{periodicity_threshold}) are kept. The latter mode enables the removal
+#'   of all reads with low or no periodicity.
+#' @param length_filter_vector Integer or an integer vector specifying a read
+#'   length or a range of read lengths to keep, respectively. This parameter is
+#'   considered only if \code{length_filter_mode} is "custom".
+#' @param periodicity_threshold Integer in [10, 100]. Only read lengths
+#'   satisfying this threshold (i.e. a higher percentage of read extremities
+#'   falls in one of the three reading frames along the CDS) are kept. This
+#'   parameter is considered only if \code{length_filter_mode} is "periodicity".
+#'   Default is 50.
+#' @param granges Logical value whether to return a GRangesList object. Default
+#'   is FALSE i.e. a list of data tables is returned instead (the required input
+#'   for \code{\link{psite}}, \code{\link{psite_info}}, \code{\link{rends_heat}}
+#'   and \code{\link{rlength_distr}}).
 #' @return A list of data tables or a GRangesList object.
 #' @examples
 #' data(reads_list)
 #' 
-#' ## Keep only reads of length between 27 and 30 nucleotides (included)
+#' ## Keep reads of length between 27 and 30 nucleotides (included):
 #' filtered_list <- length_filter(reads_list, length_filter_mode = "custom",
 #' length_filter_vector = 27:30)
 #' 
-#' ## Keep only reads of lengths satisfying a periodicity threshold (70%)
+#' ## Keep reads of lengths satisfying a periodicity threshold (70%):
 #' filtered_list <- length_filter(reads_list, length_filter_mode = "periodicity",
 #' periodicity_threshold = 70)
 #' @import data.table
@@ -77,18 +75,18 @@ length_filter <- function(data, length_filter_mode, length_filter_vector = NULL,
       if(identical(length_filter_mode, "periodicity")){
         nreads <- nrow(dt)
         
-        subdt5 <- dt[start_pos != 0 &
-                       (end5 - start_pos) >= 0 &
-                       (stop_pos - end5) >= 0]
-        subdt5[, end5_frame := as.factor((end5 - start_pos) %% 3)]
+        subdt5 <- dt[cds_start != 0 &
+                       (end5 - cds_start) >= 0 &
+                       (cds_stop - end5) >= 0]
+        subdt5[, end5_frame := as.factor((end5 - cds_start) %% 3)]
         t_end5 <- subdt5[, .N, by = list(length, end5_frame)
                          ][, end5_perc := (N / sum(N)) * 100, , by = length]
         keep_length5 <- unique(t_end5[end5_perc >= periodicity_threshold, length])
         
-        subdt3 <- dt[start_pos != 0 &
-                       (end3 - start_pos) >= 0 &
-                       (stop_pos - end3) >= 0]
-        subdt3[, end3_frame := as.factor((end3 - start_pos) %% 3)]
+        subdt3 <- dt[cds_start != 0 &
+                       (end3 - cds_start) >= 0 &
+                       (cds_stop - end3) >= 0]
+        subdt3[, end3_frame := as.factor((end3 - cds_start) %% 3)]
         t_end3 <- subdt3[, .N, by = list(length, end3_frame)
                          ][, end3_perc := (N / sum(N)) * 100, , by = length]
         keep_length3 <- unique(t_end3[end3_perc >= periodicity_threshold, length])

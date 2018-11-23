@@ -2,29 +2,34 @@
 % Please edit documentation in R/combine_bam.R
 \name{bamtobed}
 \alias{bamtobed}
-\title{Convert BAM files into BED files.}
+\title{From BAM files to BED files.}
 \usage{
 bamtobed(bamfolder, bedfolder = NULL)
 }
 \arguments{
-\item{bamfolder}{A character string specifying the path to the directory
-containing the BAM files. The function recursively looks for BAM format
-file starting from the specified folder.}
+\item{bamfolder}{Character string specifying the path to the folder storing
+BAM files. Please note: the function looks for BAM files recursively
+starting from the specified folder.}
 
-\item{bedfolder}{A character string specifying the (existing or not) location
-of the directory where the BED files should be stored. By default this
-argument is NULL, which implies the folder is set as a subdirectory of
-\code{bamfolder}, called \emph{bed}.}
+\item{bedfolder}{Character string specifying the path to the directory where
+BED files shuold be stored. If the specified folder doesn't exist, it is
+automatically created. If NULL (the default), BED files are stored in a new
+subfolder of the working directory, called \emph{bed}.}
 }
 \description{
-Converts one or several BAM files into a list of BED files containing for
-each read the name of the reference sequence (i.e. of the transcript) on
-which it aligns, the leftmost and rightmost position of the read, its length
-and the associated strand. Please note: this function calls the
-\code{\link{bamtobed}} utility of the BEDTools suite.
+This function reads one or multiple BAM files converting them into BED files
+that contain, for each read: i) the name of the corresponding reference
+sequence (i.e. of the transcript on which it aligns); ii) its leftmost and
+rightmost position with respect to the 1st nucleotide of the reference
+sequence; iii) its length; iv) the strand on which it aligns. Please note:
+this function relies on the \emph{bamtobed} utility of the BEDTools suite and
+can be only run on UNIX, LINUX and Apple OS X operating systems. Moreover, to
+generate R data structures containing reads information, the
+\code{\link{bedtolist}} must be run on the resulting BED files. For these
+reasons the authors suggest the use of \code{\link{bamtolist}}.
 }
 \examples{
-## path_bam <- "location_of_BAM_files"
-## path_bed <- "location_of_output_directory"
+## path_bam <- "path/to/BAM/files"
+## path_bed <- "path/to/output/directory"
 ## bamtobed(bamfolder = path_bam, bedfolder = path_bed)
 }

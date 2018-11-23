@@ -9,96 +9,114 @@ psite_info(data, offset, site = NULL, fastapath = NULL,
   dataSource = NA, organism = NA, granges = FALSE)
 }
 \arguments{
-\item{data}{A list of data tables from \code{\link{bamtolist}},
+\item{data}{List of data tables from \code{\link{bamtolist}},
 \code{\link{bedtolist}} or \code{\link{length_filter}}.}
 
-\item{offset}{A data table from \code{\link{psite}}.}
+\item{offset}{Data table from \code{\link{psite}}.}
 
-\item{site}{Either NULL, "psite, "asite", "esite" or a vector with a
-combination of the three character strings. When this parameter is not NULL
-(the default), it specifies which of the column(s) reporting the three
-nucleotides covered by the P-site ("psite"), A-site ("asite") or E-site
-("esite") must be added. Note: either \code{fastapath} or \code{bsgenome}
-is required to generate the additional column(s).}
+\item{site}{Either "psite, "asite", "esite" or a combination of these
+strings. It specifies if additional column(s) reporting the three
+nucleotides covered by the ribosome P-site ("psite"), A-site ("asite") and
+E-site ("esite") should be added. Note: either \code{fastapath} or
+\code{bsgenome} is required for this purpose. Default is NULL.}
 
-\item{fastapath}{An optional character string specifying the path to the
-FASTA file used in the alignment step, including its name and extension.
-This file can contain reference nucleotide sequences either of a genome
-assembly or of all the transcripts (see \code{fasta_genome}). Please make
-sure the sequences derive from the same release of the annotation file used
-in the \code{\link{create_annotation}} function. Note: either
-\code{fastapath} or \code{bsgenome} is required to generate the additional
+\item{fastapath}{Character string specifying the FASTA file used in the
+alignment step, including its path, name and extension. This file can
+contain reference nucleotide sequences either of a genome assembly or of
+all the transcripts (see \code{Details} and \code{fasta_genome}). Please
+make sure the sequences derive from the same release of the annotation file
+used in the \code{\link{create_annotation}} function. Note: either
+\code{fastapath} or \code{bsgenome} is required to generate additional
 column(s) specified by \code{site}. Default is NULL.}
 
-\item{fasta_genome}{A logical value whether or not the FASTA file specified
-by \code{fastapath} contains nucleotide sequences of a genome assembly.
-FALSE means that the nucleotide sequences of all the transcripts are
-provided instead. When this parameter is TRUE (the default), an annotation
-object is required (see \code{gtfpath} and \code{txdb}).}
+\item{fasta_genome}{Logical value whether the FASTA file specified by
+\code{fastapath} contains nucleotide sequences of a genome assembly. If
+TRUE (the default), an annotation object is required (see \code{gtfpath}
+and \code{txdb}). FALSE implies the nucleotide sequences of all the
+transcripts is provided instead.}
 
-\item{bsgenome}{An optional character string specifying the name of the
-BSgenome data package containing the genome sequences to be loaded. If it
-is not already present in your system, it will be installed through the
-biocLite.R script (check the list of data packages available in the
-Bioconductor repositories for your version of R/Bioconductor by the
+\item{bsgenome}{Character string specifying the BSgenome data package with
+the genome sequences to be loaded. If not already present in the system, it
+is automatically installed through the biocLite.R script (check the list of
+available BSgenome data packages by running the
 \code{\link[BSgenome]{available.genomes}} function of the BSgenome
-package). This parameter also requires an annotation object (see
+package). This parameter must be coupled with an annotation object (see
 \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 the specified BSgenome data pakage are in agreement with the sequences used
 in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
-required to generate the additional column(s) specified by \code{site}.
-Default is NULL.}
+required to generate additional column(s) specified by \code{site}. Default
+is NULL.}
 
-\item{gtfpath}{A character string specifying the path to te GTF file,
-including its name and extension. Please make sure the GTF derives from the
-same release of what is specified by \code{fastapath} or by
-\code{bsgenome}. Note that either \code{gtfpath} or \code{txdb} must be
-specified when the nucleotide sequences of a genome assembly are provided
-(see \code{fastapath} or \code{bsgenome}). Default is NULL.}
+\item{gtfpath}{Character string specifying the location of a GTF file,
+including its path, name and extension. Please make sure the GTF file and
+the sequences specified by \code{fastapath} or \code{bsgenome} derive from
+the same release. Note that either \code{gtfpath} or \code{txdb} is
+required if and only if nucleotide sequences of a genome assembly are
+provided (see \code{fastapath} or \code{bsgenome}). Default is NULL.}
 
-\item{txdb}{A character string specifying the name of the annotation package
-for TxDb object(s) to be loaded. If it is not already present in your
-system, it will be installed through the biocLite.R script (check the list
-of TxDb annotation packages available in the Bioconductor repositories at
-http://bioconductor.org/packages/release/BiocViews.html#___TxDb )). Please
-make sure the annotation package derives from the same release of what is
-specified by \code{fastapath} or by \code{bsgenome}. Note that either
-\code{gtfpath} or \code{txdb} must be specified when the nucleotide
+\item{txdb}{Character string specifying the TxDb annotation package to be
+loaded. If not already present in the system, it is automatically installed
+through the biocLite.R script (check
+\href{http://bioconductor.org/packages/release/BiocViews.html#___TxDb}{here}
+the list of available TxDb annotation packages). Please make sure the TxDb
+annotation package and the sequences specified by \code{fastapath} or
+\code{bsgenome} derive from the same release. Note that either
+\code{gtfpath} or \code{txdb} is required if and only if nucleotide
 sequences of a genome assembly are provided (see \code{fastapath} or
 \code{bsgenome}). Default is NULL.}
 
-\item{dataSource}{An optional character string describing the origin of the
-GTF data file. For more information about this parameter please refer to
-the description of \emph{dataSource} of the
+\item{dataSource}{Optional character string describing the origin of the GTF
+data file. This parameter is considered only if \code{gtfpath} is
+specified. For more information about this parameter please refer to the
+description of \emph{dataSource} of the
 \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 \code{GenomicFeatures} package.}
 
-\item{organism}{A optional character string reporting the genus and species
-of the organism when \code{gtfpath} is specified.  For more information
-about this parameter please refer to the description of \emph{dataSource}
-of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
-the \code{GenomicFeatures} package.}
+\item{organism}{Optional character string reporting the genus and species of
+the organism of the GTF data file. This parameter is considered only if
+\code{gtfpath} is specified. For more information about this parameter
+please refer to the description of \emph{organism} of the
+\code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
+\code{GenomicFeatures} package.}
 
-\item{granges}{A logical value whether or not to return a GRangesList object.
-Default is FALSE, meaning that a list of data tables (the required input
-for the downstream analyses and graphical outputs provided by riboWaltz) is
-returned instead.}
+\item{granges}{Logical value whether to return a GRangesList object. Default
+is FALSE i.e. a list of data tables (the required input for downstream
+analyses and graphical outputs provided by riboWaltz) is returned instead.}
 }
 \value{
 A list of data tables or a GRangesList object.
 }
 \description{
-Starting ftom the P-site position identfied by \code{\link{psite}}, this
-function updates the data tables that contains information about the reads.
-It attaches to the data tables 4 columns reporting the P-site position with
-respect to the 1st nucleotide of the transcript, the start and the stop codon
-of the annotated coding sequence (if any) and the region of the transcript
-(5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript
-is not associated to any annotated CDS then the positions of the P-site from
-both the start and the stop codon is set to NA. One or more additional
-columns reporting the three nucleotides covered by the P-site, the A-site or
-the E-site can be attached by providing either a FASTA file or a BSgenome
-data package with the nucleotide sequences.
+This function provides additional reads information according to the position
+of the P-site identfied by \code{\link{psite}}. It attaches to each data
+table in a list four columns reporting i) the P-site position with respect to
+the 1st nucleotide of the transcript, ii) the P-site position with respect to
+the start and the stop codon of the annotated coding sequence (if any) and
+iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the
+P-site. Please note: for transcripts not associated to any annotated CDS the
+position of the P-site with respect to the start and the stop codon is set to
+NA. Optionally, additional columns reporting the three nucleotides covered by
+the P-site, the A-site and the E-site are attached, based on FASTA files or
+BSgenome data packages containing the transcript nucleotide sequences.
+}
+\details{
+\strong{riboWaltz} only works for read alignments based on
+  transcript coordinates. This choice is due to the main purpose of RiboSeq
+  assays to study translational events through the isolation and sequencing
+  of ribosome protected fragments. Most reads from RiboSeq are supposed to
+  map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM
+  based on transcript coordinates can be generated in two ways: i) aligning
+  directly against transcript sequences; ii) aligning against standard
+  chromosome sequences, requiring the outputs to be translated in transcript
+  coordinates. The first option can be easily handled by many aligners (e.g.
+  Bowtie), given a reference FASTA file where each sequence represents a
+  transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The
+  second procedure is based on reference FASTA files where each sequence
+  represents a chromosome, usually coupled with comprehensive gene annotation
+  files (GTF or GFF). The STAR aligner, with its option --quantMode
+  TranscriptomeSAM (see Chapter 6 of its
+  \href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
+   is an example of tool providing such a feature.
 }
 \examples{
 data(reads_list)

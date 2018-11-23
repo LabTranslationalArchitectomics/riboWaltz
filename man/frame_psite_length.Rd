@@ -2,52 +2,56 @@
 % Please edit documentation in R/frames.R
 \name{frame_psite_length}
 \alias{frame_psite_length}
-\title{Compute the number of P-sites per frame stratified by read length.}
+\title{Percentage of P-sites per reading frame stratified by read length.}
 \usage{
-frame_psite_length(data, sample = NULL, region = "all", cl = 100,
-  length_range = "all", plot_title = NULL)
+frame_psite_length(data, sample = NULL, transcripts = NULL,
+  region = "all", cl = 100, length_range = "all", plot_title = NULL)
 }
 \arguments{
-\item{data}{A list of data tables from \code{\link{psite_info}}.}
+\item{data}{List of data tables from \code{\link{psite_info}}.}
 
-\item{sample}{A character string vector specifying the name of the sample(s)
-of interest. By default this argument is NULL, meaning that all the samples
-in \code{data} are included in the analysis.}
+\item{sample}{Character string vector specifying the name of the sample(s) of
+interest. Default is NULL i.e. all samples in \code{data} are processed.}
 
-\item{region}{Either "all" or a character string among "5utr", "cds", "3utr"
-specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
-respectively) that must be included in the analysis. Default is "all",
-meaning that the all the regions are considered.}
+\item{transcripts}{Character string vector listing the name of transcripts to
+be included in the analysis. Default is NULL i.e. all transcripts are used.}
 
-\item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
-for restricting the analysis to a sub-range of read lengths. Default is 100.
+\item{region}{Character string specifying the region(s) of the transcripts to
+be analysed. It can be either "5utr", "cds", "3utr" for 5' UTRs, CDSs and
+3' UTRs, respectively. Default is "all" i.e. all regions are considered.
+According to this parameter the heatmaps are differently arranged to
+optimise the organization and the visualization of the data.}
+
+\item{cl}{Integer value in [1,100] specifying a confidence level for
+restricting the analysis to a sub-range of read lengths i.e. to the cl% of
+read lengths associated to the highest signals. Default is 100.
 This parameter has no effect if \code{length_range} is specified.}
 
-\item{length_range}{Either "all", an integer or an integer vector. Default is
-"all", meaning that all the read lengths are included in the analysis.
-Otherwise, only the read lengths matching the specified value(s) are kept.
-If specified, this parameter prevails over \code{cl}.}
+\item{length_range}{Integer or an integer vector specyfying the read
+length(s) to be included in the analysis. Default is "all" i.e. all read
+lengths are used. If specified, this parameter prevails over \code{cl}.}
 
-\item{plot_title}{Any character string specifying the title of the plot. When
+\item{plot_title}{Character string specifying the title of the plot. If
 "auto", the title of the plot reports the region specified by \code{region}
-(if any). Default is NULL, meaning that no title will be added to the plot.}
+(if any) and the considered read length(s). Default is NULL i.e. no title
+is displayed.}
 }
 \value{
-A list containing a ggplot2 object and a data table with the
-  associated data.
+A list containing a ggplot2 object ("plot") and the data table with
+  the associated data ("dt").
 }
 \description{
-Similar to \code{\link{frame_psite}} but the results are stratified by the
-length of the reads.
+Similar to \code{\link{frame_psite}}, but the results are stratified by read
+lengths and plotted as heatmaps.
 }
 \examples{
 data(reads_psite_list)
 
-## Generate the heatmap for all the read lengths
+## Generate the heatmap for all read lengths:
 frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
 
-## Generate the heatmap for a sub-range of read lengths (the middle 90\%) and
-## restricting the analysis to the coding sequence
+## Generate the heatmap restricting the analysis to coding sequences and a 
+## sub-range of read lengths:
 frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
 region = "cds", cl = 90)
 }

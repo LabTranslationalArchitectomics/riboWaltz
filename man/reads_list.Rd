@@ -5,25 +5,27 @@
 \alias{reads_list}
 \title{Reads information}
 \format{A list of data tables with 1 object (named \emph{Samp1}) of 393,338
-  rows and 6 variables (the lengths and the distances are expressed in
-  nucleotides):
+  rows and 6 variables:
 \describe{
   \item{transcript}{Name of the transcript (ENST ID and version, dot
   separated)}
   \item{end5}{Position of the 5' end of the read with respect to the first
-  nuclotide of the transcript}
+  nuclotide of the transcript, in nucleotides}
   \item{end3}{Position of the 3' end of the read with respect to the first
-  nuclotide of the transcript}
-  \item{length}{Length of the read}
-  \item{start_pos}{Leftmost position of the annotated CDS with respect to the
-  first nuclotide of the transcript}
-  \item{stop_pos}{Rightmost position of the annotated CDS with respect to the
-  first nuclotide of the transcript}
+  nuclotide of the transcript, in nucleotides}
+  \item{length}{Length of the read, in nucleotides}
+  \item{cds_start}{Leftmost position of the annotated CDS with respect to the
+  first nuclotide of the transcript, in nucleotides}
+  \item{cds_stop}{Rightmost position of the annotated CDS with respect to the
+  first nuclotide of the transcript, in nucleotides}
 }}
 \usage{
 reads_list
 }
 \description{
-This dataset contains details on mapping reads from BAM or BED files.
+An example dataset containing details on reads mapping on the mouse
+transcriptome, generated from BAM or BED files. A subset of the original
+dataset is provided, including only reads aligning on the translation
+initiation site. Please contact the authors for more information.
 }
 \keyword{datasets}

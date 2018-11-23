@@ -1,60 +1,83 @@
-#' Identify the ribosome P-site position within the reads.
+#' Ribosome P-sites position within reads.
 #'
-#' This function identifies within each read the position of the ribosome
-#' P-site, determined by the localisation of its first nucleotide. The function
-#' processes the samples separately starting from the reads aligning on the
-#' reference codon (selected by the user between the start codon and the second
-#' to last codon) of any annotated coding sequence. It then returns the position
-#' of the P-site specifically inferred for all the read lengths. It also allows
-#' to plot a collection of read length-specific occupancy metaprofiles
-#' showing the P-sites offsets computed throughout the two steps of the
-#' algorithm.
+#' This function identifies the exact position of the ribosome P-site within
+#' each read, determined by the localisation of its first nucleotide (see
+#' \code{Details}). It returns a data table containing, for all samples and read
+#' lengths: i) the percentage of reads in the whole dataset, ii) the percentage
+#' of reads aligning on the start codon (if any); iii) the distance of the
+#' P-site from the two extremities of the reads before and after the correction
+#' step; iv) the name of the sample. Optionally, this function plots a
+#' collection of read length-specific occupancy metaprofiles displaying the
+#' P-site offsets computed through the process.
 #'
-#' @param data A list of data tables from \code{\link{bamtolist}},
+#' @param data List of data tables from \code{\link{bamtolist}},
 #'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
-#' @param flanking An integer that specifies how many nucleotides, at least, of
-#'   the reads mapping on the reference codon must flank the reference codon in
-#'   both directions. Default is 6.
-#' @param start A logical value whether ot not to compute the P-site offsets
-#'   starting from the reads aligning on the translation initiation site. FALSE
-#'   implies that the reads mapping on the last triplet before the stop codon
-#'   are used instead. Default is TRUE.
-#' @param extremity A character string specifing which extremity of the reads
-#'   should be used in the correction step of the algorithm. It can be either
-#'   "5end" or "3end" for the 5' and the 3' extremity, respectively. Default is
-#'   "auto", meaning that the best extremity is automatically selected.
-#' @param plot A logical value whether or not to plot the occupancy metaprofiles
-#'   showing the P-sites offsets computed throughout the two steps of the
-#'   algorithm. Default is FALSE.
-#' @param plotdir A character string specifying the (existing or not) location
-#'   of the directory where the occupancy metaprofiles shuold be stored. This
-#'   parameter is considered only if \code{plot} is TRUE. By default this
-#'   argument is NULL, which implies it is set as a subfolder of the working
-#'   directory, called \emph{offset_plot}.
-#' @param plotformat Either "png" (the default) or "pdf", this parameter
-#'   specifies the file format of the generated metaprofiles. It is considered
-#'   only if \code{plot} is TRUE.
-#' @param cl An integer value in \emph{[1,100]} specifying the confidence level
-#'   for restricting the generation of the occupancy metaprofiles to a sub-range
-#'   of read lengths. By default it is set to 99. This parameter is considered
-#'   only if \code{plot} is TRUE.
+#' @param flanking Integer value specifying for the selected reads the minimum
+#'   number of nucleotides that must flank the reference codon in both
+#'   directions. Default is 6.
+#' @param start Logical value whether to use the translation initiation site as
+#'   reference codon. Default is TRUE. If FALSE, the second to last codon is
+#'   used instead.
+#' @param extremity Either "5end", "3end" or "auto". It specifies if the
+#'   correction step should be based on 5' extremities ("5end") or 3'
+#'   extremities ("3end"). Default is "auto" i.e. the optimal extremity is
+#'   automatically selected.
+#' @param plot Logical value whether to plot the occupancy metaprofiles
+#'   displaying the P-site offsets computed in both steps of the algorithm.
+#'   Default is FALSE.
+#' @param plot_dir Character string specifying the directory where read
+#'   length-specific occupancy metaprofiles shuold be stored. If the specified
+#'   folder doesn't exist, it is automatically created. If NULL (the default),
+#'   the metaprofiles are stored in a new subfolder of the working directory,
+#'   called \emph{offset_plot}. This parameter is considered only if \code{plot}
+#'   is TRUE.
+#' @param plot_format Either "png" (the default) or "pdf". This parameter
+#'   specifies the file format storing the length-specific occupancy
+#'   metaprofiles. It is considered only if \code{plot} is TRUE.
+#' @param cl Integer value in [1,100] specifying a confidence level for
+#'   generating occupancy metaprofiles for to a sub-range of read lengths i.e.
+#'   for the cl% of read lengths associated to the highest signals. Default is
+#'   99. This parameter is considered only if \code{plot} is TRUE.
+#' @details The P-site offset (PO) is defined as the distance between the
+#'   extremities of a read and the first nucleotide of the P-site itself. The
+#'   function processes all samples separately starting from reads mapping on
+#'   the reference codon (either the start codon or the second to last codon,
+#'   see \code{start}) of any annotated coding sequences. Read lengths-specific
+#'   POs are inferred in two steps. First, reads mapping on the reference codon
+#'   are grouped according to their length, each group corresponding to a bin.
+#'   Reads whose extremities are too close to the reference codon are discarded
+#'   (see \code{flanking}). For each bin temporary 5' and 3' POs are defined as
+#'   the distances between the first nucleotide of the reference codon and the
+#'   nucleotide corresponding to the global maximum found in the profiles of the
+#'   5' and the 3' end at the left and at the right of the reference codon,
+#'   respectively. After the identification of the P-site for all reads aligning
+#'   on the reference codon, the POs corresponding to each length are assigned
+#'   to each read of the dataset. Second, the most frequent temporary POs
+#'   associated to the optimal extremity (see \code{extremity}) and the
+#'   predominant bins are exploited as reference values for correcting the
+#'   temporary POs of smaller bins. Briefly, the correction step defines for
+#'   each length bin a new PO based on the local maximum, whose distance from
+#'   the reference codon is the closest to the most frequent temporary POs. For
+#'   further details please refer to the \strong{riboWaltz} article (available
+#'   \href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169}{here}).
 #' @return A data table.
 #' @examples
 #' data(reads_list)
 #'
-#' ## Compute the P-site offset automatically selecting the otimal read
-#' ## extremity for the correction step and not plotting any metaprofile
+#' ## Compute the P-site offset automatically selecting the optimal read
+#' ## extremity for the correction step and not plotting any metaprofile:
 #' psite(reads_list, flanking = 6, extremity="auto")
 #'
 #' ## Compute the P-site offset specifying the extremity used in the correction
-#' ## step and plotting the metaprofiles only for a sub-range of read lengths (the
-#' ## middle 95%). The plots will be placed in the current working directory.
-#' psite_offset <- psite(reads_list, flanking = 6, extremity="3end", plot = TRUE, cl = 95)
+#' ## step and plotting the length-specific occupancy metaprofiles for a 
+#' ## sub-range of read lengths (the middle 95%). The plots will be placed in 
+#' ## the current working directory:
+#' psite_offset <- psite(reads_list, flanking = 6, extremity = "3end", plot = TRUE, cl = 95)
 #' @import data.table
 #' @import ggplot2
 #' @export
-psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FALSE,
-                  plotdir = NULL, plotformat="png", cl = 99) {
+psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
+                  plot = FALSE, plot_dir = NULL, plot_format="png", cl = 99) {
   names <- names(data)
   offset <- NULL
   for (n in names) { 
@@ -64,12 +87,12 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
     
     if(start == T | start == TRUE){
       base <- 0
-      dt[, site_dist_end5 := end5 - start_pos]
-      dt[, site_dist_end3 := end3 - start_pos]
+      dt[, site_dist_end5 := end5 - cds_start]
+      dt[, site_dist_end3 := end3 - cds_start]
     } else {
       base <- -5
-      dt[, site_dist_end5 := end5 - stop_pos - base]
-      dt[, site_dist_end3 := end3 - stop_pos - base]
+      dt[, site_dist_end5 := end5 - cds_stop - base]
+      dt[, site_dist_end3 := end3 - cds_stop - base]
     }
     site_sub <- dt[site_dist_end5 <= -flanking & site_dist_end3 >= flanking - 1]
     minlen <- min(site_sub$length)
@@ -99,7 +122,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
                                   ][perc == max(perc)]
     best_from3_tab <- offset_temp[, list(perc = sum(percentage)), offset_from_3
                                   ][perc == max(perc)]
-
+    
     if(extremity == "auto" &
        ((best_from3_tab[, perc] > best_from5_tab[, perc] &
          as.numeric(best_from3_tab[, offset_from_3]) <= minlen - 2) |
@@ -109,10 +132,10 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
       best_offset <- as.numeric(best_from3_tab[, offset_from_3])
       line_plot <- "from3"
       cat(sprintf("best offset: %i nts from the 3' end\n", best_offset))
-      adj_tab <- site_sub[, list(adj_offset_from_3 = adj_off(.SD, "site_dist_end3", 0, best_offset)), by = length]
+      adj_tab <- site_sub[, list(corrected_offset_from_3 = adj_off(.SD, "site_dist_end3", 0, best_offset)), by = length]
       offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE, by = "length")
-      offset_temp[is.na(adj_offset_from_3), adj_offset_from_3 := best_offset
-                  ][, adj_offset_from_5 := -adj_offset_from_3 + length - 1]
+      offset_temp[is.na(corrected_offset_from_3), corrected_offset_from_3 := best_offset
+                  ][, corrected_offset_from_5 := -corrected_offset_from_3 + length - 1]
     } else {
       if(extremity == "auto" &
          ((best_from3_tab[, perc] <= best_from5_tab[, perc] &
@@ -123,11 +146,11 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
         best_offset <- as.numeric(best_from5_tab[, offset_from_5])
         line_plot <- "from5"
         cat(sprintf("best offset: %i nts from the 5' end\n", -best_offset))
-        adj_tab <- site_sub[, list(adj_offset_from_5 = adj_off(.SD, "site_dist_end5", 1, best_offset)), by = length]
+        adj_tab <- site_sub[, list(corrected_offset_from_5 = adj_off(.SD, "site_dist_end5", 1, best_offset)), by = length]
         offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE, by = "length")
-        offset_temp[is.na(adj_offset_from_5), adj_offset_from_5 := best_offset
-                    ][, adj_offset_from_5 := abs(best_offset)
-                      ][, adj_offset_from_3 := abs(adj_offset_from_5 - length + 1)]
+        offset_temp[is.na(corrected_offset_from_5), corrected_offset_from_5 := best_offset
+                    ][, corrected_offset_from_5 := abs(best_offset)
+                      ][, corrected_offset_from_3 := abs(corrected_offset_from_5 - length + 1)]
       }
     }
     
@@ -136,23 +159,23 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
                 ][, total_percentage := as.numeric(format(round((as.vector(t)/sum(as.vector(t))) * 100, 3), nsmall=4))
                   ][, percentage := as.numeric(format(round(percentage, 3), nsmall=4))
                     ][, sample := n]
-                
-    setcolorder(offset_temp, c("length", "total_percentage", "percentage", "around_site", "offset_from_5", "offset_from_3", "adj_offset_from_5", "adj_offset_from_3", "sample"))
+    
+    setcolorder(offset_temp, c("length", "total_percentage", "percentage", "around_site", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
     if(start == TRUE | start == T){
-      setnames(offset_temp, c("length", "total_percentage", "start_percentage", "around_start", "offset_from_5", "offset_from_3", "adj_offset_from_5", "adj_offset_from_3", "sample"))
+      setnames(offset_temp, c("length", "total_percentage", "start_percentage", "around_start", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
     } else {
-      setnames(offset_temp, c("length", "total_percentage", "stop_percentage", "around_stop", "offset_from_5", "offset_from_3", "adj_offset_from_5", "adj_offset_from_3", "sample"))
+      setnames(offset_temp, c("length", "total_percentage", "stop_percentage", "around_stop", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
     }
-
+    
     # plot
     if (plot == T || plot == TRUE) {
       options(warn=-1)
-      if (length(plotdir) == 0) {
+      if (length(plot_dir) == 0) {
         dir <- getwd()
-        plotdir <- paste(dir, "/offset_plot", sep = "")
+        plot_dir <- paste(dir, "/offset_plot", sep = "")
       }
-      if (!dir.exists(plotdir)) {
-        dir.create(plotdir)
+      if (!dir.exists(plot_dir)) {
+        dir.create(plot_dir)
       }
       minlen <- ceiling(quantile(site_sub$length, (1 - cl/100)/2))
       maxlen <- ceiling(quantile(site_sub$length, 1 - (1 - cl/100)/2))
@@ -180,8 +203,8 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
           geom_vline(xintercept = 0, color = "gray50") +
           geom_vline(xintercept = - offset_temp[length == len, offset_from_5], color = "#D55E00", linetype = 2, size = 1.1) +
           geom_vline(xintercept = offset_temp[length == len, offset_from_3], color = "#56B4E9", linetype = 2, size = 1.1) +
-          geom_vline(xintercept = - offset_temp[length == len, adj_offset_from_5], color = "#D55E00", size = 1.1) +
-          geom_vline(xintercept = offset_temp[length == len, adj_offset_from_3], color = "#56B4E9", size = 1.1) +
+          geom_vline(xintercept = - offset_temp[length == len, corrected_offset_from_5], color = "#D55E00", size = 1.1) +
+          geom_vline(xintercept = offset_temp[length == len, corrected_offset_from_3], color = "#56B4E9", size = 1.1) +
           annotate("rect", ymin = -Inf, ymax = Inf, xmin = flanking - len, xmax = -flanking , fill = "#D55E00", alpha = 0.1) +
           annotate("rect", ymin = -Inf, ymax = Inf, xmin = flanking - 1 , xmax = len - flanking - 1, fill = "#56B4E9", alpha = 0.1) +
           labs(x = "Distance from start (nt)", y = "Number of read extremities", title = paste(n, " - length=", len, " nts", sep = ""), color= "Extremity") +
@@ -203,9 +226,9 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
                              breaks = seq(floor(min(final_tab$distance)/5) * 5, floor(max(final_tab$distance)/5) * 5, 5), 
                              labels = as.character(seq(floor(min(final_tab$distance)/5) * 5, floor(max(final_tab$distance)/5) * 5, 5) + base))
         
-        subplotdir <- paste(plotdir, n, sep = "/")
-        dir.create(subplotdir)
-        ggsave(paste(subplotdir, "/", len, ".", plotformat, sep = ""), plot = p, width = 15, height = 5, units = "in")
+        subplot_dir <- paste(plot_dir, n, sep = "/")
+        dir.create(subplot_dir)
+        ggsave(paste(subplot_dir, "/", len, ".", plot_format, sep = ""), plot = p, width = 15, height = 5, units = "in")
       }
       cat(sprintf("\rplotting   %s\n",
                   paste(paste(rep(c(" ", "<<", "-"), c(25 - progress, 1, progress)), collapse = ""), " ", 
@@ -219,85 +242,102 @@ psite <- function(data, flanking = 6, start = TRUE, extremity="auto", plot = FAL
   }
   return(offset)
 }
+                  
 
 #' Update reads information according to the inferred P-sites.
 #' 
-#' Starting ftom the P-site position identfied by \code{\link{psite}}, this
-#' function updates the data tables that contains information about the reads.
-#' It attaches to the data tables 4 columns reporting the P-site position with
-#' respect to the 1st nucleotide of the transcript, the start and the stop codon
-#' of the annotated coding sequence (if any) and the region of the transcript
-#' (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: if a transcript
-#' is not associated to any annotated CDS then the positions of the P-site from
-#' both the start and the stop codon is set to NA. One or more additional
-#' columns reporting the three nucleotides covered by the P-site, the A-site or
-#' the E-site can be attached by providing either a FASTA file or a BSgenome
-#' data package with the nucleotide sequences.
+#' This function provides additional reads information according to the position
+#' of the P-site identfied by \code{\link{psite}}. It attaches to each data
+#' table in a list four columns reporting i) the P-site position with respect to
+#' the 1st nucleotide of the transcript, ii) the P-site position with respect to
+#' the start and the stop codon of the annotated coding sequence (if any) and
+#' iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the
+#' P-site. Please note: for transcripts not associated to any annotated CDS the
+#' position of the P-site with respect to the start and the stop codon is set to
+#' NA. Optionally, additional columns reporting the three nucleotides covered by
+#' the P-site, the A-site and the E-site are attached, based on FASTA files or
+#' BSgenome data packages containing the transcript nucleotide sequences.
 #'
-#' @param data A list of data tables from \code{\link{bamtolist}},
+#' @param data List of data tables from \code{\link{bamtolist}},
 #'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
-#' @param offset A data table from \code{\link{psite}}.
-#' @param site Either NULL, "psite, "asite", "esite" or a vector with a
-#'   combination of the three character strings. When this parameter is not NULL
-#'   (the default), it specifies which of the column(s) reporting the three
-#'   nucleotides covered by the P-site ("psite"), A-site ("asite") or E-site
-#'   ("esite") must be added. Note: either \code{fastapath} or \code{bsgenome}
-#'   is required to generate the additional column(s).
-#' @param fastapath An optional character string specifying the path to the
-#'   FASTA file used in the alignment step, including its name and extension.
-#'   This file can contain reference nucleotide sequences either of a genome
-#'   assembly or of all the transcripts (see \code{fasta_genome}). Please make
-#'   sure the sequences derive from the same release of the annotation file used
-#'   in the \code{\link{create_annotation}} function. Note: either
-#'   \code{fastapath} or \code{bsgenome} is required to generate the additional
+#' @param offset Data table from \code{\link{psite}}.
+#' @param site Either "psite, "asite", "esite" or a combination of these
+#'   strings. It specifies if additional column(s) reporting the three
+#'   nucleotides covered by the ribosome P-site ("psite"), A-site ("asite") and
+#'   E-site ("esite") should be added. Note: either \code{fastapath} or
+#'   \code{bsgenome} is required for this purpose. Default is NULL.
+#' @param fastapath Character string specifying the FASTA file used in the
+#'   alignment step, including its path, name and extension. This file can
+#'   contain reference nucleotide sequences either of a genome assembly or of
+#'   all the transcripts (see \code{Details} and \code{fasta_genome}). Please
+#'   make sure the sequences derive from the same release of the annotation file
+#'   used in the \code{\link{create_annotation}} function. Note: either
+#'   \code{fastapath} or \code{bsgenome} is required to generate additional
 #'   column(s) specified by \code{site}. Default is NULL.
-#' @param fasta_genome A logical value whether or not the FASTA file specified
-#'   by \code{fastapath} contains nucleotide sequences of a genome assembly.
-#'   FALSE means that the nucleotide sequences of all the transcripts are
-#'   provided instead. When this parameter is TRUE (the default), an annotation
-#'   object is required (see \code{gtfpath} and \code{txdb}).
-#' @param bsgenome An optional character string specifying the name of the
-#'   BSgenome data package containing the genome sequences to be loaded. If it
-#'   is not already present in your system, it will be installed through the
-#'   biocLite.R script (check the list of data packages available in the
-#'   Bioconductor repositories for your version of R/Bioconductor by the
+#' @param fasta_genome Logical value whether the FASTA file specified by
+#'   \code{fastapath} contains nucleotide sequences of a genome assembly. If
+#'   TRUE (the default), an annotation object is required (see \code{gtfpath}
+#'   and \code{txdb}). FALSE implies the nucleotide sequences of all the
+#'   transcripts is provided instead.
+#' @param bsgenome Character string specifying the BSgenome data package with
+#'   the genome sequences to be loaded. If not already present in the system, it
+#'   is automatically installed through the biocLite.R script (check the list of
+#'   available BSgenome data packages by running the
 #'   \code{\link[BSgenome]{available.genomes}} function of the BSgenome
-#'   package). This parameter also requires an annotation object (see
+#'   package). This parameter must be coupled with an annotation object (see
 #'   \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 #'   the specified BSgenome data pakage are in agreement with the sequences used
 #'   in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
-#'   required to generate the additional column(s) specified by \code{site}.
-#'   Default is NULL.
-#' @param gtfpath A character string specifying the path to te GTF file,
-#'   including its name and extension. Please make sure the GTF derives from the
-#'   same release of what is specified by \code{fastapath} or by
-#'   \code{bsgenome}. Note that either \code{gtfpath} or \code{txdb} must be
-#'   specified when the nucleotide sequences of a genome assembly are provided
-#'   (see \code{fastapath} or \code{bsgenome}). Default is NULL.
-#' @param txdb A character string specifying the name of the annotation package
-#'   for TxDb object(s) to be loaded. If it is not already present in your
-#'   system, it will be installed through the biocLite.R script (check the list
-#'   of TxDb annotation packages available in the Bioconductor repositories at
-#'   http://bioconductor.org/packages/release/BiocViews.html#___TxDb )). Please
-#'   make sure the annotation package derives from the same release of what is
-#'   specified by \code{fastapath} or by \code{bsgenome}. Note that either
-#'   \code{gtfpath} or \code{txdb} must be specified when the nucleotide
+#'   required to generate additional column(s) specified by \code{site}. Default
+#'   is NULL.
+#' @param gtfpath Character string specifying the location of a GTF file,
+#'   including its path, name and extension. Please make sure the GTF file and
+#'   the sequences specified by \code{fastapath} or \code{bsgenome} derive from
+#'   the same release. Note that either \code{gtfpath} or \code{txdb} is
+#'   required if and only if nucleotide sequences of a genome assembly are
+#'   provided (see \code{fastapath} or \code{bsgenome}). Default is NULL.
+#' @param txdb Character string specifying the TxDb annotation package to be
+#'   loaded. If not already present in the system, it is automatically installed
+#'   through the biocLite.R script (check
+#'   \href{http://bioconductor.org/packages/release/BiocViews.html#___TxDb}{here}
+#'   the list of available TxDb annotation packages). Please make sure the TxDb
+#'   annotation package and the sequences specified by \code{fastapath} or
+#'   \code{bsgenome} derive from the same release. Note that either
+#'   \code{gtfpath} or \code{txdb} is required if and only if nucleotide
 #'   sequences of a genome assembly are provided (see \code{fastapath} or
 #'   \code{bsgenome}). Default is NULL.
-#' @param dataSource An optional character string describing the origin of the
-#'   GTF data file. For more information about this parameter please refer to
-#'   the description of \emph{dataSource} of the
+#' @param dataSource Optional character string describing the origin of the GTF
+#'   data file. This parameter is considered only if \code{gtfpath} is
+#'   specified. For more information about this parameter please refer to the
+#'   description of \emph{dataSource} of the
 #'   \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 #'   \code{GenomicFeatures} package.
-#' @param organism A optional character string reporting the genus and species
-#'   of the organism when \code{gtfpath} is specified.  For more information
-#'   about this parameter please refer to the description of \emph{dataSource}
-#'   of the \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in
-#'   the \code{GenomicFeatures} package.
-#' @param granges A logical value whether or not to return a GRangesList object.
-#'   Default is FALSE, meaning that a list of data tables (the required input
-#'   for the downstream analyses and graphical outputs provided by riboWaltz) is
-#'   returned instead.
+#' @param organism Optional character string reporting the genus and species of
+#'   the organism of the GTF data file. This parameter is considered only if
+#'   \code{gtfpath} is specified. For more information about this parameter
+#'   please refer to the description of \emph{organism} of the
+#'   \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
+#'   \code{GenomicFeatures} package.
+#' @param granges Logical value whether to return a GRangesList object. Default
+#'   is FALSE i.e. a list of data tables (the required input for downstream
+#'   analyses and graphical outputs provided by riboWaltz) is returned instead.
+#' @details \strong{riboWaltz} only works for read alignments based on
+#'   transcript coordinates. This choice is due to the main purpose of RiboSeq
+#'   assays to study translational events through the isolation and sequencing
+#'   of ribosome protected fragments. Most reads from RiboSeq are supposed to
+#'   map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM
+#'   based on transcript coordinates can be generated in two ways: i) aligning
+#'   directly against transcript sequences; ii) aligning against standard
+#'   chromosome sequences, requiring the outputs to be translated in transcript
+#'   coordinates. The first option can be easily handled by many aligners (e.g.
+#'   Bowtie), given a reference FASTA file where each sequence represents a
+#'   transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The
+#'   second procedure is based on reference FASTA files where each sequence
+#'   represents a chromosome, usually coupled with comprehensive gene annotation
+#'   files (GTF or GFF). The STAR aligner, with its option --quantMode
+#'   TranscriptomeSAM (see Chapter 6 of its
+#'   \href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
+#'    is an example of tool providing such a feature.
 #' @return A list of data tables or a GRangesList object.
 #' @examples
 #' data(reads_list)
@@ -365,18 +405,33 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
       }
     }
     
-    if((length(fastapath) != 0 | length(bsgenome) != 0)){
+    if(length(fastapath) != 0 | length(bsgenome) != 0){
       if(length(fastapath) != 0) {
         if(fasta_genome == TRUE | fasta_genome == T){
           temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-          exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names=TRUE))
+          names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
+          exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by="tx", use.names=TRUE))
           exon <- as.data.table(exon[unique(names(exon))])
-          sub_exon <- exon[seqnames %in% names(temp_sequences)]
-          seq_dt <- sub_exon[, list(seq = paste(Biostrings::subseq(temp_sequences[as.character(seqnames)],
-                                                                   start = start,
-                                                                   end = end), collapse="")),
-                             by = group_name]
-          sequences <- Biostrings::DNAStringSet(seq_dt$seq)
+          sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
+          sub_exon_minus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "-"
+                                 ][, new_end := width(temp_sequences[as.character(seqnames)]) - start + 1
+                                   ][, new_start := width(temp_sequences[as.character(seqnames)]) - end + 1]
+          
+          seq_dt_plus <- sub_exon_plus[, nt_seq := "emp"
+                                       ][, nt_seq := as.character(Biostrings::subseq(temp_sequences[as.character(seqnames)],
+                                                                                     start = start,
+                                                                                     end = end))
+                                         ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
+          
+          revcompl_temp_sequences <- reverseComplement(temp_sequences)
+          seq_dt_minus <- sub_exon_minus[, nt_seq := "emp"
+                                         ][, nt_seq := as.character(Biostrings::subseq(revcompl_temp_sequences[as.character(seqnames)],
+                                                                                       start = new_start,
+                                                                                       end = new_end))
+                                           ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
+          
+          sequences <- Biostrings::DNAStringSet(c(seq_dt_plus$seq, seq_dt_minus$seq))
+          names(sequences) <- c(unique(sub_exon_plus$group_name), unique(sub_exon_minus$group_name))
         } else {
           sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
         }
@@ -397,20 +452,20 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
   for (n in names) {
     cat(sprintf("processing %s\n", n))
     dt <- data[[n]]
-    suboff <- offset[sample == n, .(length,adj_offset_from_3)]
+    suboff <- offset[sample == n, .(length,corrected_offset_from_3)]
     cat("1. adding p-site position\n")
-    dt[suboff,  on = 'length', psite := i.adj_offset_from_3]
+    dt[suboff,  on = 'length', psite := i.corrected_offset_from_3]
     dt[, psite := end3 - psite]
-    setcolorder(dt,c("transcript", "end5", "psite", "end3", "length", "start_pos", "stop_pos"))
-    dt[, psite_from_start := psite - start_pos
-       ][stop_pos == 0, psite_from_start := 0]
-    dt[, psite_from_stop := psite - stop_pos
-       ][stop_pos == 0, psite_from_stop := 0]
+    setcolorder(dt,c("transcript", "end5", "psite", "end3", "length", "cds_start", "cds_stop"))
+    dt[, psite_from_start := psite - cds_start
+       ][cds_stop == 0, psite_from_start := 0]
+    dt[, psite_from_stop := psite - cds_stop
+       ][cds_stop == 0, psite_from_stop := 0]
     cat("2. adding transcript region\n")
     dt[, psite_region := "5utr"
        ][psite_from_start >= 0 & psite_from_stop <= 0, psite_region := "cds"
          ][psite_from_stop > 0, psite_region := "3utr"
-           ][stop_pos == 0, psite_region := NA]
+           ][cds_stop == 0, psite_region := NA]
     if(length(site) != 0){
       cat("3. adding nucleotide sequence(s)\n")
       if("psite" %in% site){

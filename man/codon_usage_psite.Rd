@@ -47,7 +47,7 @@ transcripts is provided instead.}
 \item{bsgenome}{Character string specifying the BSgenome data package with
 the genome sequences to be loaded. If not already present in the system, it
 is automatically installed through the biocLite.R script (check the list of
-available BSgenome data packages by the
+available BSgenome data packages by running the
 \code{\link[BSgenome]{available.genomes}} function of the BSgenome
 package). This parameter must be coupled with an annotation object (see
 \code{gtfpath} and \code{txdb}). Please make sure the sequences included in

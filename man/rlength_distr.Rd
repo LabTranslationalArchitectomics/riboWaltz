@@ -2,38 +2,39 @@
 % Please edit documentation in R/read_length_plot.R
 \name{rlength_distr}
 \alias{rlength_distr}
-\title{Plot read length distributions.}
+\title{Read length distributions.}
 \usage{
-rlength_distr(data, sample, cl = 100)
+rlength_distr(data, sample, transcripts = NULL, cl = 100)
 }
 \arguments{
-\item{data}{A list of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}} or \code{\link{length_filter}}.}
+\item{data}{List of data tables from \code{\link{bamtolist}},
+\code{\link{bedtolist}}, \code{\link{length_filter}} or
+\code{\link{psite_info}}.}
 
-\item{sample}{A character string specifying the name of the sample of
-interest.}
+\item{sample}{Character string specifying the name of the sample of interest.}
 
-\item{cl}{An integer value in \emph{[1,100]} specifying the confidence level
-for restricting the plot to a sub-range of read lengths. By default it is
-set to 100, meaning that the whole distribution is displayed.}
+\item{transcripts}{Character string vector listing the name of transcripts to
+be included in the analysis. Default is NULL i.e. all transcripts are used.}
+
+\item{cl}{Integer value in [1,100] specifying a confidence level for
+restricting the plot to a sub-range of read lengths i.e. to the cl% of
+read lengths associated to the highest signals. Default is 100.}
 }
 \value{
-A list containing a ggplot2 object, and a data table with the
-  associated data.
+List containing a ggplot2 object ("plot") and the data table with the
+  associated data ("dt").
 }
 \description{
-For a specified sample this function plots the read length distribution. It
-is possible to visualise the distribution for all the read lengths or to
-restrict the graphical output to a sub-range of read lengths.
+This function generates read length distributions.
 }
 \examples{
 data(reads_list)
 
-## Visualise distribution for all the read lengths
+## Generate the length distribution for all read lengths:
 lendist_whole <- rlength_distr(reads_list, sample = "Samp1", cl = 100)
 lendist_whole[["plot"]]
 
-## Visualise the metaheatmaps for a sub-range of read lengths (the middle 95\%)
+## Generate the length distribution for a sub-range of read lengths:
 lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
 lendist_sub95[["plot"]]
 }

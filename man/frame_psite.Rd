@@ -2,52 +2,53 @@
 % Please edit documentation in R/frames.R
 \name{frame_psite}
 \alias{frame_psite}
-\title{Compute the percentage of P-sites per frame.}
+\title{Percentage of P-sites per reading frame.}
 \usage{
-frame_psite(data, sample = NULL, region = "all", length_range = "all",
-  plot_title = NULL)
+frame_psite(data, sample = NULL, transcripts = NULL, region = "all",
+  length_range = "all", plot_title = NULL)
 }
 \arguments{
-\item{data}{A list of data tables from \code{\link{psite_info}}.}
+\item{data}{List of data tables from \code{\link{psite_info}}.}
 
-\item{sample}{A character string vector specifying the name of the sample(s)
-of interest. By default this argument is NULL, meaning that all the samples
-in \code{data} are included in the analysis.}
+\item{sample}{Character string vector specifying the name of the sample(s) of
+interest. Default is NULL i.e. all samples in \code{data} are processed.}
 
-\item{region}{Either "all" or a character string among "5utr", "cds", "3utr"
-specifying the regions of the transcript (5' UTR, CDS or 3' UTR,
-respectively) that must be included in the analysis. Default is "all",
-meaning that the all the regions are considered.}
+\item{transcripts}{Character string vector listing the name of transcripts to
+be included in the analysis. Default is NULL i.e. all transcripts are used.}
 
-\item{length_range}{Either "all", an integer or an integer vector. Default is
-"all", meaning that all the read lengths are included in the analysis.
-Otherwise, only the read lengths matching the specified value(s) are kept.}
+\item{region}{Character string specifying the region(s) of the transcripts to
+be analysed. It can be either "5utr", "cds", "3utr" for 5' UTRs, CDSs and
+3' UTRs, respectively. Default is "all" i.e. all regions are considered.
+According to this parameter the bar plots are differently arranged to
+optimise the organization and the visualization of the data.}
 
-\item{plot_title}{Any character string specifying the title of the plot. If
+\item{length_range}{Integer or an integer vector specyfying the read
+length(s) to be included in the analysis. Default is "all" i.e. all read
+lengths are used.}
+
+\item{plot_title}{Character string specifying the title of the plot. If
 "auto", the title of the plot reports the region specified by \code{region}
-(if any) and the length(s) of the reads used for generating the barplot.
-Default is NULL, meaning that no title will be added to the plot.}
+(if any) and the considered read length(s). Default is NULL i.e. no title
+is plotted.}
 }
 \value{
-A list containing a ggplot2 object and a data table with the
-  associated data.
+A list containing a ggplot2 object ("plot") and the data table with
+  the associated data ("dt").
 }
 \description{
-For one or several samples this function computes the percentage of P-sites
-falling on the three reading frames of the transcripts and generates a
-barplot of the resulting values. This analysis is performed for the annotated
-5' UTR, coding sequence and 3' UTR, separately. It is possible to compute the
-percentage of P-sites per frame using all the read lengths or to restrict the
-analysis to a sub-range of read lengths.
+This function computes the percentage of P-sites falling in the three
+possible translation reading frames and generates a bar plot of the resulting
+values. It only handles annotated 5' UTRs, coding sequences and 3' UTRs,
+separately.
 }
 \examples{
 data(reads_psite_list)
 
-## Generate the barplot for all the read lengths
+## Generate the bar plot for all read lengths:
 frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
 
-## Generate the barplot restricting the analysis to the coding sequence and
-## to the reads of 28 nucleotides
+## Generate the bar plot restricting the analysis to coding sequences and
+## reads of 28 nucleotides:
 frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
 length_range = 28)
 }
