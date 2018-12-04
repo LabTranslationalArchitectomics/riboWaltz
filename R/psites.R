@@ -392,7 +392,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
     if(length(gtfpath) != 0 | length(txdb) != 0){
       if(length(gtfpath) != 0){
         path_to_gtf <- gtfpath
-        txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
+        txdbanno <- GenomicFeatures::makeTxDbFromGFF(file = path_to_gtf, format = "gtf", dataSource = dataSource, organism = organism)
       } else {
         if(txdb %in% rownames(installed.packages())){
           library(txdb, character.only = TRUE)
@@ -410,12 +410,12 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
         if(fasta_genome == TRUE | fasta_genome == T){
           temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
           names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
-          exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by="tx", use.names=TRUE))
+          exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
           exon <- as.data.table(exon[unique(names(exon))])
           sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
           sub_exon_minus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "-"
-                                 ][, new_end := width(temp_sequences[as.character(seqnames)]) - start + 1
-                                   ][, new_start := width(temp_sequences[as.character(seqnames)]) - end + 1]
+                                 ][, new_end := Biostrings::width(temp_sequences[as.character(seqnames)]) - start + 1
+                                   ][, new_start := Biostrings::width(temp_sequences[as.character(seqnames)]) - end + 1]
           
           seq_dt_plus <- sub_exon_plus[, nt_seq := "emp"
                                        ][, nt_seq := as.character(Biostrings::subseq(temp_sequences[as.character(seqnames)],

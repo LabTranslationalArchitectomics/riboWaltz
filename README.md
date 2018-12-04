@@ -87,7 +87,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
  
  in the R console.
  
- A complete reference manual can is available [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).   
+ A complete reference manual is available [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).   
 
 ------------------------------------------------------------------------
 
@@ -243,7 +243,7 @@ For additional details please refers to the documentation provided by ?length_fi
 
 ### Note
 
- All functions in __riboWaltz__ generating graphical outputs return a list of at least two elements: a ggplot2 object named *plot* and a data table with the associated data, named *dt*. The following sections describe all these functions by illustrating their syntax and graphical output. For further examples and additional details about parameters and data structures please refer to the documentation of the single functions (by running ?name_function) or to __riboWaltz__ reference manual ([here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf)).
+ All functions in __riboWaltz__ generating graphical outputs return a list of at least two elements: a ggplot2 object named *plot* and a data table with the associated data, named *dt*. The following sections describe all these functions by illustrating their syntax and graphical output. For further examples and additional details about parameters and data structures please refer to the documentation of the single functions (by running ?name_function) or to the __riboWaltz__ reference manual ([here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf)).
 
 ### Overview of the data
 

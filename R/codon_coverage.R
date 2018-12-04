@@ -91,7 +91,7 @@ codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,
                      ][from_cds_stop > 0, region := "3utr"]
 
   if(psite == T || psite == TRUE){
-    cat("3. computing codon coverage based on P-site\n")
+    cat("3. computing codon coverage based on P-sites\n")
   } else {
     cat("3. computing codon coverage based on read footprints\n")
   }

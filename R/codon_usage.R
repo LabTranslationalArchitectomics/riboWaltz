@@ -151,7 +151,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     cat("\n")
     stop("impossible to normalize the data: no nucleotide sequences are provided. Either fastpath or bsgenome must be specified\n\n")
   }
-
+  
   if(((length(fastapath) != 0 & (fasta_genome == TRUE | fasta_genome == T)) |
       length(bsgenome) != 0) &
      length(gtfpath) == 0 & length(txdb) == 0){
@@ -181,7 +181,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   if(length(gtfpath) != 0 | length(txdb) != 0){
     if(length(gtfpath) != 0){
       path_to_gtf <- gtfpath
-      txdbanno <- GenomicFeatures::makeTxDbFromGFF(file=path_to_gtf, format="gtf", dataSource = dataSource, organism = organism)
+      txdbanno <- GenomicFeatures::makeTxDbFromGFF(file = path_to_gtf, format = "gtf", dataSource = dataSource, organism = organism)
     } else {
       if(txdb %in% rownames(installed.packages())){
         library(txdb, character.only = TRUE)
@@ -199,12 +199,12 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       if(fasta_genome == TRUE | fasta_genome == T){
         temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
         names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
-        exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by="tx", use.names=TRUE))
+        exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
         exon <- as.data.table(exon[unique(names(exon))])
         sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
         sub_exon_minus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "-"
-                               ][, new_end := width(temp_sequences[as.character(seqnames)]) - start + 1
-                                 ][, new_start := width(temp_sequences[as.character(seqnames)]) - end + 1]
+                               ][, new_end := Biostrings::width(temp_sequences[as.character(seqnames)]) - start + 1
+                                 ][, new_start := Biostrings::width(temp_sequences[as.character(seqnames)]) - end + 1]
         
         seq_dt_plus <- sub_exon_plus[, nt_seq := "emp"
                                      ][, nt_seq := as.character(Biostrings::subseq(temp_sequences[as.character(seqnames)],
@@ -212,7 +212,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
                                                                                    end = end))
                                        ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
         
-        revcompl_temp_sequences <- reverseComplement(temp_sequences)
+        revcompl_temp_sequences <- Biostrings::reverseComplement(temp_sequences)
         seq_dt_minus <- sub_exon_minus[, nt_seq := "emp"
                                        ][, nt_seq := as.character(Biostrings::subseq(revcompl_temp_sequences[as.character(seqnames)],
                                                                                      start = new_start,
@@ -238,18 +238,18 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   
   if(site == "psite" & !("p_site_codon" %in% colnames(data[[sample]]))){
     data[[sample]] <- data[[sample]][, p_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
-                                                                                            start = data[[sample]]$psite,
-                                                                                            end = data[[sample]]$psite + 2))]
+                                                                                       start = data[[sample]]$psite,
+                                                                                       end = data[[sample]]$psite + 2))]
   }
   if(site == "asite" & !("a_site_codon" %in% colnames(data[[sample]]))){
     data[[sample]] <- data[[sample]][, a_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
-                                                                                      start = data[[sample]]$psite + 3,
-                                                                                      end = data[[sample]]$psite + 5))]
+                                                                                       start = data[[sample]]$psite + 3,
+                                                                                       end = data[[sample]]$psite + 5))]
   }
   if(site == "esite" & !("e_site_codon" %in% colnames(data[[sample]]))){
     data[[sample]] <- data[[sample]][, e_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
-                                                                                      start = data[[sample]]$psite - 3,
-                                                                                      end = data[[sample]]$psite - 1))]
+                                                                                       start = data[[sample]]$psite - 3,
+                                                                                       end = data[[sample]]$psite - 1))]
   }
   
   l_transcripts <- as.character(annotation[l_cds > 0 & l_cds %% 3 == 0, transcript])
@@ -263,12 +263,12 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   } else {
     c_transcript <- intersect(l_transcripts, transcripts)
   }
-
+  
   sub_sequences <- sequences[c_transcript]
   cds_biost <- Biostrings::subseq(sub_sequences,
-                      start = annotation[transcript %in% names(sub_sequences), l_utr5] + 1,
-                      end = annotation[transcript %in% names(sub_sequences), l_utr5] +
-                        annotation[transcript %in% names(sub_sequences), l_cds])
+                                  start = annotation[transcript %in% names(sub_sequences), l_utr5] + 1,
+                                  end = annotation[transcript %in% names(sub_sequences), l_utr5] +
+                                    annotation[transcript %in% names(sub_sequences), l_cds])
   
   seq_freq <- (Biostrings::trinucleotideFrequency(cds_biost, step = 3,
                                                   as.prob = TRUE,
@@ -293,7 +293,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   colnames(norm_table) <- c("codon", "count")
   norm_table[, codon := gsub("T", "U", codon)]
   norm_table[, count := (count / sum(count)) * 1000]
-
+  
   norm_table <- norm_table[, class := "cds"
                            ][codon == "AUG", class := "start"
                              ][codon %in% c("UAA", "UGA", "UAG"), class := "stop"
@@ -308,7 +308,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   colour_codon <- ifelse(norm_table$codon == "AUG", "#104ec1",
                          ifelse(norm_table$codon %in% c("UAA", "UGA", "UAG"),
                                 "darkred", "gray40"))
-
+  
   bs <- 30
   bp <- ggplot(norm_table,aes(x = codon, y = value, fill = class)) +
     geom_bar(stat = "identity", alpha = 0.9) +
@@ -325,7 +325,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   output <- list()
   output[["plot"]] <- bp
   output[["dt"]] <- norm_table[, c("codon", "class", "value",  "aa")]
-
+  
   if(length(codon_values) != 0){
     codon_values <- codon_values[, list(codon, value)]
     setnames(codon_values, old = c("codon", "value"), new =  c("codon", "comp_values"))
@@ -333,7 +333,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     norm_table <- norm_table[codon_values, on = "codon"
                              ][, comp_values := comp_values - min(comp_values)
                                ][, comp_values := comp_values / max(comp_values)]
-               
+    
     correlation <- round(cor(norm_table$value, norm_table$comp_values), 3)
     
     bs <- 22.5
