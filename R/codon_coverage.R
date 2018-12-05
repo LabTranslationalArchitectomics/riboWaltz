@@ -39,10 +39,10 @@
 #'
 #' ## Compute the codon coverage based on the number of ribosome footprint per
 #' ## codon, setting the minimum overlap between reads and triplets to 3 nts:
-#' coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, min_overlap = 3)
+#' ## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, min_overlap = 3)
 #'
 #' ## Compute the coverage based on the number of P-sites per codon:
-#' coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, psite = TRUE)
+#' ## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, psite = TRUE)
 #' @import data.table
 #' @export
 codon_coverage <- function(data, annotation, sample = NULL, psite = FALSE,

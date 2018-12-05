@@ -5,6 +5,7 @@ cache: packages
 r-packages:
   - data.table
   - ggplot2
+  - ggrepel
 
 bioc_packages:
   - Biostrings
