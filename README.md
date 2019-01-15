@@ -95,7 +95,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Remark
 
- __riboWaltz__ only works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
+ __riboWaltz__ only works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
 
  The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see Chapter 6 of its [manual](http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf)), is an example of tool providing such a feature.
 
@@ -284,7 +284,7 @@ For additional details please refers to the documentation provided by ?length_fi
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region.png" width="300" />
 </p>
 
-### trinucleotide periodicity
+### Trinucleotide periodicity
 
  A fundamental characteristic of ribosome profiling data is the trinucleotide periodicity of ribosome footprints along coding sequences. Functions `frame_psite_length` and `frame_psite` show if, and to which extent, the identified P-sites results in codon periodicity on the CDS. Both functions compute the percentage of P-sites falling in the three possible translation reading frames for 5’ UTRs, CDSs and 3’ UTRs with one difference: `frame_psite_length` analyses all read lengths separately and generates a heatmap for each transcript region, while `frame_psite` processes all reads at once, returning three bar plots. Here the outputs for the example dataset:
 
@@ -345,13 +345,13 @@ For additional details please refers to the documentation provided by ?length_fi
 
 ### Codon usage
 
- To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon, normalized for the frequency in sequences of each codon. `codon_usage_psite` also returns a bar plot of the resulting values, highlighting the start and the stop codon and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note:  due to the FASTA file size, the package does not include the nucleotide sequences used by the author.
+ To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon optionally normalized for the frequency in sequences of each codon. `codon_usage_psite` also returns a bar plot of the resulting values, highlighting the start and the stop codon and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note: due to the FASTA file size, the package does not include the nucleotide sequences used by the author.
   
    	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 	                                         fastapath = path_to_fasta)
 ![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
   
- `codon_usage_psite` can also investigate alterations of ribosome translocation at specific codons by comparing empirical codon usage from two conditions, organisms, transcript sets etc. Similarly, this function can reveal differences between the empirical codon usage and other codon-specific values provided by the user (see the *codon_usage* parameter). In the following example the empirical codon usage previously computed is compared with codon usage bias values in mouse (downloaded from http://www.kazusa.or.jp/codon), based on the frequency of synonymous codons in coding DNA regions. The structure of the required data table is as follows:
+ `codon_usage_psite` can also be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from two conditions, organisms, transcript sets etc. Similarly, this function can reveal differences between the empirical codon usage and other codon-specific values provided by the user (see the *codon_usage* parameter). In the following example the empirical codon usage previously computed is compared with codon usage bias values in mouse (downloaded from http://www.kazusa.or.jp/codon), based on the frequency of synonymous codons in coding DNA regions. The structure of the required data table is as follows:
 
   |  codon  |  usage_index  |
   |:------:|:------:|

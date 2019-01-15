@@ -2,13 +2,14 @@
 #'
 #' This function computes empirical codon usage indexes based on either ribosome
 #' P-sites, A-site or E-site frequencies associated to in-frame P-sites within
-#' the coding sequence. It computes 64 codon usage indexes (one per triplet)
-#' normalized for the frequency of the corresponding codons within the CDS and
-#' generates a bar plot of the resulting values. Optionally, this function
-#' compares the computed codon usage indexes with a set of 64 values provided by
-#' the user. In this case the function returns a scatter plot, reporting the
-#' result of a linear regression between the two variables (i.e. the two sets
-#' of values) and the corresponding Pearson correlation coefficient.
+#' coding sequences. It computes 64 codon usage indexes (one per triplet, only
+#' based on coding sequences triplets) optionally normalized for the frequency
+#' of the corresponding codons and generates a bar plot of the resulting values.
+#' Optionally, this function compares the computed codon usage indexes with a
+#' set of 64 values provided by the user. In this case the function returns a
+#' scatter plot, reporting the result of a linear regression between the two
+#' variables (i.e. the two sets of values) and the corresponding Pearson
+#' correlation coefficient.
 #' 
 #' @param data List of data tables from \code{\link{psite_info}}. Each data
 #'   table may or may not include one or more columns among \emph{p_site_codon},
@@ -21,22 +22,22 @@
 #' @param sample Character string specifying the name of the sample of interest.
 #' @param site Either "psite, "asite", "esite". It specifies if the empirical
 #'   codon usage indexes should be based on ribosome P-sites ("psite"), A-sites
-#'   ("asite") or E-sites ("esite"). Default is "psite".
+#' ("asite") or E-sites ("esite"). Default is "psite".
 #' @param fastapath Character string specifying the FASTA file used in the
 #'   alignment step, including its path, name and extension. This file can
 #'   contain reference nucleotide sequences either of a genome assembly or of
 #'   all the transcripts (see \code{Details} and \code{fasta_genome}). Please
 #'   make sure the sequences derive from the same release of the annotation file
 #'   used in the \code{\link{create_annotation}} function. Note: either
-#'   \code{fastapath} or \code{bsgenome} is required to compute the codon
-#'   frequencies within the CDS used as normalization factors, even when
-#'   \code{data} already includes one or more columns among \emph{p_site_codon},
-#'   \emph{a_site_codon} and \emph{e_site_codon}. Default is NULL.
+#'   \code{fastapath} or \code{bsgenome} is required to compute the frequency in
+#'   sequences of each codon, used as normalization factors, even if \code{data}
+#'   includes one or more columns among \emph{p_site_codon}, \emph{a_site_codon}
+#'   and \emph{e_site_codon}. Default is NULL.
 #' @param fasta_genome Logical value whether the FASTA file specified by
 #'   \code{fastapath} contains nucleotide sequences of a genome assembly. If
 #'   TRUE (the default), an annotation object is required (see \code{gtfpath}
-#'   and \code{txdb}). FALSE implies the nucleotide sequences of all the
-#'   transcripts is provided instead.
+#'   and \code{txdb}). FALSE implies nucleotide sequences of all transcripts are
+#'   provided instead.
 #' @param bsgenome Character string specifying the BSgenome data package with
 #'   the genome sequences to be loaded. If not already present in the system, it
 #'   is automatically installed through the biocLite.R script (check the list of
@@ -46,10 +47,10 @@
 #'   \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 #'   the specified BSgenome data pakage are in agreement with the sequences used
 #'   in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
-#'   required to compute the codon frequencies within the CDS used as
-#'   normalization factors, even when \code{data} already includes one or more
-#'   columns among \emph{p_site_codon}, \emph{a_site_codon} and
-#'   \emph{e_site_codon}. Default is NULL.
+#'   required to compute the frequency in sequences of each codon, used as
+#'   normalization factors, even if \code{data} includes one or more columns
+#'   among \emph{p_site_codon}, \emph{a_site_codon} and \emph{e_site_codon}.
+#'   Default is NULL.
 #' @param gtfpath Character string specifying the location of a GTF file,
 #'   including its path, name and extension. Please make sure the GTF file and
 #'   the sequences specified by \code{fastapath} or \code{bsgenome} derive from
@@ -82,23 +83,25 @@
 #'   be included in the analysis. Default is NULL i.e. all transcripts are used.
 #'   Please note: transcripts without annotated CDS and transcripts whose coding
 #'   sequence length is not divisible by 3 are automatically discarded.
+#' @param frequency_normalization Logical value whether to normalize the 64
+#'   codon usage indexes for the corresponding codon frequencies in coding
+#'   sequences. Default is TRUE.
 #' @param codon_values Data table containing 64 codon-specific values. If
 #'   specified, the provided values are compared with the empirical codon usage
 #'   indexes computed for the sample of interest. The data table must contain
 #'   the DNA or RNA nucleotide sequence of the 64 codons and the corresponding
 #'   values arranged in two columns named \emph{codon} and \emph{value},
-#'   respectively. Please note: a data table of the same format is returned by
-#'   \code{\link{codon_usage_psite}} itself. Default is NULL.
+#'   respectively. Default is NULL.
 #' @param scatter_label Logical value whether to label the dots of the scatter
 #'   plot generated by specifying \code{codon_values}. Each dot is labeled using
 #'   either the nucleotide sequence of the codon or the corresponding amino acid
 #'   symbol (see \code{aminoacid}). This parameter is considered only if
 #'   \code{codon_values} is specified. Default is FALSE.
-#' @param aminoacid Logical value whether to use the amino acid symbols to label
-#'   the dots of the scatter plot generated by specifying \code{codon_values}.
-#'   Default is FALSE i.e. the nucleotide sequences of the codons are used
-#'   instead. This parameter is considered only if \code{codon_values} is
-#'   specified and \code{scatter_label} is TRUE. Default is FALSE.
+#' @param aminoacid Logical value whether to use amino acid symbols to label the
+#'   dots of the scatter plot generated by specifying \code{codon_values}.
+#'   Default is FALSE i.e. codon nucleotide sequences are used instead. This
+#'   parameter is considered only if \code{codon_values} is specified and
+#'   \code{scatter_label} is TRUE.
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
@@ -117,17 +120,20 @@
 #'   \href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
 #'    is an example of tool providing such a feature.
 #' @return A list containing a ggplot2 object ("plot") and the data table with
-#'   the associated data ("dt"). If \code{codon_values} is specified, an
-#'   additional ggplot2 object ("plot_comparison") is returned.
+#'   the associated data ("dt"). If \code{frequency_normalization} is TRUE, the
+#'   data table contains both raw and normalized codon usage indexes, only raw
+#'   data otherwise. If \code{codon_values} is specified, an additional ggplot2
+#'   object ("plot_comparison") is returned. Please note: before plotting, the
+#'   64 values are scaled to make them always ranging between 0 and 1.
 #' @import data.table
 #' @import ggplot2
 #' @export
 codon_usage_psite <- function(data, annotation, sample, site = "psite",
                               fastapath = NULL, fasta_genome = TRUE,
                               bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
-                              dataSource = NA, organism = NA, transcripts = NULL, 
-                              codon_values = NULL, scatter_label = FALSE, 
-                              aminoacid = FALSE) {
+                              dataSource = NA, organism = NA, transcripts = NULL,
+                              frequency_normalization = TRUE, codon_values = NULL,
+                              scatter_label = FALSE, aminoacid = FALSE) {
   
   if(site != "psite" & site != "asite" & site != "esite"){
     cat("\n")
@@ -147,109 +153,121 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     }
   }
   
-  if(length(fastapath) == 0 & length(bsgenome) == 0){
-    cat("\n")
-    stop("impossible to normalize the data: no nucleotide sequences are provided. Either fastpath or bsgenome must be specified\n\n")
-  }
-  
-  if(((length(fastapath) != 0 & (fasta_genome == TRUE | fasta_genome == T)) |
-      length(bsgenome) != 0) &
-     length(gtfpath) == 0 & length(txdb) == 0){
-    cat("\n")
-    stop("genome annotation file not specified (both GTF path and TxDb object are missing)\n\n")
-  }
-  
-  if(length(fastapath) != 0 & length(bsgenome) != 0){
-    cat("\n")
-    warning("both fastapath and bsgenome are specified. Only fastapath will be considered\n")
-    bsgenome = NULL
-  }
-  
-  if(length(gtfpath) != 0 & length(txdb) != 0){
-    cat("\n")
-    warning("both gtfpath and txdb are specified. Only gtfpath will be considered\n")
-    txdb = NULL
-  }
-  
-  if((length(gtfpath) != 0 | length(txdb) != 0) &
-     ((length(fastapath) == 0 & length(bsgenome) == 0) |
-      (length(fastapath) != 0 & (fasta_genome == FALSE | fasta_genome == F)))){
-    cat("\n")
-    warning("a genome annotation file is specified but no sequences from genome assembly are provided\n")
-  }
-  
-  if(length(gtfpath) != 0 | length(txdb) != 0){
-    if(length(gtfpath) != 0){
-      path_to_gtf <- gtfpath
-      txdbanno <- GenomicFeatures::makeTxDbFromGFF(file = path_to_gtf, format = "gtf", dataSource = dataSource, organism = organism)
-    } else {
-      if(txdb %in% rownames(installed.packages())){
-        library(txdb, character.only = TRUE)
+  if(!(gsub("site", "_site_codon", site) %in% colnames(data[[sample]])) | 
+     (gsub("site", "_site_codon", site) %in% colnames(data[[sample]]) &
+      (frequency_normalization == TRUE | frequency_normalization == T))){
+    
+    if(length(fastapath) == 0 & length(bsgenome) == 0){
+      cat("\n")
+      if(!(gsub("site", "_site_codon", site) %in% colnames(data[[sample]]))){
+        stop("no nucleotide sequences provided. Either fastpath or bsgenome must be specified\n\n")
       } else {
-        source("https://bioconductor.org/biocLite.R")
-        biocLite(txdb, suppressUpdates = TRUE)
-        library(txdb, character.only = TRUE)
+        warning("no nucleotide sequences provided: non-normalized codon usage indexes will be returned\n")
       }
-      txdbanno <- get(txdb)
     }
-  }
-  
-  if(length(fastapath) != 0 | length(bsgenome) != 0){
-    if(length(fastapath) != 0) {
-      if(fasta_genome == TRUE | fasta_genome == T){
-        temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-        names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
-        exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
-        exon <- as.data.table(exon[unique(names(exon))])
-        sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
-        sub_exon_minus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "-"
-                               ][, new_end := Biostrings::width(temp_sequences[as.character(seqnames)]) - start + 1
-                                 ][, new_start := Biostrings::width(temp_sequences[as.character(seqnames)]) - end + 1]
-        
-        seq_dt_plus <- sub_exon_plus[, nt_seq := "emp"
-                                     ][, nt_seq := as.character(Biostrings::subseq(temp_sequences[as.character(seqnames)],
-                                                                                   start = start,
-                                                                                   end = end))
-                                       ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
-        
-        revcompl_temp_sequences <- Biostrings::reverseComplement(temp_sequences)
-        seq_dt_minus <- sub_exon_minus[, nt_seq := "emp"
-                                       ][, nt_seq := as.character(Biostrings::subseq(revcompl_temp_sequences[as.character(seqnames)],
-                                                                                     start = new_start,
-                                                                                     end = new_end))
+    
+    if(((length(fastapath) != 0 & (fasta_genome == TRUE | fasta_genome == T)) |
+        length(bsgenome) != 0) &
+       length(gtfpath) == 0 & length(txdb) == 0){
+      cat("\n")
+      stop("genome annotation file not specified. Either gtfpath or txdb object must be specified\n\n")
+    }
+    
+    if(length(fastapath) != 0 & length(bsgenome) != 0){
+      cat("\n")
+      warning("both fastapath and bsgenome are specified. Only fastapath will be considered\n")
+      bsgenome = NULL
+    }
+    
+    if(length(gtfpath) != 0 & length(txdb) != 0){
+      cat("\n")
+      warning("both gtfpath and txdb are specified. Only gtfpath will be considered\n")
+      txdb = NULL
+    }
+    
+    if((length(gtfpath) != 0 | length(txdb) != 0) &
+       ((length(fastapath) == 0 & length(bsgenome) == 0) |
+        (length(fastapath) != 0 & (fasta_genome == FALSE | fasta_genome == F)))){
+      cat("\n")
+      stop("genome annotation file specified but no sequences from genome assembly provided\n\n")
+    }
+    
+    if(length(gtfpath) != 0 | length(txdb) != 0){
+      if(length(gtfpath) != 0){
+        path_to_gtf <- gtfpath
+        txdbanno <- GenomicFeatures::makeTxDbFromGFF(file = path_to_gtf, format = "gtf", dataSource = dataSource, organism = organism)
+      } else {
+        if(txdb %in% rownames(installed.packages())){
+          library(txdb, character.only = TRUE)
+        } else {
+          source("https://bioconductor.org/biocLite.R")
+          biocLite(txdb, suppressUpdates = TRUE)
+          library(txdb, character.only = TRUE)
+        }
+        txdbanno <- get(txdb)
+      }
+    }
+    
+    if(length(fastapath) != 0 | length(bsgenome) != 0){
+      if(length(fastapath) != 0) {
+        if(fasta_genome == TRUE | fasta_genome == T){
+          temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+          names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
+          exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
+          exon <- as.data.table(exon[unique(names(exon))])
+          sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
+          sub_exon_minus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "-"
+                                 ][, new_end := Biostrings::width(temp_sequences[as.character(seqnames)]) - start + 1
+                                   ][, new_start := Biostrings::width(temp_sequences[as.character(seqnames)]) - end + 1]
+          
+          seq_dt_plus <- sub_exon_plus[, nt_seq := "emp"
+                                       ][, nt_seq := as.character(Biostrings::subseq(temp_sequences[as.character(seqnames)],
+                                                                                     start = start,
+                                                                                     end = end))
                                          ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
-        
-        sequences <- Biostrings::DNAStringSet(c(seq_dt_plus$seq, seq_dt_minus$seq))
-        names(sequences) <- c(unique(sub_exon_plus$group_name), unique(sub_exon_minus$group_name))
+          
+          revcompl_temp_sequences <- Biostrings::reverseComplement(temp_sequences)
+          seq_dt_minus <- sub_exon_minus[, nt_seq := "emp"
+                                         ][, nt_seq := as.character(Biostrings::subseq(revcompl_temp_sequences[as.character(seqnames)],
+                                                                                       start = new_start,
+                                                                                       end = new_end))
+                                           ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
+          
+          sequences <- Biostrings::DNAStringSet(c(seq_dt_plus$seq, seq_dt_minus$seq))
+          names(sequences) <- c(unique(sub_exon_plus$group_name), unique(sub_exon_minus$group_name))
+        } else {
+          sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+        }
       } else {
-        sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+        if(bsgenome %in% installed.genomes()){
+          library(bsgenome, character.only = TRUE)
+        } else {
+          source("http://www.bioconductor.org/biocLite.R")
+          biocLite(bsgenome, suppressUpdates = TRUE)
+          library(bsgenome, character.only = TRUE)
+        }
+        sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
       }
-    } else {
-      if(bsgenome %in% installed.genomes()){
-        library(bsgenome, character.only = TRUE)
-      } else {
-        source("http://www.bioconductor.org/biocLite.R")
-        biocLite(bsgenome, suppressUpdates = TRUE)
-        library(bsgenome, character.only = TRUE)
-      }
-      sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names=T)
     }
-  }
-  
-  if(site == "psite" & !("p_site_codon" %in% colnames(data[[sample]]))){
-    data[[sample]] <- data[[sample]][, p_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
-                                                                                       start = data[[sample]]$psite,
-                                                                                       end = data[[sample]]$psite + 2))]
-  }
-  if(site == "asite" & !("a_site_codon" %in% colnames(data[[sample]]))){
-    data[[sample]] <- data[[sample]][, a_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
-                                                                                       start = data[[sample]]$psite + 3,
-                                                                                       end = data[[sample]]$psite + 5))]
-  }
-  if(site == "esite" & !("e_site_codon" %in% colnames(data[[sample]]))){
-    data[[sample]] <- data[[sample]][, e_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
-                                                                                       start = data[[sample]]$psite - 3,
-                                                                                       end = data[[sample]]$psite - 1))]
+    
+    if(!(gsub("site", "_site_codon", site) %in% colnames(data[[sample]]))){
+      if(site == "psite" & !("p_site_codon" %in% colnames(data[[sample]]))){
+        data[[sample]] <- data[[sample]][, p_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
+                                                                                           start = data[[sample]]$psite,
+                                                                                           end = data[[sample]]$psite + 2))]
+      }
+      if(site == "asite" & !("a_site_codon" %in% colnames(data[[sample]]))){
+        data[[sample]] <- data[[sample]][, a_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
+                                                                                           start = data[[sample]]$psite + 3,
+                                                                                           end = data[[sample]]$psite + 5))]
+      }
+      if(site == "esite" & !("e_site_codon" %in% colnames(data[[sample]]))){
+        data[[sample]] <- data[[sample]][, e_site_codon := as.character(Biostrings::subseq(sequences[as.character(data[[sample]]$transcript)],
+                                                                                           start = data[[sample]]$psite - 3,
+                                                                                           end = data[[sample]]$psite - 1))]
+      }
+    }
+    
   }
   
   l_transcripts <- as.character(annotation[l_cds > 0 & l_cds %% 3 == 0, transcript])
@@ -264,18 +282,6 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     c_transcript <- intersect(l_transcripts, transcripts)
   }
   
-  sub_sequences <- sequences[c_transcript]
-  cds_biost <- Biostrings::subseq(sub_sequences,
-                                  start = annotation[transcript %in% names(sub_sequences), l_utr5] + 1,
-                                  end = annotation[transcript %in% names(sub_sequences), l_utr5] +
-                                    annotation[transcript %in% names(sub_sequences), l_cds])
-  
-  seq_freq <- (Biostrings::trinucleotideFrequency(cds_biost, step = 3,
-                                                  as.prob = TRUE,
-                                                  with.labels = TRUE,
-                                                  simplify.as = "collapsed")) * 1000
-  names(seq_freq) <- gsub("T", "U", names(seq_freq))
-  
   dt <- data[[sample]][as.character(transcript) %in% c_transcript & psite_region == "cds" & psite_from_start %% 3 == 0]
   
   if(site == "psite"){
@@ -289,33 +295,49 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       norm_table <- data.table(table(factor(dt$e_site_codon, levels = cod_lev)))
     }
   }
+  colnames(norm_table) <- c("codon", "raw_value")
   
-  colnames(norm_table) <- c("codon", "count")
-  norm_table[, codon := gsub("T", "U", codon)]
-  norm_table[, count := (count / sum(count)) * 1000]
+  norm_table <- norm_table[, codon := gsub("T", "U", codon)
+                           ][, class := "cds"
+                             ][codon == "AUG", class := "start"
+                               ][codon %in% c("UAA", "UGA", "UAG"), class := "stop"
+                                 ][, class := factor(class, levels = c("start", "cds", "stop"),
+                                                     labels=c("Start codon", "cds", "Stop codon"))
+                                   ][cod_aa, on = "codon"]
+  colplot <- "raw_value"
   
-  norm_table <- norm_table[, class := "cds"
-                           ][codon == "AUG", class := "start"
-                             ][codon %in% c("UAA", "UGA", "UAG"), class := "stop"
-                               ][, class := factor(class, levels = c("start", "cds", "stop"), labels=c("Start codon", "cds", "Stop codon"))
-                                 ][cod_aa, on = "codon"
-                                   ][, value := count / seq_freq[codon]
-                                     ][, value := value - min(value)
-                                       ][, value := value / max(value)
-                                         ][order(value)
-                                           ][, codon := factor(codon, levels = codon)]
+  if(frequency_normalization == TRUE | frequency_normalization == T){
+    sub_sequences <- sequences[c_transcript]
+    cds_biost <- Biostrings::subseq(sub_sequences,
+                                    start = annotation[transcript %in% names(sub_sequences), l_utr5] + 1,
+                                    end = annotation[transcript %in% names(sub_sequences), l_utr5] +
+                                      annotation[transcript %in% names(sub_sequences), l_cds])
+    
+    seq_freq <- (Biostrings::trinucleotideFrequency(cds_biost, step = 3,
+                                                    as.prob = TRUE,
+                                                    with.labels = TRUE,
+                                                    simplify.as = "collapsed")) * 1000
+    names(seq_freq) <- gsub("T", "U", names(seq_freq))
+    norm_table <- norm_table[, normalized_value := raw_value / seq_freq[codon]]
+    colplot <- "normalized_value"
+  }
+  
+  norm_table <- norm_table[, plot_value := get(colplot) - min(get(colplot))
+                           ][, plot_value := plot_value / max(plot_value)
+                             ][order(plot_value)
+                               ][, codon := factor(codon, levels = codon)]
   
   colour_codon <- ifelse(norm_table$codon == "AUG", "#104ec1",
                          ifelse(norm_table$codon %in% c("UAA", "UGA", "UAG"),
                                 "darkred", "gray40"))
   
   bs <- 30
-  bp <- ggplot(norm_table,aes(x = codon, y = value, fill = class)) +
+  bp <- ggplot(norm_table, aes(x = codon, y = plot_value, fill = class)) +
     geom_bar(stat = "identity", alpha = 0.9) +
     scale_fill_manual(name = "", breaks=c("Start codon","Stop codon"), values = c("#104ec1", "gray60", "darkred")) +
     theme_bw(base_size = bs) +
     theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
-    theme(legend.text = element_text(margin = margin(l = -10, unit = "pt"))) +
+    theme(legend.text = element_text(margin = margin(l = -12, unit = "pt"))) +
     scale_x_discrete("Codon") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5, size = bs * 0.5)) +
     geom_text(aes(label = aa), vjust = -0.5, size = bs/6) +
@@ -324,26 +346,30 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   
   output <- list()
   output[["plot"]] <- bp
-  output[["dt"]] <- norm_table[, c("codon", "class", "value",  "aa")]
+  if(frequency_normalization == TRUE | frequency_normalization == T){
+    output[["dt"]] <- norm_table[, c("codon",  "aa", "class", "raw_value", "normalized_value", "plot_value")]
+  } else {
+    output[["dt"]] <- norm_table[, c("codon",  "aa", "class", "raw_value", "plot_value")]
+  }
   
   if(length(codon_values) != 0){
     codon_values <- codon_values[, list(codon, value)]
     setnames(codon_values, old = c("codon", "value"), new =  c("codon", "comp_values"))
     codon_values[, codon := gsub("T", "U", codon)]
     norm_table <- norm_table[codon_values, on = "codon"
-                             ][, comp_values := comp_values - min(comp_values)
-                               ][, comp_values := comp_values / max(comp_values)]
+                             ][, comp_plot_values := comp_values - min(comp_values)
+                               ][, comp_plot_values := comp_plot_values / max(comp_plot_values)]
     
-    correlation <- round(cor(norm_table$value, norm_table$comp_values), 3)
+    correlation <- round(cor(norm_table$plot_value, norm_table$comp_plot_values), 3)
     
     bs <- 22.5
-    pcomp <- ggplot(norm_table,aes(x = value, y = comp_values, colour = class)) +
+    pcomp <- ggplot(norm_table,aes(x = plot_value, y = comp_plot_values, colour = class)) +
       geom_smooth(method = "lm", se=T, color="gray80", fill="gray80", linetype = 1, formula = y ~ x, level = 0.99,  fullrange = TRUE) +
       geom_point(alpha = 0.9, size = bs * 0.14) +
       scale_colour_manual(name = "", breaks = c("Start codon","Stop codon"), values = c("#104ec1", "gray40", "darkred")) +
       theme_bw(base_size = bs) +
       theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
-      theme(legend.text = element_text(margin = margin(l = -10, unit = "pt"))) +
+      theme(legend.text = element_text(margin = margin(l = -12, unit = "pt"))) +
       scale_x_continuous("Codon usage index", limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       scale_y_continuous("Codon usage", limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       coord_cartesian(xlim = c(-0.05,1.05), ylim = c(-0.05,1.05)) +
@@ -352,13 +378,14 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     if (scatter_label == T || scatter_label == TRUE) {
       if (aminoacid == T || aminoacid == TRUE) {
         pcomp <- pcomp +
-          ggrepel::geom_text_repel(aes(value, comp_values, label = as.character(aa)), show.legend = F)
+          ggrepel::geom_text_repel(aes(plot_value, comp_plot_values, label = as.character(aa)), show.legend = F)
       } else {
         pcomp <- pcomp +
-          ggrepel::geom_text_repel(aes(value, comp_values, label = as.character(codon)), show.legend = F)
+          ggrepel::geom_text_repel(aes(plot_value, comp_plot_values, label = as.character(codon)), show.legend = F)
       }
     }
     
+    output[["dt"]] <- cbind(output[["dt"]], norm_table[, c("comp_values", "comp_plot_values")])
     output[["plot_comparison"]] <- pcomp
   }
   return(output)
