@@ -73,6 +73,5 @@ positions for transcripts without annotated CDS are set to 0.
 }
 \examples{
 ## path_bed <- "path/to/BED/files"
-## annotation_dt <- datatable_with_transcript_annotation
-## bedtolist(bedfolder = path_bed, annotation = annotation_dt)
+## bedtolist(bedfolder = path_bed, annotation = mm81cdna)
 }

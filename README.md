@@ -329,7 +329,7 @@ For additional details please refers to the documentation provided by ?length_fi
     comparison_dt[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
     comparison_dt[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 
- Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see the *sample* parameter).
+ Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see parameter *sample*).
 
     names_list <- list("Only_28" = c("subsample_28nt"),
                        "All" = c("whole_sample"))
@@ -345,15 +345,36 @@ For additional details please refers to the documentation provided by ?length_fi
 
 ### Codon usage
 
- To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon optionally normalized for the frequency in sequences of each codon. `codon_usage_psite` also returns a bar plot of the resulting values, highlighting the start and the stop codon and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note: due to the FASTA file size, the package does not include the nucleotide sequences used by the author.
+ To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon optionally normalized for the frequency in sequences of each codon. If one sample name is specified `codon_usage_psite` returns a bar plot of the resulting codon usage indexes, highlighting the start and stop codons and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note: due to its size, the FASTA file containing the transcripts sequences used by the author is not included in the package.
   
-   	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-	                                         fastapath = path_to_fasta)
+	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+                                             fastapath = "path/to/transcriptome/FASTA/file",
+                                             fasta_genome = FALSE,
+                                             frequency_normalization = FALSE) 
+	codon_usage_barplot[["plot"]]
 ![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
   
- `codon_usage_psite` can also be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from two conditions, organisms, transcript sets etc. Similarly, this function can reveal differences between the empirical codon usage and other codon-specific values provided by the user (see the *codon_usage* parameter). In the following example the empirical codon usage previously computed is compared with codon usage bias values in mouse (downloaded from http://www.kazusa.or.jp/codon), based on the frequency of synonymous codons in coding DNA regions. The structure of the required data table is as follows:
+  
+ `codon_usage_psite` can also be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from multiple samples or multiple populations of reads (e.g. with different length). Specifying two sample names, `codon_usage_psite` returns two bar plots (one for each sample) and compares the two sets of codon usage indexes returning a scatter plot. Each dot of the scatter plot represents a codon, optionally labelled with the corresponding triplet or amino acid. The relationship between the two sets of values (as results of a linear regression) and the Pearson correlation coefficient are displayed.
+  
+  Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. As first step we create a list of data tables with the reads of interest:
+  
+	comparison_list <- list()
+	comparison_list[["Only_28"]] <- reads_psite_list[["Samp1"]][length == 28]
+	comparison_list[["All"]] <- reads_psite_list[["Samp1"]]
 
-  |  codon  |  usage_index  |
+	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna, sample = c("All", "Only_28"),
+											  fastapath = "path/to/transcriptome/FASTA/file",
+											  fasta_genome = FALSE,
+											  frequency_normalization = FALSE)
+	codon_usage_2samples[["plot_comparison"]]
+<p align="center">
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_2samples.png" width="320" />
+</p>
+
+ `codon_usage_psite` also allows to compare codon usage indexes of a sample of interest with codon-specific values provided by the user (see parameter *codon_values*). In the following example empirical codon indexes for the example dataset are compared with codon usage bias values in mouse (downloaded from http://www.kazusa.or.jp/codon, based on the frequency of synonymous codons in coding DNA regions). The structure of the required input data table is as follows:
+  
+  |  codon  |  value  |
   |:------:|:------:|
   |  UUU  |  17.2  |
   |  UCU  |  16.2  |
@@ -362,12 +383,16 @@ For additional details please refers to the documentation provided by ?length_fi
   |  UUC  |  21.8  |
   |  UCC  |  18.1  |
   
- If a data table is passed to *codon_usage*, `codon_usage_psite` returns a scatter plot where each dot represents a codon and is optionally labelled with the corresponding triplet or amino acid:
+ When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example:
   
-	codon_usage_scatter <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-	                                         fastapath = path_to_fasta, codon_usage = cub_mouse)
+	codon_usage_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+                                         fastapath = "path/to/transcriptome/FASTA/file",
+                                         fasta_genome = FALSE,
+                                         codon_values = cub_mouse,
+                                         frequency_normalization = FALSE)
+	codon_usage_cub[["plot_comparison"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_scatter.png" width="320" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_cub.png" width="320" />
 </p>
 
 ------------------------------------------------------------------------

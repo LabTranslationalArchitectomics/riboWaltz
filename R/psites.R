@@ -168,7 +168,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     }
     
     # plot
-    if (plot == T || plot == TRUE) {
+    if (plot == T | plot == TRUE) {
       options(warn=-1)
       if (length(plot_dir) == 0) {
         dir <- getwd()
@@ -410,6 +410,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
         if(fasta_genome == TRUE | fasta_genome == T){
           temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
           names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
+          names(temp_sequences) <- tstrsplit(names(temp_sequences), "|", fixed = TRUE, keep = 1)[[1]]
           exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
           exon <- as.data.table(exon[unique(names(exon))])
           sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
@@ -434,6 +435,8 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
           names(sequences) <- c(unique(sub_exon_plus$group_name), unique(sub_exon_minus$group_name))
         } else {
           sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
+          names(sequences) <- tstrsplit(names(sequences), " ", fixed = TRUE, keep = 1)[[1]]
+          names(sequences) <- tstrsplit(names(sequences), "|", fixed = TRUE, keep = 1)[[1]]
         }
       } else {
         if(bsgenome %in% installed.genomes()){
@@ -485,9 +488,9 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
       }
     }
     
-    dt <- dt[order(transcript, end5)]
+    setorder(dt, transcript, end5)
     
-    if (granges == T || granges == TRUE) {
+    if (granges == T | granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
                                                     ignore.strand = TRUE,
@@ -502,7 +505,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
     data[[n]] <- dt
   }
   
-  if (granges == T || granges == TRUE) {
+  if (granges == T | granges == TRUE) {
     data <- GenomicRanges::GRangesList(data)
   }
   

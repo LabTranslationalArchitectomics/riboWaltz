@@ -10,20 +10,20 @@
   \item{transcript}{Name of the transcript (ENST ID and version, dot
   separated)}
   \item{end5}{Position of the 5' end of the read with respect to the first
-  nuclotide of the transcript, in nucleotides}
-  \item{psite}{Position of the P-site with respect to the first nuclotide of
+  nucleotide of the transcript, in nucleotides}
+  \item{psite}{Position of the P-site with respect to the first nucleotide of
   the transcript, in nucleotides}
   \item{end3}{Position of the 3' end of the read with respect to the first
-  nuclotide of the transcript, in nucleotides}
+  nucleotide of the transcript, in nucleotides}
   \item{length}{Length of the read, in nucleotides}
   \item{cds_start}{Leftmost position of the CDS with respect to the first
-  nuclotide of the transcript, in nucleotides}
+  nucleotide of the transcript, in nucleotides}
   \item{cds_stop}{Rightmost position of the CDS with respect to the first
-  nuclotide of the transcript, in nucleotides}
+  nucleotide of the transcript, in nucleotides}
   \item{psite_from_start}{Position of the P-site with respect to the first
-  nuclotide of the annotated CDS (if any), in nucleotides}
+  nucleotide of the annotated CDS (if any), in nucleotides}
   \item{psite_from_stop}{Position of the P-site with respect to the last
-  nuclotide of the annotated CDS (if any), in nucleotides}
+  nucleotide of the annotated CDS (if any), in nucleotides}
   \item{psite_region}{Region of the transcript that includes the P-site
   (5utr, cds, 3utr)}
 }}

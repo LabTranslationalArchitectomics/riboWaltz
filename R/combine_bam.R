@@ -56,8 +56,7 @@
 #' @return A list of data tables or a GRangesList object.
 #' @examples
 #' ## path_bam <- "path/to/BAM/files"
-#' ## annotation_dt <- datatable_with_transcript_annotation
-#' ## bamtolist(bamfolder = path_bam, annotation = annotation_dt)
+#' ## bamtolist(bamfolder = path_bam, annotation = mm81cdna)
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE, 
@@ -232,8 +231,7 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @return A list of data tables or a GRangesList object.
 #' @examples
 #' ## path_bed <- "path/to/BED/files"
-#' ## annotation_dt <- datatable_with_transcript_annotation
-#' ## bedtolist(bedfolder = path_bed, annotation = annotation_dt)
+#' ## bedtolist(bedfolder = path_bed, annotation = mm81cdna)
 #' @import data.table
 #' @export
 bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,

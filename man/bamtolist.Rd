@@ -75,6 +75,5 @@ transcripts without annotated CDS are set to 0.
 }
 \examples{
 ## path_bam <- "path/to/BAM/files"
-## annotation_dt <- datatable_with_transcript_annotation
-## bamtolist(bamfolder = path_bam, annotation = annotation_dt)
+## bamtolist(bamfolder = path_bam, annotation = mm81cdna)
 }

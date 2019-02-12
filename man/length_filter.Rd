@@ -20,13 +20,13 @@ of all reads with low or no periodicity.}
 
 \item{length_filter_vector}{Integer or an integer vector specifying a read
 length or a range of read lengths to keep, respectively. This parameter is
-considered only if \code{length_filter_mode} is "custom".}
+considered only if \code{length_filter_mode} is set to "custom".}
 
 \item{periodicity_threshold}{Integer in [10, 100]. Only read lengths
 satisfying this threshold (i.e. a higher percentage of read extremities
 falls in one of the three reading frames along the CDS) are kept. This
-parameter is considered only if \code{length_filter_mode} is "periodicity".
-Default is 50.}
+parameter is considered only if \code{length_filter_mode} is to
+"periodicity". Default is 50.}
 
 \item{granges}{Logical value whether to return a GRangesList object. Default
 is FALSE i.e. a list of data tables is returned instead (the required input
