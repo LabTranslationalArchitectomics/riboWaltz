@@ -98,16 +98,20 @@
 #'   the DNA or RNA nucleotide sequence of the 64 codons and corresponding
 #'   values arranged in two columns named \emph{codon} and \emph{value},
 #'   respectively. Default is NULL.
-#' @param scatter_label Logical value whether to label the dots in the scatter
+#' @param label_scatter Logical value whether to label the dots in the scatter
 #'   plot. Each dot is labeled using either the nucleotide sequence of the codon
-#'   or the corresponding amino acid symbol (see \code{aminoacid}). This
+#'   or the corresponding amino acid symbol (see \code{label_aminoacid}). This
 #'   parameter is considered only if two sample names are specified in
 #'   \code{sample} or \code{codon_values} is provided. Default is FALSE.
-#' @param aminoacid Logical value whether to use amino acid symbols to label the
-#'   dots of the scatter. Default is FALSE i.e. codon nucleotide sequences are
-#'   used instead. This parameter is considered only if two sample names are
-#'   specified in \code{sample} or \code{codon_values} is provided and
-#'   \code{scatter_label} is TRUE.
+#' @param label_number Integer value in [1,64] specifying how many dots in the
+#'   scatter plot should be labeled. Dots farthest from the confident interval
+#'   of the regression line are automatically identified and labeled. Default is
+#'   64 i.e. all dots are labeled. This parameter is considered only if
+#'   \code{label_scatter} is TRUE.
+#' @param label_aminoacid Logical value whether to use amino acid symbols to
+#'   label the dots of the scatter. Default is FALSE i.e. codon nucleotide
+#'   sequences are used instead. This parameter is considered only if
+#'   \code{label_scatter} is TRUE.
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
@@ -157,7 +161,8 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
                               bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
                               dataSource = NA, organism = NA, transcripts = NULL,
                               frequency_normalization = TRUE, codon_values = NULL,
-                              scatter_label = FALSE, aminoacid = FALSE) {
+                              label_scatter = FALSE, label_number = 64,
+                              label_aminoacid = FALSE) {
   
   if(site != "psite" & site != "asite" & site != "esite"){
     cat("\n")
@@ -477,11 +482,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     
     norm_table <- norm_table[order(plot_value)
                              ][, codon := factor(codon, levels = codon)]
-    
-    colour_codon <- ifelse(norm_table$codon == "AUG", "#104ec1",
-                           ifelse(norm_table$codon %in% c("UAA", "UGA", "UAG"),
-                                  "darkred", "gray40"))
-    
+
     correlation <- round(cor(norm_table$plot_value, norm_table$comp_plot_value), 3)
     
     bs <- 25
@@ -497,14 +498,38 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       coord_cartesian(xlim = c(-0.05,1.05), ylim = c(-0.05,1.05)) +
       annotate("text", x = 1, y = 0, label = paste0("R=",correlation), vjust = -0.2, size = bs * 0.2, hjust = 1, color = "black")
     
-    if (scatter_label == T || scatter_label == TRUE) {
-      if (aminoacid == T || aminoacid == TRUE) {
-        pcomp <- pcomp +
-          ggrepel::geom_text_repel(aes(plot_value, comp_plot_value, label = as.character(aa)), show.legend = F)
+    if (label_scatter == T || label_scatter == TRUE) {
+      if (label_number != 64){
+        fit <- lm(norm_table$comp_plot_value ~ norm_table$plot_value)
+        outlier_tab <- data.table(predict.lm(fit, interval = "confidence", level = 0.95)
+        )[, codon := norm_table$codon
+          ][, comp_plot_value := norm_table$comp_plot_value
+            ][comp_plot_value < lwr | comp_plot_value > upr]
+        outlier_cod <- as.character(outlier_tab[, max_dist := min(abs(comp_plot_value - lwr), abs(comp_plot_value - upr)),
+                                                by = 1:nrow(outlier_tab)
+                                                ][order(-max_dist)
+                                                  ][1:label_number, codon])
+        lab_table <- norm_table[, codon_out := ""
+                                 ][as.character(codon) %in% outlier_cod, codon_out := codon
+                                   ][, aa_out := ""
+                                     ][codon_out != "", aa_out := aa]
+        
+        if (label_aminoacid == T || label_aminoacid == TRUE) {
+          label_col <- "aa_out"
+        } else {
+          label_col <- "codon_out"
+        }
       } else {
-        pcomp <- pcomp +
-          ggrepel::geom_text_repel(aes(plot_value, comp_plot_value, label = as.character(codon)), show.legend = F)
+        if (label_aminoacid == T || label_aminoacid == TRUE) {
+          label_col <- "aa"
+        } else {
+          label_col <- "codon"
+        }
       }
+      
+      pcomp <- pcomp +
+        ggrepel::geom_text_repel(data = lab_table, 
+                                 aes_string("plot_value", "comp_plot_value", label = as.character(label_col)), show.legend = F)
     }
     
     if(length(sample) == 2){

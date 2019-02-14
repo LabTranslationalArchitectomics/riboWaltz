@@ -25,16 +25,16 @@ body {
 text-align: justify}
 </style>
 
-## Description
+## Overview
 
   Ribosome profiling is a powerful technique used to study translation at the genome-wide level, generating unique information concerning ribosome positions along RNAs. Optimal localization of ribosomes requires the proper identification of the ribosome P-site in each ribosome protected fragment, a crucial step to determine trinucleotide periodicity of translating ribosomes and draw correct conclusions concerning where ribosomes are located. To determine the P-site within ribosome footprints at nucleotide resolution, the precise estimation of its offset with respect to the protected fragment is necessary.
 
   __riboWaltz__ is an R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data. Taking advantage of a two-step algorithm where offset information is passed through populations of reads with different length in order to maximize offset coherence, __riboWaltz__ computes with high precision the P-site offset. __riboWaltz__ also provides a variety of graphical representations, laying the foundations for further accurate RiboSeq analyses and improved interpretation of positional information.
 
 
-## Reference
+## Citing riboWaltz
 
-When using __riboWaltz__ please cite the following article (available [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169)):
+Please cite the following article (available [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169)) when using __riboWaltz__:
 
 Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G. ***riboWaltz: Optimization of ribosome P-site positioning in ribosome profiling data.*** *PLoS Comput Biol. 2018 Aug 13;14(8):e1006169.*
 
@@ -112,7 +112,7 @@ help(package = riboWaltz)
 
 ### Remark
 
-__riboWaltz__ only works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
+__riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
 
 The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see Chapter 6 of its [manual](http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf)), is an example of tool providing such a feature.
 
@@ -388,9 +388,9 @@ example_metaheatmap[["plot"]]
 
 ```{r, echo = TRUE, eval = FALSE}
 codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                            fastapath = "path/to/transcriptome/FASTA/file",
-                                            fasta_genome = FALSE,
-                                            frequency_normalization = FALSE) 
+                                          fastapath = "path/to/transcriptome/FASTA/file",
+                                          fasta_genome = FALSE,
+                                          frequency_normalization = FALSE) 
 codon_usage_barplot[["plot"]]
 ```
 ```{r, out.width = '690px', fig.retina = NULL, echo = FALSE}
@@ -426,14 +426,14 @@ cub_mouse <- data.table(codon = c("UUU", "UCU", "UAU", "UGU", "UUC", "UCC", "UAC
 ```{r}
 head(cub_mouse)
 ```
-  When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example:
+  When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example. In both cases labels for a specified number of dots, reporting the coresponding triplet or amino acid symbol, can be added (see parameters *label_scatter*, *label_number* and *label_aminoacid*):
 
 ```{r, echo=TRUE, eval=FALSE}
 codon_usage_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                            fastapath = "path/to/transcriptome/FASTA/file",
-                                            fasta_genome = FALSE,
-                                            codon_values = cub_mouse,
-                                            frequency_normalization = FALSE)
+                                      fastapath = "path/to/transcriptome/FASTA/file",
+                                      fasta_genome = FALSE, codon_values = cub_mouse,
+                                      frequency_normalization = FALSE,
+                                      label_scatter = TRUE, label_number = 5)
 codon_usage_cub[["plot_comparison"]]
 ```
 ```{r, out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"}

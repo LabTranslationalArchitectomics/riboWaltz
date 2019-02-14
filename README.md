@@ -5,6 +5,36 @@
 R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data
 ------------------------------------------------------------------------
 
+# Table of contents
+
+[Overview](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview)
+[Citing riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz#citing-ribowaltz)
+[License](https://github.com/LabTranslationalArchitectomics/riboWaltz#license)
+[Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
+[Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
+[Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
+[Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
+[From BAM files to P-site offsets](https://github.com/LabTranslationalArchitectomics/riboWaltz#from-bam-files-to-p-site-offsets)
+* [Remark](https://github.com/LabTranslationalArchitectomics/riboWaltz#remark)
+* [Acquiring input files](https://github.com/LabTranslationalArchitectomics/riboWaltz#acquiring-input-files)
+* [Selection of read lengths](https://github.com/LabTranslationalArchitectomics/riboWaltz#selection-of-read-lengths)
+* [Annotation data table](https://github.com/LabTranslationalArchitectomics/riboWaltz#annotation-data-table)
+* [P-site offset](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-site-offset)
+
+[Codon and CDS coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-and-cds-coverage)
+* [Codon coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-coverage)
+* [CDS coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#cds-coverage)
+
+[Graphical outputs](https://github.com/LabTranslationalArchitectomics/riboWaltz#graphical-outputs)
+* [Note](https://github.com/LabTranslationalArchitectomics/riboWaltz#note)
+* [Overview of the data](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview-of-the-data)
+* [P-sites per region](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-sites-per-region)
+* [Trinucleotide periodicity](https://github.com/LabTranslationalArchitectomics/riboWaltz#trinucleotide-periodicity)
+* [Metaplots](https://github.com/LabTranslationalArchitectomics/riboWaltz#metaplots)
+* [Codon usage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-usage)
+
+------------------------------------------------------------------------
+
 ## Overview
 
  Ribosome profiling is a powerful technique used to study translation at the genome-wide level, generating unique information concerning ribosome positions along RNAs. Optimal localization of ribosomes requires the proper identification of the ribosome P-site in each ribosome protected fragment, a crucial step to determine trinucleotide periodicity of translating ribosomes and draw correct conclusions concerning where ribosomes are located. To determine the P-site within ribosome footprints at nucleotide resolution, the precise estimation of its offset with respect to the protected fragment is necessary. 
@@ -13,7 +43,7 @@ R package for calculation of optimal P-site offsets, diagnostic analysis and vis
 
 ------------------------------------------------------------------------
 
-## Reference
+## Citing riboWaltz
 
 Please cite the following article when using __riboWaltz__:
 
@@ -95,7 +125,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Remark
 
- __riboWaltz__ only works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
+ __riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
 
  The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see Chapter 6 of its [manual](http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf)), is an example of tool providing such a feature.
 
@@ -363,7 +393,8 @@ For additional details please refers to the documentation provided by ?length_fi
 	comparison_list[["Only_28"]] <- reads_psite_list[["Samp1"]][length == 28]
 	comparison_list[["All"]] <- reads_psite_list[["Samp1"]]
 
-	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna, sample = c("All", "Only_28"),
+	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna,
+											  sample = c("All", "Only_28"),
 											  fastapath = "path/to/transcriptome/FASTA/file",
 											  fasta_genome = FALSE,
 											  frequency_normalization = FALSE)
@@ -383,13 +414,13 @@ For additional details please refers to the documentation provided by ?length_fi
   |  UUC  |  21.8  |
   |  UCC  |  18.1  |
   
- When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example:
+ When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example. In both cases labels for a specified number of dots, reporting the coresponding triplet or amino acid symbol, can be added (see parameters *label_scatter*, *label_number* and *label_aminoacid*):
   
 	codon_usage_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                          fastapath = "path/to/transcriptome/FASTA/file",
-                                         fasta_genome = FALSE,
-                                         codon_values = cub_mouse,
-                                         frequency_normalization = FALSE)
+                                         fasta_genome = FALSE, codon_values = cub_mouse,
+                                         frequency_normalization = FALSE,
+										 label_scatter = TRUE, label_number = 5)
 	codon_usage_cub[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_cub.png" width="320" />

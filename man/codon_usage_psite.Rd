@@ -8,7 +8,7 @@ codon_usage_psite(data, annotation, sample, site = "psite",
   fastapath = NULL, fasta_genome = TRUE, bsgenome = NULL,
   gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA,
   transcripts = NULL, frequency_normalization = TRUE, codon_values = NULL,
-  scatter_label = FALSE, aminoacid = FALSE)
+  label_scatter = FALSE, label_number = 64, label_aminoacid = FALSE)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}. Each data
@@ -112,17 +112,22 @@ the DNA or RNA nucleotide sequence of the 64 codons and corresponding
 values arranged in two columns named \emph{codon} and \emph{value},
 respectively. Default is NULL.}
 
-\item{scatter_label}{Logical value whether to label the dots in the scatter
+\item{label_scatter}{Logical value whether to label the dots in the scatter
 plot. Each dot is labeled using either the nucleotide sequence of the codon
-or the corresponding amino acid symbol (see \code{aminoacid}). This
+or the corresponding amino acid symbol (see \code{label_aminoacid}). This
 parameter is considered only if two sample names are specified in
 \code{sample} or \code{codon_values} is provided. Default is FALSE.}
 
-\item{aminoacid}{Logical value whether to use amino acid symbols to label the
-dots of the scatter. Default is FALSE i.e. codon nucleotide sequences are
-used instead. This parameter is considered only if two sample names are
-specified in \code{sample} or \code{codon_values} is provided and
-\code{scatter_label} is TRUE.}
+\item{label_number}{Integer value in [1,64] specifying how many dots in the
+scatter plot should be labeled. Dots farthest from the confident interval
+of the regression line are automatically identified and labeled. Default is
+64 i.e. all dots are labeled. This parameter is considered only if
+\code{label_scatter} is TRUE.}
+
+\item{label_aminoacid}{Logical value whether to use amino acid symbols to
+label the dots of the scatter. Default is FALSE i.e. codon nucleotide
+sequences are used instead. This parameter is considered only if
+\code{label_scatter} is TRUE.}
 }
 \value{
 A list containing ggplot2 objects and a data table with the
