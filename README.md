@@ -5,15 +5,22 @@
 R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data
 ------------------------------------------------------------------------
 
-# Table of contents
+## Table of contents
 
 [Overview](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview)
+
 [Citing riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz#citing-ribowaltz)
+
 [License](https://github.com/LabTranslationalArchitectomics/riboWaltz#license)
+
 [Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
+
 [Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
+
 [Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
+
 [Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
+
 [From BAM files to P-site offsets](https://github.com/LabTranslationalArchitectomics/riboWaltz#from-bam-files-to-p-site-offsets)
 * [Remark](https://github.com/LabTranslationalArchitectomics/riboWaltz#remark)
 * [Acquiring input files](https://github.com/LabTranslationalArchitectomics/riboWaltz#acquiring-input-files)
