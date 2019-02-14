@@ -7,38 +7,29 @@ R package for calculation of optimal P-site offsets, diagnostic analysis and vis
 
 ## Table of contents
 
-[Overview](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview)
-
-[Citing riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz#citing-ribowaltz)
-
-[License](https://github.com/LabTranslationalArchitectomics/riboWaltz#license)
-
-[Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
-
-[Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
-
-[Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
-
-[Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
-
-[From BAM files to P-site offsets](https://github.com/LabTranslationalArchitectomics/riboWaltz#from-bam-files-to-p-site-offsets)
-* [Remark](https://github.com/LabTranslationalArchitectomics/riboWaltz#remark)
-* [Acquiring input files](https://github.com/LabTranslationalArchitectomics/riboWaltz#acquiring-input-files)
-* [Selection of read lengths](https://github.com/LabTranslationalArchitectomics/riboWaltz#selection-of-read-lengths)
-* [Annotation data table](https://github.com/LabTranslationalArchitectomics/riboWaltz#annotation-data-table)
-* [P-site offset](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-site-offset)
-
-[Codon and CDS coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-and-cds-coverage)
-* [Codon coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-coverage)
-* [CDS coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#cds-coverage)
-
-[Graphical outputs](https://github.com/LabTranslationalArchitectomics/riboWaltz#graphical-outputs)
-* [Note](https://github.com/LabTranslationalArchitectomics/riboWaltz#note)
-* [Overview of the data](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview-of-the-data)
-* [P-sites per region](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-sites-per-region)
-* [Trinucleotide periodicity](https://github.com/LabTranslationalArchitectomics/riboWaltz#trinucleotide-periodicity)
-* [Metaplots](https://github.com/LabTranslationalArchitectomics/riboWaltz#metaplots)
-* [Codon usage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-usage)
+* [Overview](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview)
+* [Citing riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz#citing-ribowaltz)
+* [License](https://github.com/LabTranslationalArchitectomics/riboWaltz#license)
+* [Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
+* [Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
+* [Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
+* [Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
+* [From BAM files to P-site offsets](https://github.com/LabTranslationalArchitectomics/riboWaltz#from-bam-files-to-p-site-offsets)
+	- [Remark](https://github.com/LabTranslationalArchitectomics/riboWaltz#remark)
+	- [Acquiring input files](https://github.com/LabTranslationalArchitectomics/riboWaltz#acquiring-input-files)
+	- [Selection of read lengths](https://github.com/LabTranslationalArchitectomics/riboWaltz#selection-of-read-lengths)
+	- [Annotation data table](https://github.com/LabTranslationalArchitectomics/riboWaltz#annotation-data-table)
+	- [P-site offset](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-site-offset)
+* [Codon and CDS coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-and-cds-coverage)
+	- [Codon coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-coverage)
+	- [CDS coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#cds-coverage)
+* [Graphical outputs](https://github.com/LabTranslationalArchitectomics/riboWaltz#graphical-outputs)
+	- [Note](https://github.com/LabTranslationalArchitectomics/riboWaltz#note)
+	- [Overview of the data](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview-of-the-data)
+	- [P-sites per region](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-sites-per-region)
+	- [Trinucleotide periodicity](https://github.com/LabTranslationalArchitectomics/riboWaltz#trinucleotide-periodicity)
+	- [Metaplots](https://github.com/LabTranslationalArchitectomics/riboWaltz#metaplots)
+	- [Codon usage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-usage)
 
 ------------------------------------------------------------------------
 
