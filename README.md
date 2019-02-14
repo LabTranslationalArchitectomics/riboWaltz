@@ -1,7 +1,6 @@
 ![riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/ribowaltz.png)
 
 # riboWaltz
-
 R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data
 ------------------------------------------------------------------------
 
