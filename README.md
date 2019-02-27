@@ -1,18 +1,19 @@
 ![riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/ribowaltz.png)
 
-# riboWaltz
-R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data
-------------------------------------------------------------------------
+# __riboWaltz__
+### R package for calculation of optimal P-site offsets, diagnostic analysis and visual inspection of ribosome profiling data
+<br>
 
 ## Table of contents
 
 * [Overview](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview)
 * [Citing riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz#citing-ribowaltz)
 * [License](https://github.com/LabTranslationalArchitectomics/riboWaltz#license)
-* [Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
-* [Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
-* [Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
-* [Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
+* [Before starting](https://github.com/LabTranslationalArchitectomics/riboWaltz#before-starting)
+	- [Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
+	- [Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
+	- [Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
+	- [Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
 * [From BAM files to P-site offsets](https://github.com/LabTranslationalArchitectomics/riboWaltz#from-bam-files-to-p-site-offsets)
 	- [Remark](https://github.com/LabTranslationalArchitectomics/riboWaltz#remark)
 	- [Acquiring input files](https://github.com/LabTranslationalArchitectomics/riboWaltz#acquiring-input-files)
@@ -29,7 +30,8 @@ R package for calculation of optimal P-site offsets, diagnostic analysis and vis
 	- [Trinucleotide periodicity](https://github.com/LabTranslationalArchitectomics/riboWaltz#trinucleotide-periodicity)
 	- [Metaplots](https://github.com/LabTranslationalArchitectomics/riboWaltz#metaplots)
 	- [Codon usage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-usage)
-
+* [Contacts](https://github.com/LabTranslationalArchitectomics/riboWaltz#contacts)
+	
 ------------------------------------------------------------------------
 
 ## Overview
@@ -58,7 +60,9 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ------------------------------------------------------------------------
 
-## Dependencies
+## Before starting
+
+### Dependencies
 
  __riboWaltz__ requires R version >= 3.3.0 and the following packages:
 
@@ -75,9 +79,9 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
  All dependencies are automatically installed running the code in the next section.
 
-------------------------------------------------------------------------
 
-## Installation
+
+### Installation
 
  To install __riboWaltz__ directly from GitHub the *devtools* package is required. If not already installed on your system, run
     
@@ -92,17 +96,17 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
   
     install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes = TRUE)
 
-------------------------------------------------------------------------
 
-## Loading
+
+### Loading
 
  To load __riboWaltz__ run
 
 	library(riboWaltz)
 	
-------------------------------------------------------------------------
 
-## Getting help
+
+### Getting help
 
  Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and the usage of all parameters in a function run
  
@@ -425,7 +429,7 @@ For additional details please refers to the documentation provided by ?length_fi
 
 ------------------------------------------------------------------------
 
-### Contacts
+## Contacts
 
 fab.lauria.88@gmail.com
 

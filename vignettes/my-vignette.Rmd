@@ -39,7 +39,9 @@ Please cite the following article (available [here](https://journals.plos.org/pl
 Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G. ***riboWaltz: Optimization of ribosome P-site positioning in ribosome profiling data.*** *PLoS Comput Biol. 2018 Aug 13;14(8):e1006169.*
 
 
-## Dependencies
+## Before starting
+
+### Dependencies
 
   __riboWaltz__ requires R version >= 3.3.0 and the following packages:
 
@@ -57,7 +59,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G. ***riboWal
   All dependencies are automatically installed running the code in the next section.
 
 
-## Installation
+### Installation
 
   To install __riboWaltz__ directly from GitHub the *devtools* package is required. If not already installed on your system, run
     
@@ -79,7 +81,7 @@ install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, 
 ```
 
 
-## Loading
+### Loading
 
   To load __riboWaltz__ run
 
@@ -88,7 +90,7 @@ library(riboWaltz)
 ```
 
 
-## Getting help
+### Getting help
 
   Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and the usage of all parameters in a function run
 

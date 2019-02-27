@@ -520,6 +520,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
           label_col <- "codon_out"
         }
       } else {
+        lab_table <- norm_table
         if (label_aminoacid == T || label_aminoacid == TRUE) {
           label_col <- "aa"
         } else {
