@@ -21,12 +21,15 @@ This function reads one or multiple BAM files converting them into BED files
 that contain, for each read: i) the name of the corresponding reference
 sequence (i.e. of the transcript on which it aligns); ii) its leftmost and
 rightmost position with respect to the 1st nucleotide of the reference
-sequence; iii) its length; iv) the strand on which it aligns. Please note:
-this function relies on the \emph{bamtobed} utility of the BEDTools suite and
-can be only run on UNIX, LINUX and Apple OS X operating systems. Moreover, to
-generate R data structures containing reads information, the
-\code{\link{bedtolist}} must be run on the resulting BED files. For these
-reasons the authors suggest the use of \code{\link{bamtolist}}.
+sequence; iii) its length (intended as the width of the reference sequence
+region covered by the RNA fragment. For further information about this choice
+please refer to section \code{Details} of function \code{\link{bamtolist}});
+iv) the strand on which it aligns. Please note: this function relies on the
+\emph{bamtobed} utility of the BEDTools suite and can be only run on UNIX,
+LINUX and Apple OS X operating systems. Moreover, to generate R data
+structures containing reads information, the \code{\link{bedtolist}} must be
+run on the resulting BED files. For these reasons the authors suggest the use
+of \code{\link{bamtolist}}.
 }
 \examples{
 ## path_bam <- "path/to/BAM/files"

@@ -13,7 +13,7 @@
 #'   "periodicity": only read lengths satisfying a periodicity threshold (see
 #'   \code{periodicity_threshold}) are kept. The latter mode enables the removal
 #'   of all reads with low or no periodicity.
-#' @param length_filter_vector Integer or an integer vector specifying a read
+#' @param length_filter_vector Integer or integer vector specifying one read
 #'   length or a range of read lengths to keep, respectively. This parameter is
 #'   considered only if \code{length_filter_mode} is set to "custom".
 #' @param periodicity_threshold Integer in [10, 100]. Only read lengths

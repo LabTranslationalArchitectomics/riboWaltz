@@ -408,7 +408,7 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
   linestart <- data.frame(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
   linered <- data.frame(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
   
-  max <- max(final_tab_heatmap$reads)
+  maxl <- max(final_tab_heatmap$reads)
   
   plot <- ggplot(final_tab_heatmap, aes(as.numeric(as.character(distance)), sample)) +
     geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60") +
@@ -422,11 +422,19 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
     theme(strip.background = element_blank())
   
   if(log_colour == F) {
+    minl <- min(final_tab_heatmap$reads)
     plot <- plot +
-      scale_fill_gradient("P-site signal\n", low = "white", high = colour, limits = c(0.1, max), breaks = c(0.1, max/2, max), labels = c("0", floor(max/2), floor(max)), na.value = "white")
+      scale_fill_gradient("P-site signal\n", low = "white", high = colour, na.value = "white",
+                          limits = c(minl, maxl),
+                          breaks = c(minl, minl/2 + maxl/2, maxl),
+                          labels = c(round(minl, 2), round(minl/2 + maxl/2, 2), round(maxl, 2)))
   } else {
+    minl <- min(final_tab_heatmap[reads != 0, reads])
     plot <- plot +
-      scale_fill_gradient("P-site signal\n", low = "white", high = colour, limits = c(0.1, max), breaks = c(0.1, 10^(log10(max)/2 - 0.5), floor(max)), labels = c("0", floor(10^(log10(max)/2 - 0.5)), floor(max)), trans = "log", na.value = "transparent")
+      scale_fill_gradient("P-site signal\n", low = "white", high = colour, trans = "log", na.value = "transparent",
+                          limits = c(minl, maxl),
+                          breaks = c(minl, 10^(log10(minl)/2 + log10(maxl)/2), maxl),
+                          labels = c(round(minl, 2), round(10^(log10(minl)/2 + log10(maxl)/2), 2), round(maxl, 2)))
   }
   
   if(identical(plot_title, "auto")) {

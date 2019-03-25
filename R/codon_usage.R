@@ -44,6 +44,13 @@
 #'   TRUE (the default), an annotation object is required (see \code{gtfpath}
 #'   and \code{txdb}). FALSE implies nucleotide sequences of all transcripts are
 #'   provided instead.
+#' @param refseq_sep Character specifying the separator between reference
+#'   sequences' name and additional information to discard, stored in the
+#'   headers of the FASTA file specified by \code{fastapath} (if any). It might
+#'   be required for matching the reference sequences' identifiers reported in
+#'   the input list of data tables. All characters before the first occurrence
+#'   of the specified separator are kept. Default is NULL i.e. no string
+#'   splitting is performed.
 #' @param bsgenome Character string specifying the BSgenome data package with
 #'   the genome sequences to be loaded. If not already present in the system, it
 #'   is automatically installed through the biocLite.R script (check the list of
@@ -158,11 +165,11 @@
 #' @export
 codon_usage_psite <- function(data, annotation, sample, site = "psite",
                               fastapath = NULL, fasta_genome = TRUE,
-                              bsgenome = NULL, gtfpath = NULL, txdb = NULL, 
-                              dataSource = NA, organism = NA, transcripts = NULL,
-                              frequency_normalization = TRUE, codon_values = NULL,
-                              label_scatter = FALSE, label_number = 64,
-                              label_aminoacid = FALSE) {
+                              refseq_sep = NULL, bsgenome = NULL, gtfpath = NULL,
+                              txdb = NULL, dataSource = NA, organism = NA,
+                              transcripts = NULL, frequency_normalization = TRUE,
+                              codon_values = NULL, label_scatter = FALSE,
+                              label_number = 64, label_aminoacid = FALSE) {
   
   if(site != "psite" & site != "asite" & site != "esite"){
     cat("\n")
@@ -253,8 +260,9 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       if(length(fastapath) != 0) {
         if(fasta_genome == TRUE | fasta_genome == T){
           temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-          names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
-          names(temp_sequences) <- tstrsplit(names(temp_sequences), "|", fixed = TRUE, keep = 1)[[1]]
+          if(length(refseq_sep) != 0){
+            names(temp_sequences) <- tstrsplit(names(temp_sequences), refseq_sep, fixed = TRUE, keep = 1)[[1]]
+          }
           exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
           exon <- as.data.table(exon[unique(names(exon))])
           sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
@@ -279,8 +287,9 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
           names(sequences) <- c(unique(sub_exon_plus$group_name), unique(sub_exon_minus$group_name))
         } else {
           sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-          names(sequences) <- tstrsplit(names(sequences), " ", fixed = TRUE, keep = 1)[[1]]
-          names(sequences) <- tstrsplit(names(sequences), "|", fixed = TRUE, keep = 1)[[1]]
+          if(length(refseq_sep) != 0){
+            names(sequences) <- tstrsplit(names(sequences), refseq_sep, fixed = TRUE, keep = 1)[[1]]
+          }
         }
       } else {
         if(bsgenome %in% installed.genomes()){
@@ -291,16 +300,6 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
           library(bsgenome, character.only = TRUE)
         }
         sequences <- GenomicFeatures::extractTranscriptSeqs(get(bsgenome), txdbanno, use.names = T)
-      }
-    }
-    
-    if(setequal(names(sequences), as.character(annotation$transcript)) == FALSE){
-      if(length(setdiff(names(sequences), as.character(annotation$transcript))) > 0){
-        cat("\n")
-        warning("more sequences (FASTA) than transcripts (annotation)\n")
-      } else {
-        cat("\n")
-        warning("more transcripts (annotation) than sequences (FASTA)\n")
       }
     }
     
@@ -323,7 +322,6 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
         }
       }
     }
-    
   }
   
   l_transcripts <- as.character(annotation[l_cds > 0 & l_cds %% 3 == 0, transcript])
@@ -339,7 +337,23 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
   }
   
   if(frequency_normalization == TRUE | frequency_normalization == T){
-    sub_sequences <- sequences[intersect(c_transcript, names(sequences))]
+    if(setequal(names(sequences), as.character(annotation$transcript)) == FALSE){
+      exc_seq <- length(setdiff(names(sequences), as.character(annotation$transcript)))
+      exc_anno <- length(setdiff(as.character(annotation$transcript), names(sequences)))
+      
+      if(exc_seq > 0){
+        cat("\n")
+        warning(sprintf("more reference sequences (from FASTA or BSgenome) than transcript IDs (from annotation data table)\n  %s reference sequences discarded", exc_seq))
+      } 
+      
+      if(exc_anno > 0){
+        cat("\n")
+        warning(sprintf("more transcript IDs (from annotation data table) than sequences (from FASTA or BSgenome)\n  %s reference sequences discarded", exc_seq))
+      }
+    }
+    
+    c_transcript <- intersect(c_transcript, names(sequences))
+    sub_sequences <- sequences[c_transcript]
     cds_biost <- Biostrings::subseq(sub_sequences,
                                     start = annotation[transcript %in% names(sub_sequences), l_utr5] + 1,
                                     end = annotation[transcript %in% names(sub_sequences), l_utr5] +

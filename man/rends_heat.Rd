@@ -5,7 +5,8 @@
 \title{Metaheatmaps of the two extremities of the reads.}
 \usage{
 rends_heat(data, annotation, sample, transcripts = NULL, cl = 95,
-  utr5l = 50, cdsl = 50, utr3l = 50, log_colour = F, colour = "black")
+  utr5l = 50, cdsl = 50, utr3l = 50, log_colour = F,
+  colour = "black")
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},

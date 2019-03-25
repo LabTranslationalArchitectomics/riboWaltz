@@ -108,7 +108,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Getting help
 
- Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and the usage of all parameters in a function run
+ Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and usage of all parameters in a function run
  
 	?function_name
 
@@ -116,10 +116,10 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 	help(package = riboWaltz)
  
- in the R console.
- 
  A complete reference manual is available [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).   
 
+ Bugs and errors can be reported at the [issues](https://github.com/LabTranslationalArchitectomics/riboWaltz/issues) page on GitHub. Before filing new issues, please read the documentation and take a look at currently open and already closed discussions.
+ 
 ------------------------------------------------------------------------
 
 ## From BAM files to P-site offsets
@@ -388,16 +388,15 @@ For additional details please refers to the documentation provided by ?length_fi
   
  `codon_usage_psite` can also be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from multiple samples or multiple populations of reads (e.g. with different length). Specifying two sample names, `codon_usage_psite` returns two bar plots (one for each sample) and compares the two sets of codon usage indexes returning a scatter plot. Each dot of the scatter plot represents a codon, optionally labelled with the corresponding triplet or amino acid. The relationship between the two sets of values (as results of a linear regression) and the Pearson correlation coefficient are displayed.
   
-  Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. As first step we create a list of data tables with the reads of interest:
+ Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. As first step we create a list of data tables with the reads of interest:
   
 	comparison_list <- list()
 	comparison_list[["Only_28"]] <- reads_psite_list[["Samp1"]][length == 28]
 	comparison_list[["All"]] <- reads_psite_list[["Samp1"]]
 
-	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna,
+	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
 											  sample = c("All", "Only_28"),
 											  fastapath = "path/to/transcriptome/FASTA/file",
-											  fasta_genome = FALSE,
 											  frequency_normalization = FALSE)
 	codon_usage_2samples[["plot_comparison"]]
 <p align="center">

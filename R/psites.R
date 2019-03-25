@@ -279,6 +279,13 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #'   TRUE (the default), an annotation object is required (see \code{gtfpath}
 #'   and \code{txdb}). FALSE implies the nucleotide sequences of all the
 #'   transcripts is provided instead.
+#' @param refseq_sep Character specifying the separator between reference
+#'   sequences' name and additional information to discard, stored in the
+#'   headers of the FASTA file specified by \code{fastapath} (if any). It might
+#'   be required for matching the reference sequences' identifiers reported in
+#'   the input list of data tables. All characters before the first occurrence
+#'   of the specified separator are kept. Default is NULL i.e. no string
+#'   splitting is performed.
 #' @param bsgenome Character string specifying the BSgenome data package with
 #'   the genome sequences to be loaded. If not already present in the system, it
 #'   is automatically installed through the biocLite.R script (check the list of
@@ -348,9 +355,9 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #' @import data.table
 #' @export
 psite_info <- function(data, offset, site = NULL, fastapath = NULL, 
-                       fasta_genome = TRUE, bsgenome = NULL, gtfpath = NULL,
-                       txdb = NULL, dataSource = NA, organism = NA,
-                       granges = FALSE) {
+                       fasta_genome = TRUE, refseq_sep = NULL, bsgenome = NULL,
+                       gtfpath = NULL, txdb = NULL, dataSource = NA,
+                       organism = NA, granges = FALSE) {
   
   if(!(all(site %in% c("psite", "asite", "esite"))) & length(site) != 0){
     cat("\n")
@@ -409,8 +416,9 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
       if(length(fastapath) != 0) {
         if(fasta_genome == TRUE | fasta_genome == T){
           temp_sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-          names(temp_sequences) <- tstrsplit(names(temp_sequences), " ", fixed = TRUE, keep = 1)[[1]]
-          names(temp_sequences) <- tstrsplit(names(temp_sequences), "|", fixed = TRUE, keep = 1)[[1]]
+          if(length(refseq_sep) != 0){
+            names(temp_sequences) <- tstrsplit(names(temp_sequences), refseq_sep, fixed = TRUE, keep = 1)[[1]]
+          }
           exon <- suppressWarnings(GenomicFeatures::exonsBy(txdbanno, by = "tx", use.names = TRUE))
           exon <- as.data.table(exon[unique(names(exon))])
           sub_exon_plus <- exon[as.character(seqnames) %in% names(temp_sequences) & strand == "+"]
@@ -435,8 +443,9 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
           names(sequences) <- c(unique(sub_exon_plus$group_name), unique(sub_exon_minus$group_name))
         } else {
           sequences <- Biostrings::readDNAStringSet(fastapath, format = "fasta", use.names = TRUE)
-          names(sequences) <- tstrsplit(names(sequences), " ", fixed = TRUE, keep = 1)[[1]]
-          names(sequences) <- tstrsplit(names(sequences), "|", fixed = TRUE, keep = 1)[[1]]
+          if(length(refseq_sep) != 0){
+            names(sequences) <- tstrsplit(names(sequences), refseq_sep, fixed = TRUE, keep = 1)[[1]]
+          }
         }
       } else {
         if(bsgenome %in% installed.genomes()){

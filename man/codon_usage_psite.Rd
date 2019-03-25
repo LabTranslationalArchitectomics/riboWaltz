@@ -5,10 +5,11 @@
 \title{Empirical codon usage indexes.}
 \usage{
 codon_usage_psite(data, annotation, sample, site = "psite",
-  fastapath = NULL, fasta_genome = TRUE, bsgenome = NULL,
-  gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA,
-  transcripts = NULL, frequency_normalization = TRUE, codon_values = NULL,
-  label_scatter = FALSE, label_number = 64, label_aminoacid = FALSE)
+  fastapath = NULL, fasta_genome = TRUE, refseq_sep = NULL,
+  bsgenome = NULL, gtfpath = NULL, txdb = NULL, dataSource = NA,
+  organism = NA, transcripts = NULL, frequency_normalization = TRUE,
+  codon_values = NULL, label_scatter = FALSE, label_number = 64,
+  label_aminoacid = FALSE)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}. Each data
@@ -49,6 +50,14 @@ and \emph{e_site_codon}. Default is NULL.}
 TRUE (the default), an annotation object is required (see \code{gtfpath}
 and \code{txdb}). FALSE implies nucleotide sequences of all transcripts are
 provided instead.}
+
+\item{refseq_sep}{Character specifying the separator between reference
+sequences' name and additional information to discard, stored in the
+headers of the FASTA file specified by \code{fastapath} (if any). It might
+be required for matching the reference sequences' identifiers reported in
+the input list of data tables. All characters before the first occurrence
+of the specified separator are kept. Default is NULL i.e. no string
+splitting is performed.}
 
 \item{bsgenome}{Character string specifying the BSgenome data package with
 the genome sequences to be loaded. If not already present in the system, it

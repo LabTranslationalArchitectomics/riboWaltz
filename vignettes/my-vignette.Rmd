@@ -92,7 +92,7 @@ library(riboWaltz)
 
 ### Getting help
 
-  Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and the usage of all parameters in a function run
+  Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and usage of all parameters in a function run
 
 ```{r, eval = FALSE}
 ?function_name
@@ -104,11 +104,9 @@ library(riboWaltz)
 help(package = riboWaltz)
 ```
 
-  in the R console.
-  
-  
   A complete reference manual is available [here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf).
 
+  Bugs and errors can be reported at the [issues](https://github.com/LabTranslationalArchitectomics/riboWaltz/issues) page on GitHub. Before filing new issues, please read the documentation and take a look at currently open and already closed discussions.
 
 ## From BAM files to P-site offsets
 

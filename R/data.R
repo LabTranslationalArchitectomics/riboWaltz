@@ -20,7 +20,7 @@
 #' An example dataset containing details on reads mapping on the mouse
 #' transcriptome, generated from BAM or BED files. A subset of the original
 #' dataset is provided, including only reads aligning on the translation
-#' initiation site. Please contact the authors for more information.
+#' initiation site. Please contact the authors for further information.
 #'
 #' @format A list of data tables with 1 object (named \emph{Samp1}) of 393,338
 #'   rows and 6 variables:
@@ -31,7 +31,10 @@
 #'   nucleotide of the transcript, in nucleotides}
 #'   \item{end3}{Position of the 3' end of the read with respect to the first
 #'   nucleotide of the transcript, in nucleotides}
-#'   \item{length}{Length of the read, in nucleotides}
+#'   \item{length}{Length of the read, in nucleotides (intended as the width of
+#'   the reference sequence region covered by the RNA fragment. For further
+#'   information about this choice please refer to section \code{Details} of
+#'   function \code{\link{bamtolist}})}
 #'   \item{cds_start}{Leftmost position of the annotated CDS with respect to the
 #'   first nucleotide of the transcript, in nucleotides}
 #'   \item{cds_stop}{Rightmost position of the annotated CDS with respect to the
@@ -47,7 +50,10 @@
 #'
 #' @format A data table with 31 rows and 9 variables:
 #' \describe{
-#'   \item{length}{Length of the read, in nucleotides}
+#'   \item{length}{Length of the read, in nucleotides (intended as the width of
+#'   the reference sequence region covered by the RNA fragment. For further
+#'   information about this choice please refer to section \code{Details} of
+#'   function \code{\link{bamtolist}})}
 #'   \item{total_percentage}{Percentage of reads of the considered length in the
 #'   whole dataset}
 #'   \item{start_percentage}{Percentage of reads of the considered length
@@ -85,7 +91,10 @@
 #'   the transcript, in nucleotides}
 #'   \item{end3}{Position of the 3' end of the read with respect to the first
 #'   nucleotide of the transcript, in nucleotides}
-#'   \item{length}{Length of the read, in nucleotides}
+#'   \item{length}{Length of the read, in nucleotides (intended as the width of
+#'   the reference sequence region covered by the RNA fragment. For further
+#'   information about this choice please refer to section \code{Details} of
+#'   function \code{\link{bamtolist}})}
 #'   \item{cds_start}{Leftmost position of the CDS with respect to the first
 #'   nucleotide of the transcript, in nucleotides}
 #'   \item{cds_stop}{Rightmost position of the CDS with respect to the first

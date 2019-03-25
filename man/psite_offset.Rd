@@ -6,7 +6,10 @@
 \title{P-site offsets}
 \format{A data table with 31 rows and 9 variables:
 \describe{
-  \item{length}{Length of the read, in nucleotides}
+  \item{length}{Length of the read, in nucleotides (intended as the width of
+  the reference sequence region covered by the RNA fragment. For further
+  information about this choice please refer to section \code{Details} of
+  function \code{\link{bamtolist}})}
   \item{total_percentage}{Percentage of reads of the considered length in the
   whole dataset}
   \item{start_percentage}{Percentage of reads of the considered length

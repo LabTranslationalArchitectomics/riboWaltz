@@ -132,10 +132,10 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
     
   if(region == "all") {
     plot <- plot + facet_grid(sample ~ region)
-    final_frame_dt <- final_frame_dt[order(region, frame, sample)]
+    final_frame_dt <- final_frame_dt[order(sample, region, frame)]
   } else {
     plot <- plot + facet_wrap( ~ sample, ncol = 3)
-    final_frame_dt <- final_frame_dt[order(frame, sample)]
+    final_frame_dt <- final_frame_dt[order(sample, frame)]
   }
   
   if(identical(plot_title, "auto")) {
@@ -294,6 +294,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
       if(identical(length_range, "all")){
         minl <- quantile(dt$length, (1 - cl/100) / 2)
         maxl <- quantile(dt$length, 1 - (1 - cl/100) / 2)
+        length_range <- minl:maxl
       }
       
       dt[, psite_region := factor(psite_region, levels = c("5utr", "cds", "3utr"))
@@ -302,7 +303,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
       
       setkey(dt, length, psite_region, frame)
       frame_dt <- dt[CJ(levels(length), levels(psite_region), levels(frame)), list(count = .N), by = .EACHI
-                     ][as.numeric(as.character(length)) %in% minl:maxl
+                     ][as.numeric(as.character(length)) %in% length_range
                        ][, percentage := (count / sum(count)) * 100, by = list(length, psite_region)
                          ][is.na(percentage), percentage := 0
                            ][, psite_region := factor(psite_region, levels = c("5utr", "cds", "3utr"), labels = c("5' UTR", "CDS", "3' UTR"))]
@@ -316,6 +317,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
       if(identical(length_range, "all")){
         minl <- quantile(dt$length, (1 - cl/100) / 2)
         maxl <- quantile(dt$length, 1 - (1 - cl/100) / 2)
+        length_range <- minl:maxl
       }
       
       dt[, frame := factor(frame, levels = c(0, 1, 2))
@@ -323,7 +325,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
       
       setkey(dt, length, frame)
       frame_dt <- dt[CJ(levels(length), levels(frame)), list(count = .N), by = .EACHI
-                     ][as.numeric(as.character(length)) %in% minl:maxl
+                     ][as.numeric(as.character(length)) %in% length_range
                        ][, percentage := (count / sum(count)) * 100, by = length
                          ][is.na(percentage), percentage := 0]
     }
@@ -337,14 +339,14 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
     }
   }
   
-  minfp <- min(final_frame_dt$percentage)
-  maxfo <- max(final_frame_dt$percentage)
+  mins <- min(final_frame_dt$percentage)
+  maxs <- max(final_frame_dt$percentage)
   
   plot <- ggplot(final_frame_dt, aes(frame, as.numeric(as.character(length)))) +
     geom_tile(aes(fill = percentage)) +
     scale_fill_gradient("P-site signal (%)  ", low = "white", high = "#104ec1",
-                        breaks = c(minfp, (maxfo - minfp) / 2, maxfo),
-                        labels = c(round(minfp), round((maxfo - minfp) / 2), round(maxfo))) +
+                        breaks = c(mins, mins/2 + maxs/2, maxs),
+                        labels = c(round(mins), round(mins/2 + maxs/2), round(maxs))) +
     labs(x = "Frame", y = "Read length") +
     theme_bw(base_size = 20) +
     theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
@@ -354,10 +356,10 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
   
   if (region == "all") {
     plot <- plot + facet_grid(sample ~ region)
-    final_frame_dt <- final_frame_dt[order(length, region, frame, sample)]
+    final_frame_dt <- final_frame_dt[order(sample, region, length, frame)]
   } else {
     plot <- plot + facet_wrap( ~ sample, ncol = 3)
-    final_frame_dt <- final_frame_dt[order(length, frame, sample)]
+    final_frame_dt <- final_frame_dt[order(sample, length, frame)]
   }
   
   if(identical(plot_title, "auto") & !identical(region, "all")){

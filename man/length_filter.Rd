@@ -18,7 +18,7 @@ specified by the user are kept (see \code{length_filter_vector});
 \code{periodicity_threshold}) are kept. The latter mode enables the removal
 of all reads with low or no periodicity.}
 
-\item{length_filter_vector}{Integer or an integer vector specifying a read
+\item{length_filter_vector}{Integer or integer vector specifying one read
 length or a range of read lengths to keep, respectively. This parameter is
 considered only if \code{length_filter_mode} is set to "custom".}
 
