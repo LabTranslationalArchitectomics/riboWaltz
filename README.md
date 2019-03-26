@@ -94,7 +94,8 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
   
  Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
-    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes = TRUE)
+    install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, 
+					build_opts = c("--no-resave-data", "--no-manual"))
 
 
 
@@ -395,9 +396,9 @@ For additional details please refers to the documentation provided by ?length_fi
 	comparison_list[["All"]] <- reads_psite_list[["Samp1"]]
 
 	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
-						 sample = c("All", "Only_28"),
-						 fastapath = "path/to/transcriptome/FASTA/file",
-						 frequency_normalization = FALSE)
+						  sample = c("All", "Only_28"),
+						  fastapath = "path/to/transcriptome/FASTA/file",
+						  frequency_normalization = FALSE)
 	codon_usage_2samples[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_2samples.png" width="320" />
@@ -420,7 +421,7 @@ For additional details please refers to the documentation provided by ?length_fi
                                          fastapath = "path/to/transcriptome/FASTA/file",
                                          fasta_genome = FALSE, codon_values = cub_mouse,
                                          frequency_normalization = FALSE, 
-					  label_scatter = TRUE, label_number = 5)
+					    label_scatter = TRUE, label_number = 5)
 	codon_usage_cub[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_cub.png" width="320" />

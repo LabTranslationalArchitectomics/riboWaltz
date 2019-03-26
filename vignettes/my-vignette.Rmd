@@ -77,7 +77,8 @@ install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE)
   Please note: to install __riboWaltz__ generating the vignette replace the last command with:
 
 ```{r, eval = FALSE}
-install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes = TRUE)
+install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE,
+               build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
 
@@ -92,7 +93,7 @@ library(riboWaltz)
 
 ### Getting help
 
-  Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and usage of all parameters in a function run
+  Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. Similar information are reported in the [README](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/README.md). For additional examples and further details about the meaning and usage of all parameters in a function run
 
 ```{r, eval = FALSE}
 ?function_name
