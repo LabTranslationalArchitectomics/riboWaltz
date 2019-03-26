@@ -109,7 +109,11 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Getting help
 
- Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. For additional examples and further details about the meaning and usage of all parameters in a function run
+ Next sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. Similar information are reported in the vignette returned by
+ 
+	browseVignettes("riboWaltz")
+ 
+ For additional examples and further details about the meaning and usage of all parameters in a function run
  
 	?function_name
 
@@ -421,7 +425,7 @@ For additional details please refers to the documentation provided by ?length_fi
                                          fastapath = "path/to/transcriptome/FASTA/file",
                                          fasta_genome = FALSE, codon_values = cub_mouse,
                                          frequency_normalization = FALSE, 
-					    label_scatter = TRUE, label_number = 5)
+					     label_scatter = TRUE, label_number = 5)
 	codon_usage_cub[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_cub.png" width="320" />
