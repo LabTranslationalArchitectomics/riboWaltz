@@ -6,7 +6,8 @@
 #  install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE)
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, build_vignettes = TRUE)
+#  install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE,
+#                 build_opts = c("--no-resave-data", "--no-manual"))
 
 ## ---- eval = TRUE, warning = FALSE---------------------------------------
 library(riboWaltz)

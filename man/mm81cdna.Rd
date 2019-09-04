@@ -3,7 +3,7 @@
 \docType{data}
 \name{mm81cdna}
 \alias{mm81cdna}
-\title{Annotation}
+\title{Annotation data table}
 \format{A data table with 109,712 rows and 5 variables:
 \describe{
   \item{transcript}{Name of the transcript (ENST ID and version, dot

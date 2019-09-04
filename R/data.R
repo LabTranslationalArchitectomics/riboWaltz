@@ -1,4 +1,4 @@
-#' Annotation
+#' Annotation data table
 #'
 #' A dataset containing basic information about 109,712 mouse mRNA (Ensembl v81
 #' transcript annotation).
@@ -15,7 +15,7 @@
 "mm81cdna"
 
 
-#' Reads information 
+#' Reads information data table
 #'
 #' An example dataset containing details on reads mapping on the mouse
 #' transcriptome, generated from BAM or BED files. A subset of the original
@@ -43,7 +43,7 @@
 "reads_list"
 
 
-#' P-site offsets
+#' P-site offsets data table
 #'
 #' An example dataset containing length-specific ribosome P-site offsets as
 #' returned by \code{\link{psite}} applied to \code{\link{reads_list}}.
@@ -73,7 +73,7 @@
 "psite_offset"
 
 
-#' Reads details updated with P-site information
+#' Reads information data table updated with P-site details
 #'
 #' An example dataset that combines details on reads mapping on the mouse
 #' transcriptome (see \code{\link{reads_list}}) and length-specific ribosome

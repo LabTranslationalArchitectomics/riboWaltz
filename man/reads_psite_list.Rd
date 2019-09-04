@@ -3,7 +3,7 @@
 \docType{data}
 \name{reads_psite_list}
 \alias{reads_psite_list}
-\title{Reads details updated with P-site information}
+\title{Reads information data table updated with P-site details}
 \format{A list of data tables with 1 object (named \emph{Samp1}) of 393,338
   rows and 10 variables:
 \describe{

@@ -3,7 +3,7 @@
 \docType{data}
 \name{psite_offset}
 \alias{psite_offset}
-\title{P-site offsets}
+\title{P-site offsets data table}
 \format{A data table with 31 rows and 9 variables:
 \describe{
   \item{length}{Length of the read, in nucleotides (intended as the width of

@@ -94,16 +94,24 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
     
     if (region == "all") {
       frame_dt <- dt[cds_start != 0 & cds_stop !=0
-               ][, frame := psite_from_start %% 3
-                 ][, list(count = .N), by = list(region = psite_region, frame)
-                   ][, percentage := (count / sum(count)) * 100, by = region
-                     ][is.na(percentage), percentage := 0
-                       ][, region := factor(region, levels = c("5utr", "cds", "3utr"), labels = c("5' UTR", "CDS", "3' UTR"))]
+                     ][, frame := psite_from_start %% 3]
+      
+      setkey(frame_dt, psite_region, frame)
+      frame_dt <- frame_dt[CJ(psite_region = c("5utr", "cds", "3utr"), frame = c(0,1,2)),
+                           list(count = .N), by = .EACHI
+                           ][, percentage := (count / sum(count)) * 100, by = psite_region
+                             ][is.na(percentage), percentage := 0
+                               ][, psite_region := factor(psite_region,
+                                                          levels = c("5utr", "cds", "3utr"),
+                                                          labels = c("5' UTR", "CDS", "3' UTR"))]
+      setnames(frame_dt, "psite_region", "region")
     } else {
       frame_dt <- dt[psite_region == region
                      ][cds_start != 0 & cds_stop !=0
-                       ][, frame := psite_from_start %% 3
-                         ][, list(count = .N), by = frame
+                       ][, frame := psite_from_start %% 3]
+      
+      setkey(frame_dt, frame)
+      frame_dt <- frame_dt[CJ(frame = c(0,1,2)), list(count = .N), by = .EACHI
                            ][, percentage := (count / sum(count)) * 100
                              ][is.na(percentage), percentage := 0]
     }
@@ -129,12 +137,12 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
     geom_bar(stat = "identity") +
     theme_bw(base_size = 20) +
     labs(x = "Frame", y = "P-site signal (%)")
-    
+  
   if(region == "all") {
     plot <- plot + facet_grid(sample ~ region)
     final_frame_dt <- final_frame_dt[order(sample, region, frame)]
   } else {
-    plot <- plot + facet_wrap( ~ sample, ncol = 3)
+    plot <- plot + facet_wrap( ~ sample, ncol = ceiling(sqrt(length(sample))))
     final_frame_dt <- final_frame_dt[order(sample, frame)]
   }
   
@@ -358,7 +366,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
     plot <- plot + facet_grid(sample ~ region)
     final_frame_dt <- final_frame_dt[order(sample, region, length, frame)]
   } else {
-    plot <- plot + facet_wrap( ~ sample, ncol = 3)
+    plot <- plot + facet_wrap( ~ sample, ncol = ceiling(sqrt(length(sample))))
     final_frame_dt <- final_frame_dt[order(sample, length, frame)]
   }
   

@@ -22,12 +22,14 @@ end of the coding sequences to be excluded from the analisys. Default is 0.}
 A data table.
 }
 \description{
-This function generates a data table containing, for each transcript: i) its
-name; ii) its length; iii) the number of in-frame P-sites falling in its
-annotated coding sequence (if any) for all samples. A chosen number of
-nucleotides at the beginning and/or at the end of the CDSs can be excluded
-for restricting the analysis to a subregion of the original sequence. Please
-note: transcripts without annotated CDS are automatically discarded.
+This function generates a data table that for each transcript contains at
+least i) its name; ii) the length of its coding sequence; iii) the number of
+in-frame P-sites falling in its annotated coding sequence (if any) for all
+samples. A chosen number of nucleotides at the beginning and/or at the end of
+the CDSs can be excluded for restricting the analysis to a portion of the
+original coding sequence. In this case the output data table includes an
+additional column reporting the length of the selected region. Please note:
+transcripts without annotated CDS are automatically discarded.
 }
 \examples{
 data(reads_psite_list)

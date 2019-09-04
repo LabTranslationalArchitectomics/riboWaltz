@@ -33,11 +33,15 @@
 #' @param utr3l Positive integer specifying the length (in nucleotides) of the
 #'   3' UTR region flanking the stop codon to be considered in the analysis.
 #'   Default is 25.
-#' @param plot_title Character string specifying the title of the plot. If
-#'   "auto", the title of the plot reports the sample(s) specified by
-#'   \code{sample} as well as the number of transcripts and the read length(s)
-#'   employed for generating the metaprofiles. Default is NULL i.e. no title is
-#'   displayed.
+#' @param plot_title Character string specifying the title of the plot. It can
+#'   be any string provided by the user or "sample", "transcript" and
+#'   "length_range" for automatically displaying the name of the sample(s)
+#'   specified by \code{sample}, the number of transcripts or the read length(s)
+#'   employed for generating the metaprofiles, respectively. A combination of
+#'   the three strings, dot-separated, can be used for displaying multiple
+#'   information. For example, specifying "sample.length_range" the title
+#'   reports both the name of the sample(s) and the read length(s). Default is
+#'   NULL i.e. no title is displayed.
 #' @details The intensity of signal in the metaprofiles corresponds, for each
 #'   nucleotide, to the sum of the number of P-sites (defined by their leftmost
 #'   position) mapping on that position for all transcripts in one or multiple
@@ -165,39 +169,50 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
     theme(strip.background = element_blank(), strip.placement = "outside") +
     geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
 
-  if(identical(plot_title, "auto")) {
-    
-    title1 <- paste0(paste(sample, collapse = "+"), " (", ntr, " tr). Read length: ")
-    minlr <- min(length_range)
-    maxlr <- max(length_range)
-
-    if(minlr == maxlr) {
-      plottitle <- paste0(title1, min(length_range), " nts")
-    } else {
-      if(identical(length_range, minlr:maxlr) | identical(length_range, seq(minlr, maxlr, 1))){
-        plottitle <- paste0(title1, minlr, "-", maxlr, " nts")
+  plot_title_v <- unlist(tstrsplit(plot_title, ".", fixed = TRUE))
+  if(length(setdiff(plot_title_v, c("sample", "transcript", "length_range"))) == 0 &
+     length(plot_title_v) != 0){
+    if("sample" %in% plot_title_v){
+      t_sample <- paste(sample, collapse = "+")
+    }
+    if("transcript" %in% plot_title_v){
+      t_transcript <- paste0(ntr, " transcripts")
+    } 
+    if("length_range" %in% plot_title_v){
+      minlr <- min(length_range)
+      maxlr <- max(length_range)
+      
+      if(minlr == maxlr) {
+        t_length_range <- paste0("Read length: ", min(length_range), " nts")
       } else {
-        nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
-        sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ", ", "-")[-length(nextl)]
-        if(1 %in% which(diff(length_range) == 1)){
-          nextl <- c( length_range[1], nextl)
-          sep <- c("-", sep)
+        if(identical(length_range, minlr:maxlr) | identical(length_range, seq(minlr, maxlr, 1))){
+          t_length_range <- paste0("Read lengths: ", minlr, "-", maxlr, " nts")
+        } else {
+          nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
+          sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ",", "-")[-length(nextl)]
+          if(1 %in% which(diff(length_range) == 1)){
+            nextl <- c( length_range[1], nextl)
+            sep <- c("-", sep)
+          }
+          if((length(length_range) - 1) %in% which(diff(length_range) == 1)){
+            nextl <- c(nextl, length_range[length(length_range)])
+            sep <- c(sep, "-")
+          }
+          sep <- c(sep, "")
+          t_length_range <- paste0("Read lengths: ", paste0(nextl, sep, collapse = ""), " nts")
         }
-        if((length(length_range) - 1) %in% which(diff(length_range) == 1)){
-          nextl <- c(nextl, length_range[length(length_range)])
-          sep <- c(sep, "-")
-        }
-        sep <- c(sep, "")
-        plottitle <- paste0(title1, paste0(nextl, sep, collapse = ""), " nts")
       }
     }
+    
+    plottitle <- paste(unlist(mget(paste0("t_", plot_title_v))), collapse = "; ")
+    
     plot <- plot +
       labs(title = plottitle) +
       theme(plot.title = element_text(hjust = 0.5))
   } else {
     if(length(plot_title) != 0){
       plot <- plot +
-        labs(title = plot_title) + 
+        labs(title = plot_title) +
         theme(plot.title = element_text(hjust = 0.5))
     }
   }

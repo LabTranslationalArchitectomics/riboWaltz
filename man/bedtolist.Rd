@@ -73,7 +73,7 @@ positions for transcripts without annotated CDS are set to 0.
    is an example of tool providing such a feature.
    
   \code{refseq_sep} is intended to lighten the identifiers of the reference
-  sequences included in the final data table or modifying them to match those
+  sequences included in the final data table or to modify them to match those
   in the annotation table. Many details about the reference sequence such as
   their version (usually dot-separated), their length, name variants,
   associated gene/transcript/protein names (usually pipe-separated) might

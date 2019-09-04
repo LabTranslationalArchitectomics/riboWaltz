@@ -80,7 +80,7 @@ length_filter <- function(data, length_filter_mode, length_filter_vector = NULL,
                        (cds_stop - end5) >= 0]
         subdt5[, end5_frame := as.factor((end5 - cds_start) %% 3)]
         t_end5 <- subdt5[, .N, by = list(length, end5_frame)
-                         ][, end5_perc := (N / sum(N)) * 100, , by = length]
+                         ][, end5_perc := (N / sum(N)) * 100, by = length]
         keep_length5 <- unique(t_end5[end5_perc >= periodicity_threshold, length])
         
         subdt3 <- dt[cds_start != 0 &
@@ -88,7 +88,7 @@ length_filter <- function(data, length_filter_mode, length_filter_vector = NULL,
                        (cds_stop - end3) >= 0]
         subdt3[, end3_frame := as.factor((end3 - cds_start) %% 3)]
         t_end3 <- subdt3[, .N, by = list(length, end3_frame)
-                         ][, end3_perc := (N / sum(N)) * 100, , by = length]
+                         ][, end3_perc := (N / sum(N)) * 100, by = length]
         keep_length3 <- unique(t_end3[end3_perc >= periodicity_threshold, length])
         
         keep_length <- intersect(keep_length5, keep_length3)

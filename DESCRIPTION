@@ -1,7 +1,7 @@
 Package: riboWaltz
 Type: Package
 Title: Optimization of ribosome P-site positioning in ribosome profiling data
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: c(
     person("Fabio", "Lauria", email = "fabio.lauria@gmail.com", role = c("aut", "cre")),
     person("Toma", "Tebaldi", email = "toma.tebaldi@gmail.com", role = "aut"),
@@ -21,7 +21,7 @@ Description: riboWaltz is an R package designed for the analysis of
     provides the user a variety of graphical representations, laying
     the groundwork for further positional analyses and new biological
     discoveries.
-License: MIT
+License: MIT + file LICENSE
 LazyData: TRUE
 Depends:
     R (>= 3.3.0)

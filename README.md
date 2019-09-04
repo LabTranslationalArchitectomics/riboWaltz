@@ -95,7 +95,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
  Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
     install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, 
-					build_opts = c("--no-resave-data", "--no-manual"))
+			build_opts = c("--no-resave-data", "--no-manual"))
 
 
 

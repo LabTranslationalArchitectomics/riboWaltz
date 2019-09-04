@@ -5,7 +5,8 @@
 \title{Ribosome P-sites position within reads.}
 \usage{
 psite(data, flanking = 6, start = TRUE, extremity = "auto",
-  plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99)
+  plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99,
+  log_file = FALSE, log_file_dir = NULL)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},
@@ -43,6 +44,16 @@ metaprofiles. It is considered only if \code{plot} is TRUE.}
 generating occupancy metaprofiles for to a sub-range of read lengths i.e.
 for the cl% of read lengths associated to the highest signals. Default is
 99. This parameter is considered only if \code{plot} is TRUE.}
+
+\item{log_file}{Logical value whether to generate a plain text file, called
+\emph{best_offset.txt}, that reports the extremity used for the correction
+step and the best offset for each sample. Default is FALSE.}
+
+\item{log_file_dir}{Character string specifying the directory where the log
+file shuold be saved. If the specified folder doesn't exist, it is
+automatically created. If NULL (the default), the file is stored in the
+working directory. This parameter is considered only if \code{log_file} is
+TRUE.}
 }
 \value{
 A data table.

@@ -38,6 +38,14 @@
 #'   generating occupancy metaprofiles for to a sub-range of read lengths i.e.
 #'   for the cl% of read lengths associated to the highest signals. Default is
 #'   99. This parameter is considered only if \code{plot} is TRUE.
+#' @param log_file Logical value whether to generate a plain text file, called
+#'   \emph{best_offset.txt}, that reports the extremity used for the correction
+#'   step and the best offset for each sample. Default is FALSE.
+#' @param log_file_dir Character string specifying the directory where the log
+#'   file shuold be saved. If the specified folder doesn't exist, it is
+#'   automatically created. If NULL (the default), the file is stored in the
+#'   working directory. This parameter is considered only if \code{log_file} is
+#'   TRUE.
 #' @details The P-site offset (PO) is defined as the distance between the
 #'   extremities of a read and the first nucleotide of the P-site itself. The
 #'   function processes all samples separately starting from reads mapping on
@@ -77,14 +85,26 @@
 #' @import ggplot2
 #' @export
 psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
-                  plot = FALSE, plot_dir = NULL, plot_format="png", cl = 99) {
+                  plot = FALSE, plot_dir = NULL, plot_format="png", cl = 99,
+                  log_file = FALSE, log_file_dir = NULL) {
+  
+  if(log_file == T | log_file == TRUE){
+    if(length(log_file_dir) == 0){
+      log_file_dir <- getwd()
+    }
+    if (!dir.exists(log_file_dir)) {
+      dir.create(log_file_dir)
+    }
+    logpath <- paste0(log_file_dir, "/best_offset.txt")
+    cat("sample\texremity\toffset(nts)\n", file = logpath)
+  }
+  
   names <- names(data)
   offset <- NULL
   for (n in names) { 
     cat(sprintf("processing %s\n", n))
     dt <- data[[n]]
     lev <- sort(unique(dt$length))
-    
     if(start == T | start == TRUE){
       base <- 0
       dt[, site_dist_end5 := end5 - cds_start]
@@ -103,8 +123,16 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     offset_temp <- data.table(length = as.numeric(as.character(names(t))), percentage = (as.vector(t)/sum(as.vector(t))) * 100)
     offset_temp[, around_site := "T"
                 ][percentage == 0, around_site := "F"]
-    offset_temp5 <- site_sub[, list(offset_from_5 = as.numeric(names(which.max(table(site_dist_end5))))), by = length]
-    offset_temp3 <- site_sub[, list(offset_from_3 = as.numeric(names(which.max(table(site_dist_end3))))), by = length]
+    tempoff <- function(v_dist){
+      ttable <- sort(table(v_dist), decreasing = T)
+      ttable_sr <- ttable[as.character(as.numeric(names(ttable))+1)]
+      ttable_sl <- ttable[as.character(as.numeric(names(ttable))-1)]
+      tsel <- rowSums(cbind(ttable > ttable_sr, ttable > ttable_sl), na.rm = T)
+      return(as.numeric(names(tsel[tsel == 2][1])))
+    }
+    
+    offset_temp5 <- site_sub[, list(offset_from_5 = tempoff(.SD$site_dist_end5)), by = length]
+    offset_temp3 <- site_sub[, list(offset_from_3 = tempoff(.SD$site_dist_end3)), by = length]
     merge_allx <- function(x, y) merge(x, y, all.x = TRUE, by = "length")
     offset_temp  <-  Reduce(merge_allx, list(offset_temp, offset_temp5, offset_temp3))
     
@@ -127,11 +155,10 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
        ((best_from3_tab[, perc] > best_from5_tab[, perc] &
          as.numeric(best_from3_tab[, offset_from_3]) <= minlen - 2) |
         (best_from3_tab[, perc] <= best_from5_tab[, perc] &
-         as.numeric(best_from5_tab[, offset_from_5]) <= minlen - 1)) |
+         as.numeric(best_from5_tab[, offset_from_5]) > minlen - 1)) |
        extremity == "3end"){
       best_offset <- as.numeric(best_from3_tab[, offset_from_3])
-      line_plot <- "from3"
-      cat(sprintf("best offset: %i nts from the 3' end\n", best_offset))
+      line_plot <- "3end"
       adj_tab <- site_sub[, list(corrected_offset_from_3 = adj_off(.SD, "site_dist_end3", 0, best_offset)), by = length]
       offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE, by = "length")
       offset_temp[is.na(corrected_offset_from_3), corrected_offset_from_3 := best_offset
@@ -144,14 +171,19 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
            as.numeric(best_from3_tab[, offset_from_3]) > minlen - 2)) |
          extremity == "5end"){
         best_offset <- as.numeric(best_from5_tab[, offset_from_5])
-        line_plot <- "from5"
-        cat(sprintf("best offset: %i nts from the 5' end\n", -best_offset))
+        line_plot <- "5end"
         adj_tab <- site_sub[, list(corrected_offset_from_5 = adj_off(.SD, "site_dist_end5", 1, best_offset)), by = length]
         offset_temp <- merge(offset_temp, adj_tab, all.x = TRUE, by = "length")
         offset_temp[is.na(corrected_offset_from_5), corrected_offset_from_5 := best_offset
-                    ][, corrected_offset_from_5 := abs(best_offset)
+                    ][, corrected_offset_from_5 := abs(corrected_offset_from_5)
                       ][, corrected_offset_from_3 := abs(corrected_offset_from_5 - length + 1)]
       }
+    }
+    
+    cat(sprintf("best offset: %i nts from the %s\n", abs(best_offset), gsub("end", "' end", line_plot)))
+    
+    if(log_file == T | log_file == TRUE){
+      cat(sprintf("%s\t%s\t%i\n", n, gsub("end", "'end", line_plot), abs(best_offset)), file = logpath, append = TRUE)
     }
     
     t <- table(factor(dt$length, levels = lev))
@@ -213,7 +245,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
           theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), strip.placement = "outside") +
           theme(plot.title = element_text(hjust = 0.5))
         
-        if(line_plot == "from3"){
+        if(line_plot == "3end"){
           p <- p + geom_vline(xintercept = best_offset, color = "black", linetype = 3, size = 1.1) +
             geom_vline(xintercept = best_offset - len + 1, color = "black", linetype = 3, size = 1.1)
         } else {

@@ -48,11 +48,15 @@ analysis. Default is 50.}
 3' UTR region flanking the stop codon to be considered in the analysis.
 Default is 25.}
 
-\item{plot_title}{Character string specifying the title of the plot. If
-"auto", the title of the plot reports the sample(s) specified by
-\code{sample} as well as the number of transcripts and the read length(s)
-employed for generating the metaprofiles. Default is NULL i.e. no title is
-displayed.}
+\item{plot_title}{Character string specifying the title of the plot. It can
+be any string provided by the user or "sample", "transcript" and
+"length_range" for automatically displaying the name of the sample(s)
+specified by \code{sample}, the number of transcripts or the read length(s)
+employed for generating the metaprofiles, respectively. A combination of
+the three strings, dot-separated, can be used for displaying multiple
+information. For example, specifying "sample.length_range" the title
+reports both the name of the sample(s) and the read length(s). Default is
+NULL i.e. no title is displayed.}
 }
 \value{
 A list containing a ggplot2 object ("plot") and the data table with

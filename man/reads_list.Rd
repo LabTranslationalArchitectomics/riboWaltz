@@ -3,7 +3,7 @@
 \docType{data}
 \name{reads_list}
 \alias{reads_list}
-\title{Reads information}
+\title{Reads information data table}
 \format{A list of data tables with 1 object (named \emph{Samp1}) of 393,338
   rows and 6 variables:
 \describe{
