@@ -104,7 +104,7 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
     facet_grid( . ~ class, scales = "free", space="free_x") +
     theme(strip.background = element_blank(), strip.text = element_blank()) +
     scale_y_continuous("P-sites (%)", sec.axis = sec_axis(~ . * 1 , name = "Length (%)")) + 
-    theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
+    theme(legend.position = "top", legend.margin=margin(0,0,-5,0), legend.box.margin=margin(5,0,-10,0)) +
     theme(legend.text = element_text(margin = margin(l = -10, unit = "pt")))
   
   output <- list()

@@ -126,6 +126,7 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
     
     length_temp <- unique(c(length_temp, data[[samp]]$length))
   }
+  final_frame_dt[, sample := factor(sample, levels = unique(sample))]
   
   if(!identical(length_range, "all")){
     length_range <- sort(intersect(length_range, length_temp))
@@ -338,7 +339,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
                          ][is.na(percentage), percentage := 0]
     }
     
-    frame_dt$sample <- samp
+    frame_dt[, sample := samp]
     
     if (exists("final_frame_dt")) {
       final_frame_dt <- rbind(final_frame_dt, frame_dt)
@@ -346,6 +347,8 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
       final_frame_dt <- frame_dt
     }
   }
+  
+  final_frame_dt[, sample := factor(sample, levels = unique(sample))]
   
   mins <- min(final_frame_dt$percentage)
   maxs <- max(final_frame_dt$percentage)

@@ -243,7 +243,10 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     if(length(gtfpath) != 0 | length(txdb) != 0){
       if(length(gtfpath) != 0){
         path_to_gtf <- gtfpath
-        txdbanno <- GenomicFeatures::makeTxDbFromGFF(file = path_to_gtf, format = "gtf", dataSource = dataSource, organism = organism)
+        suppressWarnings(txdbanno <- GenomicFeatures::makeTxDbFromGFF(file = path_to_gtf,
+                                                                      format = "gtf",
+                                                                      dataSource = dataSource,
+                                                                      organism = organism))
       } else {
         if(txdb %in% rownames(installed.packages())){
           library(txdb, character.only = TRUE)
@@ -451,10 +454,10 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       output[["dt"]] <- norm_table[, c("codon", "aa", "class", "raw_value", "comp_raw_value",
                                        "plot_value", "comp_plot_value")]
     }
-    
+
     setnames(output[["dt"]],
              old = c("raw_value", "comp_raw_value", "plot_value", "comp_plot_value"),
-             new = CJ(c("raw_value", "plot_value"), c(sample[1], sample[2]))[, paste(V1, V2, sep = "_")])
+             new = paste(rep(c("raw_value", "plot_value"),each=2), c(sample[1], sample[2]), sep = "_"))
     
     plotnamex <- sample[1]
     plotnamey <- sample[2]

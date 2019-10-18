@@ -30,25 +30,24 @@
 #' @import data.table
 #' @export
 cds_coverage <- function(data, annotation, start_nts = 0, stop_nts = 0) {
-  
+
   psite_cds <- annotation[l_cds > start_nts + stop_nts,
                           list(transcript, length_cds = l_cds)]
-  
+
   if(start_nts != 0 | stop_nts != 0){
     psite_cds[, length_selection := length_cds - start_nts - stop_nts]
   }
-  
+
   for (n in names(data)) {
     cat(sprintf("processing %s\n", n))
-    
-    data[[n]][, transcript := factor(transcript, levels = as.character(psite_cds$transcript))]
-    data[[n]] <- data[[n]][as.character(transcript) %in% as.character(psite_cds$transcript) &
-                             psite_from_start >= start_nts &
+
+    data[[n]] <- data[[n]][psite_from_start >= start_nts &
                              psite_from_stop <= -stop_nts &
                              psite_from_start %% 3 == 0]
-    setkey(data[[n]], "transcript")
-    psite_cds[, (n) := (data[[n]][CJ(levels(transcript)), .N, by = .EACHI]$N)] 
-    
+
+    temp_count <- data[[n]][, .N, by = transcript]
+    psite_cds <- merge(psite_cds, temp_count, by = "transcript", all.x = TRUE)
+    setnames(psite_cds, old = "N", new = n)
   }
   return(psite_cds)
 }

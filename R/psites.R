@@ -146,9 +146,9 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
       ifelse(length(adjoff) != 0, adjoff, bestoff)
     }
     
-    best_from5_tab <- offset_temp[, list(perc = sum(percentage)), offset_from_5
+    best_from5_tab <- offset_temp[!is.na(offset_from_5), list(perc = sum(percentage)), by = offset_from_5
                                   ][perc == max(perc)]
-    best_from3_tab <- offset_temp[, list(perc = sum(percentage)), offset_from_3
+    best_from3_tab <- offset_temp[!is.na(offset_from_5), list(perc = sum(percentage)), by = offset_from_3
                                   ][perc == max(perc)]
     
     if(extremity == "auto" &
@@ -529,7 +529,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
       }
     }
     
-    setorder(dt, transcript, end5)
+    setorder(dt, transcript, end5, end3)
     
     if (granges == T | granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,

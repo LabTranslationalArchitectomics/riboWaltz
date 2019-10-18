@@ -67,15 +67,34 @@
 #' @import data.table
 #' @import ggplot2
 #' @export
-metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
-                              length_range = "all", transcripts = NULL,
+metaprofile_psite <- function(data, annotation, sample, multisamples = "separated",
+                              scale_factors = NULL, length_range = "all",
+                              transcripts = NULL, frequency = FALSE,
                               utr5l = 25, cdsl = 50, utr3l = 25,
                               plot_title = NULL) {
   
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
     cat("\n")
-    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n", call. = FALSE)
     length_range = "all"
+  }
+  
+  if(frequency == TRUE & length(scale_factors) != 0){
+    cat("\n")
+    warning("parameter scale_factors is specified but frequency = TRUE: scale_factors won't be considered\n", call. = FALSE)
+    multisamples = "separated"
+  }
+  
+  if(!(multisamples %in% c("average", "sum", "separated"))){
+    cat("\n")
+    warning("parameter multisamples must be either \"average\", \"sum\", \"separated\". Set to default \"average\"\n", call. = FALSE)
+    multisamples = "separated"
+  }
+  
+  if(multisamples %in% c("average", "sum") & length(sample) == 1){
+    cat("\n")
+    warning("parameter multisamples is set to either \"average\" or \"sum\" but only one sample is provided\n", call. = FALSE)
+    multisamples = "separated"
   }
   
   if(!identical(length_range, "all")){
@@ -83,17 +102,17 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
       len_check <- unique(data[[samp]]$length)
       if(sum(length_range %in% len_check) == 0) {
         cat("\n")
-        warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
+        warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
         sample <- sample[sample != samp]
       }
     }
   }
-
+  
   if(length(sample) == 0){
     cat("\n")
     stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
   }
-
+  
   if(length(scale_factors) != 0) {
     if(!all(sample %in% names(scale_factors))){
       cat("\n")
@@ -103,6 +122,7 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
   
   l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 
                                              l_cds >= 2 * (cdsl + 1) &
+                                             l_cds %%3 == 0 &
                                              l_utr3 >= utr3l, transcript])
   
   if (length(transcripts) == 0) {
@@ -113,11 +133,11 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
     ntr <- length(transcripts)
   }
   
-  length_temp <- vector()
-
-  for (samp in sample) {
+  length_common <- vector()
+  for(samp in sample){
+    namerep <- samp
     
-    dt <- data[[samp]][as.character(transcript) %in% c_transcripts, ]
+    dt <- data[[samp]][as.character(transcript) %in% c_transcripts]
     
     if (identical(length_range, "all")) {
       start_sub <- dt[psite_from_start %in% seq(-utr5l, cdsl)]
@@ -128,98 +148,155 @@ metaprofile_psite <- function(data, annotation, sample, scale_factors = NULL,
     }
     
     setkey(start_sub, psite_from_start)
-    start_tab <- start_sub[CJ(-utr5l:cdsl), list(reads = .N), by = list(distance = psite_from_start)
+    start_tab <- start_sub[CJ(-utr5l:cdsl), list(reads = .N), by = .EACHI
                            ][, reg := "start"]
+    setnames(start_tab, c("distance", "reads", "reg"))
     setkey(stop_sub, psite_from_stop)
-    stop_tab <- stop_sub[CJ(-cdsl:utr3l), list(reads = .N), by = list(distance = psite_from_stop)
-                           ][, reg := "stop"]
+    stop_tab <- stop_sub[CJ(-cdsl:utr3l), list(reads = .N), by = .EACHI
+                         ][, reg := "stop"]
+    setnames(stop_tab, c("distance", "reads", "reg"))
     samp_tab <- rbind(start_tab, stop_tab)
     
-    if(length(scale_factors) != 0) {
-      samp_tab[, reads := reads * scale_factors[samp]]
-    }
-
-    if(exists("final_tab_psm")) {
-      final_tab_psm[, reads := reads + samp_tab$reads]
-    } else {
-      final_tab_psm <- samp_tab
-    }
+    length_common <- unique(c(length_common, data[[samp]]$length))
     
-    length_temp <- unique(c(length_temp, data[[samp]]$length))
+    if(frequency == TRUE){
+      samp_tab[, (samp) := reads / sum(reads)]
+    } else {
+      if(length(scale_factors) != 0){
+        samp_tab[, (samp) := reads * scale_factors[samp]]
+      } else {
+        samp_tab[, (samp) := reads]
+      }
+    }
+    samp_tab[, reads := NULL]
+    
+    if(!exists("final_dt")){
+      final_dt <- samp_tab
+    } else {
+      final_dt <- final_dt[, (samp) := samp_tab[, get(samp)]]
+    }
   }
   
-  if(!identical(length_range, "all")){
-    length_range <- sort(intersect(length_temp, length_range))
-  } else {
-    length_range <- sort(length_temp)
+  if(length(sample) != 1 & multisamples != "separated"){
+    if(multisamples == "average"){
+      final_dt[, mean := apply(.SD, 1, mean), .SDcols = sample
+               ][, se := apply(.SD, 1, sd)/sqrt(length(sample)), .SDcols = sample]
+    } else {
+      final_dt[, sum := apply(.SD, 1, sum), .SDcols = sample]
+    }
   }
   
-  final_tab_psm[, reg := factor(reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))]
-
+  final_dt[, reg := factor(reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))]
+  
+  output <- list()
+  output[["dt"]] <- final_dt
+  
   linestart <- data.table(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
   linered <- data.table(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
   
-  plot <- ggplot(final_tab_psm, aes(distance, reads)) +
-    geom_line(size=1.05, color="gray40") +
-    geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
-    labs(x = "", y = "P-site") +
-    theme_bw(base_size = 20) +
-    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
-    facet_grid(. ~ reg, scales = "free", switch = "x") +
-    theme(strip.background = element_blank(), strip.placement = "outside") +
-    geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
-
-  plot_title_v <- unlist(tstrsplit(plot_title, ".", fixed = TRUE))
-  if(length(setdiff(plot_title_v, c("sample", "transcript", "length_range"))) == 0 &
-     length(plot_title_v) != 0){
-    if("sample" %in% plot_title_v){
-      t_sample <- paste(sample, collapse = "+")
-    }
-    if("transcript" %in% plot_title_v){
-      t_transcript <- paste0(ntr, " transcripts")
-    } 
-    if("length_range" %in% plot_title_v){
-      minlr <- min(length_range)
-      maxlr <- max(length_range)
-      
-      if(minlr == maxlr) {
-        t_length_range <- paste0("Read length: ", min(length_range), " nts")
-      } else {
-        if(identical(length_range, minlr:maxlr) | identical(length_range, seq(minlr, maxlr, 1))){
-          t_length_range <- paste0("Read lengths: ", minlr, "-", maxlr, " nts")
-        } else {
-          nextl <- sort(length_range[c(which(diff(length_range) != 1), which(diff(length_range) != 1) + 1)])
-          sep <- ifelse(nextl %in% length_range[which(diff(length_range) != 1)], ",", "-")[-length(nextl)]
-          if(1 %in% which(diff(length_range) == 1)){
-            nextl <- c( length_range[1], nextl)
-            sep <- c("-", sep)
-          }
-          if((length(length_range) - 1) %in% which(diff(length_range) == 1)){
-            nextl <- c(nextl, length_range[length(length_range)])
-            sep <- c(sep, "-")
-          }
-          sep <- c(sep, "")
-          t_length_range <- paste0("Read lengths: ", paste0(nextl, sep, collapse = ""), " nts")
-        }
-      }
-    }
-    
-    plottitle <- paste(unlist(mget(paste0("t_", plot_title_v))), collapse = "; ")
-    
-    plot <- plot +
-      labs(title = plottitle) +
-      theme(plot.title = element_text(hjust = 0.5))
+  if(multisamples == "average"){
+    col_plot_sel <- "mean"
   } else {
-    if(length(plot_title) != 0){
-      plot <- plot +
-        labs(title = plot_title) +
-        theme(plot.title = element_text(hjust = 0.5))
+    if(multisamples == "separated"){
+      col_plot_sel <- sample
+    } else {
+      col_plot_sel <- "sum"
     }
   }
   
-  output <- list()
-  output[["plot"]] <- plot
-  output[["dt"]] <- final_tab_psm
+  for(col_plot in col_plot_sel){
+    plot <- ggplot(final_dt, aes_string("distance", col_plot)) +
+      geom_line(size = 1.50, color = "gray40")
+    
+    if(multisamples == "average"){
+      plot <- plot + geom_ribbon(aes(ymin = mean - se, ymax = mean + se), color = NA, fill = "gray40", alpha = 0.20)
+    }
+    
+    plot <- plot + geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
+      theme_bw(base_size = 30) +
+      theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), axis.title.x = element_blank()) +
+      facet_grid(. ~ reg, scales = "free", switch = "x") +
+      theme(strip.background = element_blank(), strip.placement = "outside") +
+      geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
+    
+    if(frequency != TRUE){
+      plot <- plot + labs(y = "P-site")
+    } else {
+      plot <- plot + labs(y = "P-site frequency")
+    }
+    
+    plot_title_v <- unlist(tstrsplit(plot_title, ".", fixed = TRUE))
+    if(length(setdiff(plot_title_v, c("sample", "transcript", "length_range"))) == 0 &
+       length(plot_title_v) != 0){
+      if("sample" %in% plot_title_v){
+        if(multisamples %in% c("average", "sum")){
+          t_sample <- paste0("Samples: ", paste(sample, collapse = ", "))
+        } else {
+          t_sample <- paste0("Sample: ", col_plot) 
+        }
+      }
+      if("transcript" %in% plot_title_v){
+        t_transcript <- paste0(ntr, " transcripts")
+      } 
+      if("length_range" %in% plot_title_v){
+        if(multisamples %in% c("average", "sum")){
+          if(!identical(length_range, "all")){
+            length_range_pl <- sort(intersect(length_common, length_range))
+          } else {
+            length_range_pl <- sort(length_common)
+          }
+        } else {
+          length_sample <- unique(data[[col_plot]]$length)
+          if(!identical(length_range, "all")){
+            length_range_pl <- sort(intersect(length_sample, length_range))
+          } else {
+            length_range_pl <- sort(length_sample)
+          }
+        }
+        
+        minlr <- min(length_range_pl)
+        maxlr <- max(length_range_pl)
+        
+        if(minlr == maxlr) {
+          t_length_range <- paste0("Read length: ", min(length_range_pl), " nts")
+        } else {
+          if(identical(length_range_pl, minlr:maxlr) | identical(length_range_pl, seq(minlr, maxlr, 1))){
+            t_length_range <- paste0("Read lengths: ", minlr, "-", maxlr, " nts")
+          } else {
+            nextl <- sort(length_range_pl[c(which(diff(length_range_pl) != 1), which(diff(length_range_pl) != 1) + 1)])
+            sep <- ifelse(nextl %in% length_range_pl[which(diff(length_range_pl) != 1)], ",", "-")[-length(nextl)]
+            if(1 %in% which(diff(length_range_pl) == 1)){
+              nextl <- c(length_range_pl[1], nextl)
+              sep <- c("-", sep)
+            }
+            if((length(length_range_pl) - 1) %in% which(diff(length_range_pl) == 1)){
+              nextl <- c(nextl, length_range_pl[length(length_range_pl)])
+              sep <- c(sep, "-")
+            }
+            sep <- c(sep, "")
+            t_length_range <- paste0("Read lengths: ", paste0(nextl, sep, collapse = ""), " nts")
+          }
+        }
+      }
+      
+      plottitle <- paste(unlist(mget(paste0("t_", plot_title_v))), collapse = "; ")
+      
+      plot <- plot +
+        labs(title = plottitle) +
+        theme(plot.title = element_text(hjust = 0.5))
+    } else {
+      if(length(plot_title) != 0){
+        plot <- plot +
+          labs(title = plot_title) +
+          theme(plot.title = element_text(hjust = 0.5))
+      }
+    }
+    if(multisamples %in% c("average", "sum")){
+      output[["plot"]] <- plot
+    } else {
+      output[[paste0("plot_", col_plot)]] <- plot
+    }
+  }
   return(output)
 }
 
@@ -318,7 +395,7 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
   
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
     cat("\n")
-    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n", call. = FALSE)
     length_range = "all"
   }
   
@@ -328,13 +405,13 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
         len_check <- unique(data[[samp]]$length)
         if(sum(length_range %in% len_check) == 0) {
           cat("\n")
-          warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp))
+          warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
           sample[[sampgroup]] <- sample[[sampgroup]][sample[[sampgroup]] != samp]
         }
       }
       if(length(sample[[sampgroup]]) == 0) {
         cat("\n")
-        warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: group of samples removed \n", sampgroup))
+        warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: group of samples removed \n", sampgroup), call. = FALSE)
         sample[[sampgroup]] <- NULL
       }
     }
