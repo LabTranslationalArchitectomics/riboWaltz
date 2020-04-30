@@ -195,8 +195,10 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     setcolorder(offset_temp, c("length", "total_percentage", "percentage", "around_site", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
     if(start == TRUE | start == T){
       setnames(offset_temp, c("length", "total_percentage", "start_percentage", "around_start", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
+      xlab_plot<-"Distance from start (nt)"
     } else {
       setnames(offset_temp, c("length", "total_percentage", "stop_percentage", "around_stop", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
+      xlab_plot<-"Distance from stop (nt)"
     }
     
     # plot
@@ -239,7 +241,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
           geom_vline(xintercept = offset_temp[length == len, corrected_offset_from_3], color = "#56B4E9", size = 1.1) +
           annotate("rect", ymin = -Inf, ymax = Inf, xmin = flanking - len, xmax = -flanking , fill = "#D55E00", alpha = 0.1) +
           annotate("rect", ymin = -Inf, ymax = Inf, xmin = flanking - 1 , xmax = len - flanking - 1, fill = "#56B4E9", alpha = 0.1) +
-          labs(x = "Distance from start (nt)", y = "Number of read extremities", title = paste(n, " - length=", len, " nts", sep = ""), color= "Extremity") +
+          labs(x = xlab_plot, y = "Number of read extremities", title = paste(n, " - length=", len, " nts", sep = ""), color= "Extremity") +
           theme_bw(base_size = 20) +
           scale_fill_discrete("") +
           theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), strip.placement = "outside") +
