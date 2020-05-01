@@ -376,8 +376,8 @@ We can now run `metaprofile_psite`:
 	                                                    utr5l = 20, cdsl = 40, utr3l = 20,
 														frequency = TRUE, plot_title = "transcript",
 														mirrored = TRUE, colour = c("green4", "gray40"))
-    example_metaprofile_comparison[["plot]]
-![example_metaprofile_comparison](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
+	example_metaprofile_comparison[["plot]]
+![example_metaprofile_comparison](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_comparison.png)
 
  Another way to visualize the trinucleotide periodicity along coding sequences is generating a metahaetmap. In this case the abundance of P-sites is represented by a continuous color scale and not by the height of a line chart as in metaprofiles. If multiple sets of transcripts are provided, the resulting heatmaps are arranged in one graphical output. Using the sample list generated in the previous example, `metaheatmap_psite` returns:
 
