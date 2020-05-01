@@ -4,8 +4,14 @@
 \alias{region_psite}
 \title{Percentage of P-sites per transcript region.}
 \usage{
-region_psite(data, annotation, sample = NULL, transcripts = NULL,
-  label_sample = NULL, colour = c("gray70", "gray40", "gray10"))
+region_psite(
+  data,
+  annotation,
+  sample = NULL,
+  transcripts = NULL,
+  label_sample = NULL,
+  colour = c("gray70", "gray40", "gray10")
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}.}

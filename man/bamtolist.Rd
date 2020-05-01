@@ -4,9 +4,15 @@
 \alias{bamtolist}
 \title{From BAM files to lists of data tables or GRangesList objects.}
 \usage{
-bamtolist(bamfolder, annotation, transcript_align = TRUE,
-  name_samples = NULL, indel_threshold = 5, refseq_sep = NULL,
-  granges = FALSE)
+bamtolist(
+  bamfolder,
+  annotation,
+  transcript_align = TRUE,
+  name_samples = NULL,
+  indel_threshold = 5,
+  refseq_sep = NULL,
+  granges = FALSE
+)
 }
 \arguments{
 \item{bamfolder}{Character string specifying the path to the folder storing

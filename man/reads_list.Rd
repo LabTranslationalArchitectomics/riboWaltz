@@ -4,7 +4,8 @@
 \name{reads_list}
 \alias{reads_list}
 \title{Reads information data table}
-\format{A list of data tables with 1 object (named \emph{Samp1}) of 393,338
+\format{
+A list of data tables with 1 object (named \emph{Samp1}) of 393,338
   rows and 6 variables:
 \describe{
   \item{transcript}{Name of the transcript (ENST ID and version, dot
@@ -21,7 +22,8 @@
   first nucleotide of the transcript, in nucleotides}
   \item{cds_stop}{Rightmost position of the annotated CDS with respect to the
   first nucleotide of the transcript, in nucleotides}
-}}
+}
+}
 \usage{
 reads_list
 }

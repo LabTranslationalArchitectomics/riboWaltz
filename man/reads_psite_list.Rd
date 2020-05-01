@@ -4,7 +4,8 @@
 \name{reads_psite_list}
 \alias{reads_psite_list}
 \title{Reads information data table updated with P-site details}
-\format{A list of data tables with 1 object (named \emph{Samp1}) of 393,338
+\format{
+A list of data tables with 1 object (named \emph{Samp1}) of 393,338
   rows and 10 variables:
 \describe{
   \item{transcript}{Name of the transcript (ENST ID and version, dot
@@ -29,7 +30,8 @@
   nucleotide of the annotated CDS (if any), in nucleotides}
   \item{psite_region}{Region of the transcript that includes the P-site
   (5utr, cds, 3utr)}
-}}
+}
+}
 \usage{
 reads_psite_list
 }

@@ -38,7 +38,7 @@ rlength_distr <- function(data, sample, transcripts = NULL, cl = 100) {
   xmax <- quantile(dt$length, 1 - (1 - cl/100)/2)
   
   setkey(dt, length)
-  dist <- dt[CJ(min(dt$length) : max(dt$length)), list(count = .N), by = length
+  dist <- dt[CJ(unique(dt$length)), list(count = .N), by = .EACHI
              ][, count := (count / sum(count)) * 100]
 
   p <- ggplot(dist, aes(as.numeric(length), count)) +

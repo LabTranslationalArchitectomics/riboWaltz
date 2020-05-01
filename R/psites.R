@@ -466,7 +466,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
                                                                                      end = end))
                                          ][, list(seq = paste(nt_seq, collapse = "")), by = group_name]
           
-          revcompl_temp_sequences <- reverseComplement(temp_sequences)
+          revcompl_temp_sequences <- Biostrings::reverseComplement(temp_sequences)
           seq_dt_minus <- sub_exon_minus[, nt_seq := "emp"
                                          ][, nt_seq := as.character(Biostrings::subseq(revcompl_temp_sequences[as.character(seqnames)],
                                                                                        start = new_start,

@@ -4,9 +4,20 @@
 \alias{metaheatmap_psite}
 \title{Ribosome occupancy metaheatmaps at single-nucleotide resolution.}
 \usage{
-metaheatmap_psite(data, annotation, sample, scale_factors = NULL,
-  length_range = "all", transcripts = NULL, utr5l = 25, cdsl = 50,
-  utr3l = 25, log_colour = F, colour = "black", plot_title = NULL)
+metaheatmap_psite(
+  data,
+  annotation,
+  sample,
+  scale_factors = NULL,
+  length_range = "all",
+  transcripts = NULL,
+  utr5l = 25,
+  cdsl = 50,
+  utr3l = 25,
+  log_colour = F,
+  colour = "black",
+  plot_title = NULL
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}.}
@@ -95,7 +106,7 @@ metaheat_whole <- metaheatmap_psite(reads_psite_list, mm81cdna, sample = list("W
 ## subset of transcripts (in this example only transcripts with at least one
 ## P-site mapping on the translation initiation site are kept):
 sample_name <- "Samp1"
-sub_reads_psite_list <- subset(reads_psite_list[[sample_name]], psite_from_start == 0)
+sub_reads_psite_list <- reads_psite_list[[sample_name]][psite_from_start == 0]
 transcript_names <- as.character(sub_reads_psite_list$transcript)
 metaheat_sub <- metaheatmap_psite(reads_psite_list, mm81cdna, sample = list("sub"=sample_name),
 length_range = 27:29, transcripts = transcript_names, plot_title = "auto")
@@ -105,8 +116,8 @@ length_range = 27:29, transcripts = transcript_names, plot_title = "auto")
 ## other one is generated employing only reads of 28 nucleotides:
 sample_name <- "Samp1"
 metaheat_df <- list()
-metaheat_df[["subsample_28nt"]] <- subset(reads_psite_list[[sample_name]], length == 28)
+metaheat_df[["subsample_28nt"]] <- reads_psite_list[[sample_name]][length == 28]
 metaheat_df[["whole_sample"]] <- reads_psite_list[[sample_name]]
-names_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
-metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = names_list)
+sample_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
+metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = sample_list)
 }

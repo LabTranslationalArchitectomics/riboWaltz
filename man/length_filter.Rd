@@ -4,8 +4,13 @@
 \alias{length_filter}
 \title{Read length filtering.}
 \usage{
-length_filter(data, length_filter_mode, length_filter_vector = NULL,
-  periodicity_threshold = 50, granges = FALSE)
+length_filter(
+  data,
+  length_filter_mode,
+  length_filter_vector = NULL,
+  periodicity_threshold = 50,
+  granges = FALSE
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},

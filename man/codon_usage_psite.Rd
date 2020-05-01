@@ -4,12 +4,26 @@
 \alias{codon_usage_psite}
 \title{Empirical codon usage indexes.}
 \usage{
-codon_usage_psite(data, annotation, sample, site = "psite",
-  fastapath = NULL, fasta_genome = TRUE, refseq_sep = NULL,
-  bsgenome = NULL, gtfpath = NULL, txdb = NULL, dataSource = NA,
-  organism = NA, transcripts = NULL, frequency_normalization = TRUE,
-  codon_values = NULL, label_scatter = FALSE, label_number = 64,
-  label_aminoacid = FALSE)
+codon_usage_psite(
+  data,
+  annotation,
+  sample,
+  site = "psite",
+  fastapath = NULL,
+  fasta_genome = TRUE,
+  refseq_sep = NULL,
+  bsgenome = NULL,
+  gtfpath = NULL,
+  txdb = NULL,
+  dataSource = NA,
+  organism = NA,
+  transcripts = NULL,
+  frequency_normalization = TRUE,
+  codon_values = NULL,
+  label_scatter = FALSE,
+  label_number = 64,
+  label_aminoacid = FALSE
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}. Each data

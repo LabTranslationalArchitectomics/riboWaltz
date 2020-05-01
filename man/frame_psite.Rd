@@ -4,8 +4,14 @@
 \alias{frame_psite}
 \title{Percentage of P-sites per reading frame.}
 \usage{
-frame_psite(data, sample = NULL, transcripts = NULL, region = "all",
-  length_range = "all", plot_title = NULL)
+frame_psite(
+  data,
+  sample = NULL,
+  transcripts = NULL,
+  region = "all",
+  length_range = "all",
+  plot_title = NULL
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}.}

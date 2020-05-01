@@ -4,8 +4,7 @@
 \alias{create_annotation}
 \title{Annotation data table.}
 \usage{
-create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA,
-  organism = NA)
+create_annotation(gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA)
 }
 \arguments{
 \item{gtfpath}{A character string specifying the path to a GTF file,

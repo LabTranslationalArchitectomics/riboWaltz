@@ -49,5 +49,6 @@ cds_coverage <- function(data, annotation, start_nts = 0, stop_nts = 0) {
     psite_cds <- merge(psite_cds, temp_count, by = "transcript", all.x = TRUE)
     setnames(psite_cds, old = "N", new = n)
   }
+  psite_cds[is.na(psite_cds)] <- 0
   return(psite_cds)
 }

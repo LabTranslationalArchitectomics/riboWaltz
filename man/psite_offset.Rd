@@ -4,7 +4,8 @@
 \name{psite_offset}
 \alias{psite_offset}
 \title{P-site offsets data table}
-\format{A data table with 31 rows and 9 variables:
+\format{
+A data table with 31 rows and 9 variables:
 \describe{
   \item{length}{Length of the read, in nucleotides (intended as the width of
   the reference sequence region covered by the RNA fragment. For further
@@ -25,7 +26,8 @@
   \item{corrected_offset_from_3}{P-site offset from the 3' end of the read, in
   nucleotides (after the correction step)}
   \item{sample}{Name of the sample}
-}}
+}
+}
 \usage{
 psite_offset
 }

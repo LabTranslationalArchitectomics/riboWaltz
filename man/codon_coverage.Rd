@@ -4,8 +4,14 @@
 \alias{codon_coverage}
 \title{Number of reads per codon.}
 \usage{
-codon_coverage(data, annotation, sample = NULL, psite = FALSE,
-  min_overlap = 1, granges = FALSE)
+codon_coverage(
+  data,
+  annotation,
+  sample = NULL,
+  psite = FALSE,
+  min_overlap = 1,
+  granges = FALSE
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}. Data tables

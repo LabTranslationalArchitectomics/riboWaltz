@@ -345,39 +345,48 @@ For additional details please refers to the documentation provided by ?length_fi
 
     example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 	                                         utr5l = 20, cdsl = 40, utr3l = 20,
-	                                         plot_title = "auto")
-    example_metaprofile[["plot"]]
+	                                         plot_title = "sample.transcript")
+    example_metaprofile[["plot_Samp1"]]
 ![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile.png)
 
-  `metaprofile_psite` also provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
+  `metaprofile_psite` provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
 
     example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                                 length_range = 28, utr5l = 20, cdsl = 40,
-                                                utr3l = 20, plot_title = "auto")
-    example_metaprofile_28[["plot"]]
+                                                utr3l = 20, plot_title = "sample.transcript")
+    example_metaprofile_28[["plot_Samp1"]]
 ![example_metaprofile_28](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
 
- Another way to visualize the trinucleotide periodicity along coding sequences is generating a metahaetmap. In this case the abundance of P-sites is represented by a continuous color scale and not by the height of a line chart, as in metaprofiles. Metahaetmaps are a convenient choice for comparing multiple samples or multiple populations of reads (e.g. with different length): for the same set of transcripts, `metaheatmap_psite` can generate a collection of metaheatmaps using reads from either a variety of biological conditions or subsets of the same dataset. All the resulting heatmaps are then arranged in one graphical output.
+ It is also possible to use `metaprofile_psite` for comparing multiple samples or populations of reads (e.g. with different length): for the same set of transcripts, `metaprofile_psite` can generate a collection of metaprofiles using reads from either a variety of biological conditions or subsets of the same dataset.
 
  Here an example: let's suppose we want to investigate if, and to which extent, trinucleotide periodicity of reads of 28 nucleotides differs from trinucleotide periodicity based on all read lengths. As first step we create a list of data tables with the reads of interest:
 
-    comparison_dt <- list()
-    comparison_dt[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
-    comparison_dt[["whole_sample"]] <- reads_psite_list[["Samp1"]]
+    comparison_list <- list()
+    comparison_list[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
+    comparison_list[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 
  Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see parameter *sample*).
 
-    names_list <- list("Only_28" = c("subsample_28nt"),
+    sample_list <- list("Only_28" = c("subsample_28nt"),
                        "All" = c("whole_sample"))
 
- We can now run `metaheatmap_psite`:
+We can now run `metaprofile_psite`:
 
-    example_metaheatmap <- metaheatmap_psite(comparison_dt, mm81cdna, sample = names_list,
+    example_metaprofile_comparison <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+	                                                    utr5l = 20, cdsl = 40, utr3l = 20,
+														frequency = TRUE, plot_title = "transcript",
+														mirrored = TRUE, colour = c("green4", "gray40"))
+    example_metaprofile_comparison[["plot]]
+![example_metaprofile_comparison](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
+
+ Another way to visualize the trinucleotide periodicity along coding sequences is generating a metahaetmap. In this case the abundance of P-sites is represented by a continuous color scale and not by the height of a line chart as in metaprofiles. If multiple sets of transcripts are provided, the resulting heatmaps are arranged in one graphical output. Using the sample list generated in the previous example, `metaheatmap_psite` returns:
+
+    example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
                                              utr5l = 20, cdsl = 40, utr3l = 20, log = F)
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
 
- The output includes two heatmaps, one for each data table, named after the strings in *names_list*. The plot shows a clear trinucleotide periodicity for both datasets and a signal on the 5th codon stonger than on the TIS only for reads of 28 nucleotides, in agreement with the metaprofiles showed above.
+ The output includes two heatmaps, one for each data table. The plot shows a clear trinucleotide periodicity for both datasets and a signal on the 5th codon stonger than on the TIS only for reads of 28 nucleotides, in agreement with the metaprofiles showed above.
 
 ### Codon usage
 

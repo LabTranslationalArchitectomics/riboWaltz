@@ -4,8 +4,14 @@
 \alias{bedtolist}
 \title{From BED files to lists of data tables or GRangesList objects.}
 \usage{
-bedtolist(bedfolder, annotation, transcript_align = TRUE,
-  name_samples = NULL, refseq_sep = FALSE, granges = FALSE)
+bedtolist(
+  bedfolder,
+  annotation,
+  transcript_align = TRUE,
+  name_samples = NULL,
+  refseq_sep = FALSE,
+  granges = FALSE
+)
 }
 \arguments{
 \item{bedfolder}{Character string specifying the path to the folder storing

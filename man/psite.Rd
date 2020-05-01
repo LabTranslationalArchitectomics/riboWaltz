@@ -4,9 +4,18 @@
 \alias{psite}
 \title{Ribosome P-sites position within reads.}
 \usage{
-psite(data, flanking = 6, start = TRUE, extremity = "auto",
-  plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99,
-  log_file = FALSE, log_file_dir = NULL)
+psite(
+  data,
+  flanking = 6,
+  start = TRUE,
+  extremity = "auto",
+  plot = FALSE,
+  plot_dir = NULL,
+  plot_format = "png",
+  cl = 99,
+  log_file = FALSE,
+  log_file_dir = NULL
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},

@@ -4,10 +4,20 @@
 \alias{psite_info}
 \title{Update reads information according to the inferred P-sites.}
 \usage{
-psite_info(data, offset, site = NULL, fastapath = NULL,
-  fasta_genome = TRUE, refseq_sep = NULL, bsgenome = NULL,
-  gtfpath = NULL, txdb = NULL, dataSource = NA, organism = NA,
-  granges = FALSE)
+psite_info(
+  data,
+  offset,
+  site = NULL,
+  fastapath = NULL,
+  fasta_genome = TRUE,
+  refseq_sep = NULL,
+  bsgenome = NULL,
+  gtfpath = NULL,
+  txdb = NULL,
+  dataSource = NA,
+  organism = NA,
+  granges = FALSE
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},

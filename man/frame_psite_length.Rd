@@ -4,9 +4,15 @@
 \alias{frame_psite_length}
 \title{Percentage of P-sites per reading frame stratified by read length.}
 \usage{
-frame_psite_length(data, sample = NULL, transcripts = NULL,
-  region = "all", cl = 100, length_range = "all",
-  plot_title = NULL)
+frame_psite_length(
+  data,
+  sample = NULL,
+  transcripts = NULL,
+  region = "all",
+  cl = 100,
+  length_range = "all",
+  plot_title = NULL
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{psite_info}}.}
