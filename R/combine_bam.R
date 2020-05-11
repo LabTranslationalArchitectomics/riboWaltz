@@ -102,27 +102,29 @@
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE, 
                       name_samples = NULL, indel_threshold = 5, 
                       refseq_sep = NULL, granges = FALSE) {
-  names <- list.files(path = bamfolder, pattern = ".bam$")
+
+  name_bams <- list.files(path = bamfolder, pattern = ".bam$")
+
   if (length(name_samples) == 0) {
-    name_samples <- unlist(strsplit(names, ".bam"))
-    names(name_samples) <- unlist(strsplit(names, ".bam"))
+    name_samples <- unlist(strsplit(name_bams, ".bam"))
+    names(name_samples) <- unlist(strsplit(name_bams, ".bam"))
   } else {
-    if (length(name_samples) > length(names)) {
-      cat("\n")
-      stop("length of name_samples greater than number of files\n\n")
-    }
-    if (length(name_samples) < length(names)) {
-      cat("\n")
-      stop("length of name_samples smaller than number of files\n\n")
+    if(is.null(names(name_samples)) | any(names(name_samples) == "") ){
+      stop("name_samples must be a named character vector or NULL.")
+    }else if( !all( sel <- names(name_samples) %in% unlist(strsplit(name_bams, ".bam")) ) ){
+      stop("File not found:\n",
+           paste0("\t",names(name_samples)[!sel],".bam\n"),
+           "\tin ", bamfolder,  "\n"
+           )
     }
   }
 
-  i <- 0
   sample_reads_list <- list()
-  for (n in names) {
-    i <- i + 1
-    cat(sprintf("Reading %s\n", n))
-    filename <- paste(bamfolder, n, sep = "/")
+  for (current_sample in names(name_samples)) {
+    current_bam <- paste0(current_sample,".bam")
+
+    cat(sprintf("Reading %s\n", current_bam))
+    filename <- file.path(bamfolder, current_bam)
     dt <- as.data.table(GenomicAlignments::readGAlignments(filename))
     nreads <- nrow(dt)
     cat(sprintf("Input reads: %s M\n", format(round((nreads / 1000000), 3), nsmall = 3)))
@@ -203,8 +205,10 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
       GenomicRanges::strand(dt) <- "+"
     }
     
-    sample_reads_list[[name_samples[i]]] <- dt
-    cat("\n")
+
+    sample_reads_list[[name_samples[current_sample]]] <- dt
+    cat("Done!",current_bam, "has been loaded as",name_samples[current_sample],".\n\n")
+    
   }
   
   if (granges == T || granges == TRUE) {
