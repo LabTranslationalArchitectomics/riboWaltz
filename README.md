@@ -373,9 +373,9 @@ For additional details please refers to the documentation provided by ?length_fi
 We can now run `metaprofile_psite`:
 
     example_metaprofile_comparison <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-	                                                    utr5l = 20, cdsl = 40, utr3l = 20,
-														frequency = TRUE, plot_title = "transcript",
-														mirrored = TRUE, colour = c("green4", "gray40"))
+														utr5l = 20, cdsl = 40, utr3l = 20,
+							  frequency = TRUE, plot_title = "transcript",
+							  mirrored = TRUE, colour = c("green4", "gray40"))
 	example_metaprofile_comparison[["plot]]
 ![example_metaprofile_comparison](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_comparison.png)
 
@@ -392,29 +392,25 @@ We can now run `metaprofile_psite`:
 
  To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon optionally normalized for the frequency in sequences of each codon. If one sample name is specified `codon_usage_psite` returns a bar plot of the resulting codon usage indexes, highlighting the start and stop codons and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note: due to its size, the FASTA file containing the transcripts sequences used by the author is not included in the package.
   
-	codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                              fastapath = "path/to/transcriptome/FASTA/file",
                                              fasta_genome = FALSE,
                                              frequency_normalization = FALSE) 
-	codon_usage_barplot[["plot"]]
-![codon_usage_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_barplot.png)
+	example_cu_barplot[["plot"]]
+![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot.png)
   
   
  `codon_usage_psite` can also be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from multiple samples or multiple populations of reads (e.g. with different length). Specifying two sample names, `codon_usage_psite` returns two bar plots (one for each sample) and compares the two sets of codon usage indexes returning a scatter plot. Each dot of the scatter plot represents a codon, optionally labelled with the corresponding triplet or amino acid. The relationship between the two sets of values (as results of a linear regression) and the Pearson correlation coefficient are displayed.
   
- Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. As first step we create a list of data tables with the reads of interest:
-  
-	comparison_list <- list()
-	comparison_list[["Only_28"]] <- reads_psite_list[["Samp1"]][length == 28]
-	comparison_list[["All"]] <- reads_psite_list[["Samp1"]]
+ Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. Using the sample list generated in the previous examples, we can run `codon_usage_psite`:
 
-	codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
+	example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
 						  sample = c("All", "Only_28"),
 						  fastapath = "path/to/transcriptome/FASTA/file",
 						  frequency_normalization = FALSE)
-	codon_usage_2samples[["plot_comparison"]]
+	example_cu_scatter_2samples[["plot_comparison"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_2samples.png" width="320" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_2samples.png" width="320" />
 </p>
 
  `codon_usage_psite` also allows to compare codon usage indexes of a sample of interest with codon-specific values provided by the user (see parameter *codon_values*). In the following example empirical codon indexes for the example dataset are compared with codon usage bias values in mouse (downloaded from http://www.kazusa.or.jp/codon, based on the frequency of synonymous codons in coding DNA regions). The structure of the required input data table is as follows:
@@ -430,14 +426,14 @@ We can now run `metaprofile_psite`:
   
  When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example. In both cases labels for a specified number of dots, reporting the coresponding triplet or amino acid symbol, can be added (see parameters *label_scatter*, *label_number* and *label_aminoacid*):
   
-	codon_usage_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+	example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                          fastapath = "path/to/transcriptome/FASTA/file",
                                          fasta_genome = FALSE, codon_values = cub_mouse,
                                          frequency_normalization = FALSE, 
 					     label_scatter = TRUE, label_number = 5)
-	codon_usage_cub[["plot_comparison"]]
+	example_cu_scatter_cub[["plot_comparison"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/codon_usage_cub.png" width="320" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_cub.png" width="320" />
 </p>
 
 ------------------------------------------------------------------------

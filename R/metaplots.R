@@ -96,11 +96,6 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
                               frequency = FALSE, utr5l = 25, cdsl = 50, utr3l = 25,
                               colour = c("gray40", "dodgerblue"), plot_title = NULL) {
   
-  if(length(sample) == 0){
-    cat("\n")
-    stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
-  }
-  
   if(length(scale_factors) != 0) {
     if(!all(sample %in% names(scale_factors))){
       cat("\n")
@@ -108,6 +103,47 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     }
   }
   
+  if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
+    cat("\n")
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n", call. = FALSE)
+    length_range = "all"
+  }
+  
+  if(!identical(length_range, "all")){
+    if(class(sample) == "list"){
+      for(sampgroup in names(sample)){
+        for(samp in sample[[sampgroup]]){
+          len_check <- unique(data[[samp]]$length)
+          if(!(any(length_range %in% len_check))) {
+            cat("\n")
+            warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
+            sample[[sampgroup]] <- sample[[sampgroup]][sample[[sampgroup]] != samp]
+          }
+        }
+        if(length(sample[[sampgroup]]) == 0) {
+          cat("\n")
+          warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: group of samples removed \n", sampgroup), call. = FALSE)
+          sample[[sampgroup]] <- NULL
+        }
+      }
+    } else {
+      for(samp in sample){
+        len_check <- unique(data[[samp]]$length)
+        if(!(any(length_range %in% len_check))) {
+          cat("\n")
+          warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
+          sample <- sample[sample != samp]
+        }
+      }
+    }
+  }
+
+    
+  if(length(sample) == 0){
+    cat("\n")
+    stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
+  }
+
   if(multisamples == "separated" & class(sample) == "list" & 
      length(as.character(unlist(sample))) > length(sample)) {
     cat("\n")
@@ -130,12 +166,6 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     mirrored <- FALSE
   }
   
-  if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
-    cat("\n")
-    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n", call. = FALSE)
-    length_range = "all"
-  }
-  
   if(frequency == TRUE & length(scale_factors) != 0){
     cat("\n")
     warning("parameter scale_factors is specified but frequency = TRUE: scale_factors won't be considered\n", call. = FALSE)
@@ -152,17 +182,6 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     cat("\n")
     warning("parameter multisamples is set to either \"average\" or \"sum\" but only one sample is provided\nparameter multisample will be set to \"separated\"", call. = FALSE)
     multisamples = "separated"
-  }
-  
-  if(!identical(length_range, "all")){
-    for(samp in sample){
-      len_check <- unique(data[[samp]]$length)
-      if(sum(length_range %in% len_check) == 0) {
-        cat("\n")
-        warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
-        sample <- sample[sample != samp]
-      }
-    }
   }
   
   l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 
@@ -324,7 +343,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     
     if(multisamples == "average"){
       for(col_plot in names(col_plot_sel)){
-        if(length(col_plot_sel[[col_plot]]) > 1){
+        if(length(col_plot_se_sel[[col_plot]]) != 0){
           plot_dt[, paste0("minus_se_", col_plot) := get(col_plot_sel[[col_plot]]) - 
                     get(col_plot_se_sel[[col_plot]])
                   ][, paste0("plus_se_", col_plot) := get(col_plot_sel[[col_plot]]) +
@@ -370,7 +389,8 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
       if(length(setdiff(plot_title_v, c("sample", "transcript", "length_range"))) == 0 &
          length(plot_title_v) != 0){
         plottitle <- hf_title_plot(plot_title_v = plot_title_v, multisamples = multisamples,
-                                sample_l = sample_l, data = data, samp = NULL, ntr = ntr)
+                                sample_l = sample_l, data = data, samp = NULL, ntr = ntr,
+                                length_range = length_range, length_common = length_common)
         plot <- plot + labs(title = plottitle) +
           theme(plot.title = element_text(hjust = 0.5))
       } else {
@@ -409,7 +429,8 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
         if(length(setdiff(plot_title_v, c("sample", "transcript", "length_range"))) == 0 &
            length(plot_title_v) != 0){
           plottitle <- hf_title_plot(plot_title_v = plot_title_v, multisamples = multisamples, 
-                                  sample_l = sample_l, data = data, samp = col_plot, ntr = ntr)
+                                  sample_l = sample_l, data = data, samp = col_plot, ntr = ntr,
+                                  length_range = length_range, length_common = length_common)
           plot <- plot + labs(title = plottitle) +
             theme(plot.title = element_text(hjust = 0.5))
         } else {
@@ -432,7 +453,8 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   return(output)
 }
 
-hf_title_plot <- function(plot_title_v, multisamples, sample_l, data, samp, ntr){
+hf_title_plot <- function(plot_title_v, multisamples, sample_l, data, samp, ntr,
+                          length_range, length_common){
   
   if("sample" %in% plot_title_v & length(sample_l) == 1){
     if(multisamples %in% c("average", "sum")){
@@ -588,6 +610,13 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
                               utr5l = 25, cdsl = 50, utr3l = 25, log_colour = F,
                               colour = "black", plot_title = NULL) {
   
+  if(length(scale_factors) != 0) {
+    if(!all(unlist(sample) %in% names(scale_factors))){
+      cat("\n")
+      stop("scale factor for one or more replicates is missing\n\n")
+    }
+  }
+  
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
     cat("\n")
     warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n", call. = FALSE)
@@ -595,35 +624,38 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
   }
   
   if(!identical(length_range, "all")){
-    for(sampgroup in names(sample)){
-      for(samp in sample[[sampgroup]]){
-        len_check <- unique(data[[samp]]$length)
-        if(sum(length_range %in% len_check) == 0) {
+    if(class(sample) == "list"){
+      for(sampgroup in names(sample)){
+        for(samp in sample[[sampgroup]]){
+          len_check <- unique(data[[samp]]$length)
+          if(!(any(length_range %in% len_check))) {
+            cat("\n")
+            warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
+            sample[[sampgroup]] <- sample[[sampgroup]][sample[[sampgroup]] != samp]
+          }
+        }
+        if(length(sample[[sampgroup]]) == 0) {
           cat("\n")
-          warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
-          sample[[sampgroup]] <- sample[[sampgroup]][sample[[sampgroup]] != samp]
+          warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: group of samples removed \n", sampgroup), call. = FALSE)
+          sample[[sampgroup]] <- NULL
         }
       }
-      if(length(sample[[sampgroup]]) == 0) {
-        cat("\n")
-        warning(sprintf("none of the data tables in \"%s\" contain reads of the specified lengths: group of samples removed \n", sampgroup), call. = FALSE)
-        sample[[sampgroup]] <- NULL
+    } else {
+      for(samp in sample){
+        len_check <- unique(data[[samp]]$length)
+        if(!(any(length_range %in% len_check))) {
+          cat("\n")
+          warning(sprintf("\"%s\" doesn't contain any reads of the specified lengths: sample removed\n", samp), call. = FALSE)
+          sample <- sample[sample != samp]
+        }
       }
     }
   }
+
   
   if(length(sample) == 0){
     cat("\n")
     stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
-  }
-  
-  if(length(scale_factors) != 0) {
-    for(sampgroup in names(sample)){
-      if(!all(sample[[sampgroup]] %in% names(scale_factors)) & !all(!(sample[[sampgroup]] %in% names(scale_factors)))){
-        cat("\n")
-        stop(sprintf("scale factor for one or more replicates of \"%s\" is missing\n\n", sampgroup))
-      }
-    }
   }
   
   l_transcripts <- as.character(annotation[l_utr5 >= utr5l & 

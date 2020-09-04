@@ -134,11 +134,11 @@ comparison_list[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 sample_list <- list("Only_28" = c("subsample_28nt"),
                    "All" = c("whole_sample"))
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/3.25, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE----
+## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE----
 example_metaprofile_comparison <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
                                          utr5l = 20, cdsl = 40, utr3l = 20,
                                          frequency = TRUE, plot_title = "transcript",
-                                         mirrored = TRUE, colour = c("green4", "gray40"))
+                                         mirrored = TRUE, colour = c("aquamarine4", "gray40"))
 example_metaprofile_comparison[["plot"]]
 
 ## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '700px', message = FALSE, warning = FALSE----
@@ -147,28 +147,24 @@ example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sam
 example_metaheatmap[["plot"]]
 
 ## ---- echo = TRUE, eval = FALSE-----------------------------------------------
-#  codon_usage_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+#  example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 #                                            fastapath = "path/to/transcriptome/FASTA/file",
 #                                            fasta_genome = FALSE,
 #                                            frequency_normalization = FALSE)
-#  codon_usage_barplot[["plot"]]
+#  example_cu_barplot[["plot"]]
 
 ## ---- out.width = '690px', fig.retina = NULL, echo = FALSE--------------------
-knitr::include_graphics("codon_usage_barplot.png")
+knitr::include_graphics("example_cu_barplot.png")
 
 ## ---- echo = TRUE, eval = FALSE-----------------------------------------------
-#  comparison_list <- list()
-#  comparison_list[["Only_28"]] <- reads_psite_list[["Samp1"]][length == 28]
-#  comparison_list[["All"]] <- reads_psite_list[["Samp1"]]
-#  
-#  codon_usage_2samples <- codon_usage_psite(comparison_list, mm81cdna, sample = c("All", "Only_28"),
+#  example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, sample = c("All", "Only_28"),
 #                                            fastapath = "path/to/transcriptome/FASTA/file",
 #                                            fasta_genome = FALSE,
 #                                            frequency_normalization = FALSE)
-#  codon_usage_2samples[["plot_comparison"]]
+#  example_cu_scatter_2samples[["plot_comparison"]]
 
 ## ---- out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
-knitr::include_graphics("codon_usage_2samples.png")
+knitr::include_graphics("example_cu_scatter_2samples.png")
 
 ## ---- eval=TRUE, echo=FALSE---------------------------------------------------
 cub_mouse <- data.table(codon = c("UUU", "UCU", "UAU", "UGU", "UUC", "UCC", "UAC", "UGC", "UUA", "UCA", "UAA", "UGA", "UUG", "UCG", "UAG", "UGG", "CUU", "CCU", "CAU", "CGU", "CUC", "CCC", "CAC", "CGC", "CUA", "CCA", "CAA", "CGA", "CUG", "CCG", "CAG", "CGG", "AUU", "ACU", "AAU", "AGU", "AUC", "ACC", "AAC", "AGC", "AUA", "ACA", "AAA", "AGA", "AUG", "ACG", "AAG", "AGG", "GUU", "GCU", "GAU", "GGU", "GUC", "GCC", "GAC", "GGC", "GUA", "GCA", "GAA", "GGA", "GUG", "GCG", "GAG", "GGG"),
@@ -178,13 +174,13 @@ cub_mouse <- data.table(codon = c("UUU", "UCU", "UAU", "UGU", "UUC", "UCC", "UAC
 head(cub_mouse)
 
 ## ---- echo=TRUE, eval=FALSE---------------------------------------------------
-#  codon_usage_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+#  example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
 #                                       fastapath = "path/to/transcriptome/FASTA/file",
 #                                       fasta_genome = FALSE, codon_values = cub_mouse,
 #                                       frequency_normalization = FALSE,
 #                                       label_scatter = TRUE, label_number = 5)
-#  codon_usage_cub[["plot_comparison"]]
+#  example_cu_scatter_cub[["plot_comparison"]]
 
 ## ---- out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
-knitr::include_graphics("codon_usage_cub.png")
+knitr::include_graphics("example_cu_scatter_cub.png")
 
