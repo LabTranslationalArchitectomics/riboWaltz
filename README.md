@@ -373,9 +373,9 @@ For additional details please refers to the documentation provided by ?length_fi
 We can now run `metaprofile_psite`:
 
     example_metaprofile_comparison <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-														utr5l = 20, cdsl = 40, utr3l = 20,
-							  frequency = TRUE, plot_title = "transcript",
-							  mirrored = TRUE, colour = c("green4", "gray40"))
+							    utr5l = 20, cdsl = 40, utr3l = 20,
+							    frequency = TRUE, plot_title = "transcript",
+							    mirrored = TRUE, colour = c("green4", "gray40"))
 	example_metaprofile_comparison[["plot]]
 ![example_metaprofile_comparison](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_comparison.png)
 
@@ -405,9 +405,9 @@ We can now run `metaprofile_psite`:
  Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. Using the sample list generated in the previous examples, we can run `codon_usage_psite`:
 
 	example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
-						  sample = c("All", "Only_28"),
-						  fastapath = "path/to/transcriptome/FASTA/file",
-						  frequency_normalization = FALSE)
+						     sample = c("All", "Only_28"),
+						     fastapath = "path/to/transcriptome/FASTA/file",
+						     frequency_normalization = FALSE)
 	example_cu_scatter_2samples[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_2samples.png" width="320" />

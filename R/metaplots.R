@@ -110,7 +110,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   }
   
   if(!identical(length_range, "all")){
-    if(class(sample) == "list"){
+    if(is.list(sample)){
       for(sampgroup in names(sample)){
         for(samp in sample[[sampgroup]]){
           len_check <- unique(data[[samp]]$length)
@@ -144,7 +144,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     stop("none of the data tables in sample contains any reads of the specified lengths\n\n")
   }
 
-  if(multisamples == "separated" & class(sample) == "list" & 
+  if(multisamples == "separated" & is.list(sample) & 
      length(as.character(unlist(sample))) > length(sample)) {
     cat("\n")
     warning("parameter multisamples is set to \"separated\":\nparameter sample will be unlisted and coerced to character string\n", call. = FALSE)
@@ -153,14 +153,14 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   
   if(length(plot_title) != 0){
     plot_title_v <- unlist(tstrsplit(plot_title, ".", fixed = TRUE))
-    if(plot_title %like% "sample" & class(sample) == "list" & length(sample) > 1) {
+    if(plot_title %like% "sample" & is.list(sample) & length(sample) > 1) {
       cat("\n")
       warning("parameter sample is a list of dimension > 2: plot title won't contain samples name\n", call. = FALSE)
       plot_title_v <- plot_title_v[plot_title_v != "sample"]
     }
   }
   
-  if(class(sample) == "list" & length(sample) > 2 & mirrored == TRUE) {
+  if(is.list(sample) & length(sample) > 2 & mirrored == TRUE) {
     cat("\n")
     warning("parameter sample is a list of dimentsion > 2. Parameter mirrored won't be considered\n", call. = FALSE)
     mirrored <- FALSE
@@ -177,8 +177,8 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     multisamples = "separated"
   }
   
-  if(multisamples %in% c("average", "sum") & ((class(sample) == "character" & length(sample) == 1) |
-                                              (class(sample) == "list" & length(as.character(unlist(sample))) == 1))){
+  if(multisamples %in% c("average", "sum") & ((is.character(sample) & length(sample) == 1) |
+                                              (is.list(sample) & length(as.character(unlist(sample))) == 1))){
     cat("\n")
     warning("parameter multisamples is set to either \"average\" or \"sum\" but only one sample is provided\nparameter multisample will be set to \"separated\"", call. = FALSE)
     multisamples = "separated"
@@ -197,14 +197,14 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     ntr <- length(c_transcripts)
   }
   
-  if(class(sample) == "list" & length(as.character(unlist(sample))) == length(sample) &
+  if(is.list(sample) & length(as.character(unlist(sample))) == length(sample) &
      length(sample) > 1 & multisamples == "separated"){
     cat("\n")
     multisamples <- "sum"
   }
   
-  if(class(sample) == "character" | (class(sample) == "list" & length(sample) == 1)){
-    if(class(sample) == "list" & length(sample) == 1){
+  if(is.character(sample) | (is.list(sample) & length(sample) == 1)){
+    if(is.list(sample) & length(sample) == 1){
       sample <- as.character(unlist(sample))
     }
     sample_l <- list("sample_name" = sample)
@@ -445,7 +445,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     }
   }
   
-  if(class(sample) == "list" & length(as.character(unlist(sample))) == length(sample) &
+  if(is.list(sample) & length(as.character(unlist(sample))) == length(sample) &
      length(sample) > 1 & multisamples != "separated"){
     setnames(output[["dt"]], old = as.character(unlist(sample)), new = names(sample))
   }
@@ -624,7 +624,7 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
   }
   
   if(!identical(length_range, "all")){
-    if(class(sample) == "list"){
+    if(is.list(sample)){
       for(sampgroup in names(sample)){
         for(samp in sample[[sampgroup]]){
           len_check <- unique(data[[samp]]$length)
