@@ -7,6 +7,8 @@ r-packages:
   - ggplot2
   - ggrepel
 
+bioc_check: false
+
 bioc_packages:
   - Biostrings
   - GenomicAlignments
