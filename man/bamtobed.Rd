@@ -27,9 +27,9 @@ please refer to section \code{Details} of function \code{\link{bamtolist}});
 iv) the strand on which it aligns. Please note: this function relies on the
 \emph{bamtobed} utility of the BEDTools suite and can be only run on UNIX,
 LINUX and Apple OS X operating systems. Moreover, to generate R data
-structures containing reads information, the \code{\link{bedtolist}} must be
-run on the resulting BED files. For these reasons the authors suggest the use
-of \code{\link{bamtolist}}.
+structures containing reads information, the function \code{\link{bedtolist}}
+must be run on the resulting BED files. For these reasons the authors suggest
+the use of \code{\link{bamtolist}}.
 }
 \examples{
 ## path_bam <- "path/to/BAM/files"
