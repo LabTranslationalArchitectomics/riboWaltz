@@ -62,9 +62,9 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
   
   for(sam in sample) {
     frame_dt <- data[[sam]][as.character(transcript) %in% c_transcript
-                            ][, list(percentage = .N), by = list(region = psite_region)
+                            ][, list(count = .N), by = list(region = psite_region)
                               ][, sample := sam
-                                ][, percentage := (percentage / sum(percentage)) * 100]
+                                ][, percentage := (count / sum(count)) * 100]
     
     if (exists("melt_table")) {
       melt_table <- rbind(melt_table, frame_dt)
@@ -84,6 +84,7 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
   
   RNA_table <- data.table(region = c("5utr", "cds", "3utr"),
                           percentage = RNA_reg_perc,
+                          count = RNA_reg,
                           sample = rep("RNAs", 3),
                           class = "rna")
   
