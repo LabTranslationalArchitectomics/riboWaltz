@@ -33,21 +33,21 @@ rlength_distr <- function(data, sample, transcripts = NULL, cl = 100) {
   } else {
     dt <- data[[sample]][transcript %in% transcripts]
   }
-  
+
   xmin <- quantile(dt$length, (1 - cl/100)/2)
   xmax <- quantile(dt$length, 1 - (1 - cl/100)/2)
-  
+
   setkey(dt, length)
   dist <- dt[CJ(unique(dt$length)), list(count = .N), by = .EACHI
-             ][, count := (count / sum(count)) * 100]
+             ][, percentage := (count / sum(count)) * 100]
 
-  p <- ggplot(dist, aes(as.numeric(length), count)) +
+  p <- ggplot(dist, aes(as.numeric(length), percentage)) +
     geom_bar(stat = "identity", fill = "gray80") +
     labs(title = sample, x = "Read length", y = "Count (%)") +
     theme_bw(base_size = 18) +
     theme(plot.title = element_text(hjust = 0.5)) +
     scale_x_continuous(limits = c(xmin - 0.5, xmax + 0.5), breaks = seq(xmin + ((xmin) %% 2), xmax, by = max(c(1, floor((xmax - xmin)/7)))))
-  
+
   output <- list()
   output[["plot"]] <- p
   output[["dt"]] <- dist
