@@ -133,7 +133,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
  __riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
 
- The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see Chapter 6 of its [manual](http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf)), is an example of tool providing such a feature.
+ The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see the section "Output in transcript coordinates" of its manual), is an example of tool providing such a feature.
 
 ### Acquiring input files
 
@@ -376,7 +376,7 @@ We can now run `metaprofile_psite`:
 							    utr5l = 20, cdsl = 40, utr3l = 20,
 							    frequency = TRUE, plot_title = "transcript",
 							    mirrored = TRUE, colour = c("green4", "gray40"))
-	example_metaprofile_comparison[["plot]]
+	example_metaprofile_comparison[["plot"]]
 ![example_metaprofile_comparison](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_comparison.png)
 
  Another way to visualize the trinucleotide periodicity along coding sequences is generating a metahaetmap. In this case the abundance of P-sites is represented by a continuous color scale and not by the height of a line chart as in metaprofiles. If multiple sets of transcripts are provided, the resulting heatmaps are arranged in one graphical output. Using the sample list generated in the previous example, `metaheatmap_psite` returns:
@@ -393,9 +393,9 @@ We can now run `metaprofile_psite`:
  To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon optionally normalized for the frequency in sequences of each codon. If one sample name is specified `codon_usage_psite` returns a bar plot of the resulting codon usage indexes, highlighting the start and stop codons and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note: due to its size, the FASTA file containing the transcripts sequences used by the author is not included in the package.
   
 	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                             fastapath = "path/to/transcriptome/FASTA/file",
-                                             fasta_genome = FALSE,
-                                             frequency_normalization = FALSE) 
+                                            fastapath = "path/to/transcriptome/FASTA/file",
+                                            fasta_genome = FALSE,
+                                            frequency_normalization = FALSE) 
 	example_cu_barplot[["plot"]]
 ![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot.png)
   
@@ -405,9 +405,9 @@ We can now run `metaprofile_psite`:
  Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. Using the sample list generated in the previous examples, we can run `codon_usage_psite`:
 
 	example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
-						     sample = c("All", "Only_28"),
-						     fastapath = "path/to/transcriptome/FASTA/file",
-						     frequency_normalization = FALSE)
+						        sample = c("All", "Only_28"),
+						        fastapath = "path/to/transcriptome/FASTA/file",
+						        frequency_normalization = FALSE)
 	example_cu_scatter_2samples[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_2samples.png" width="320" />
@@ -427,10 +427,10 @@ We can now run `metaprofile_psite`:
  When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example. In both cases labels for a specified number of dots, reporting the coresponding triplet or amino acid symbol, can be added (see parameters *label_scatter*, *label_number* and *label_aminoacid*):
   
 	example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                         fastapath = "path/to/transcriptome/FASTA/file",
-                                         fasta_genome = FALSE, codon_values = cub_mouse,
-                                         frequency_normalization = FALSE, 
-					     label_scatter = TRUE, label_number = 5)
+                                              fastapath = "path/to/transcriptome/FASTA/file",
+                                              fasta_genome = FALSE, codon_values = cub_mouse,
+                                              frequency_normalization = FALSE, 
+					          label_scatter = TRUE, label_number = 5)
 	example_cu_scatter_cub[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_cub.png" width="320" />

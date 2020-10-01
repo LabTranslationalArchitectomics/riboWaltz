@@ -1,6 +1,6 @@
 #' Annotation data table
 #'
-#' A dataset containing basic information about 109,712 mouse mRNA (Ensembl v81
+#' A dataset containing basic information about 109,712 mouse mRNAs (Ensembl v81
 #' transcript annotation).
 #'
 #' @format A data table with 109,712 rows and 5 variables:

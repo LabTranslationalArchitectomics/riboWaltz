@@ -111,11 +111,9 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
   } else {
     if(is.null(names(name_samples)) | any(names(name_samples) == "") ){
       stop("name_samples must be a named character vector or NULL.")
-    }else if( !all( sel <- names(name_samples) %in% unlist(strsplit(name_bams, ".bam")) ) ){
-      stop("File not found:\n",
-           paste0("\t",names(name_samples)[!sel],".bam\n"),
-           "\tin ", bamfolder,  "\n"
-           )
+    } else if( !all( sel <- names(name_samples) %in% unlist(strsplit(name_bams, ".bam")) ) ){
+      stop("file not found in ", bamfolder, ": ", names(name_samples)[!sel],
+           ".bam. Please check name_samples\n")
     }
   }
 
@@ -207,7 +205,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     
 
     sample_reads_list[[name_samples[current_sample]]] <- dt
-    cat("Done!",current_bam, "has been loaded as",name_samples[current_sample],".\n\n")
+    cat("Done!", current_bam, "has been loaded as", name_samples[current_sample], ".\n\n")
     
   }
   

@@ -78,9 +78,9 @@
 #'
 #' ## Compute the P-site offset specifying the extremity used in the correction
 #' ## step and plotting the length-specific occupancy metaprofiles for a 
-#' ## sub-range of read lengths (the middle 95%). The plots will be placed in 
+#' ## sub-range of read lengths (the middle 90%). The plots will be placed in 
 #' ## the current working directory:
-#' psite_offset <- psite(reads_list, flanking = 6, extremity = "3end", plot = TRUE, cl = 95)
+#' psite_offset <- psite(reads_list, flanking = 6, extremity = "3end", plot = TRUE, cl = 90)
 #' @import data.table
 #' @import ggplot2
 #' @export
