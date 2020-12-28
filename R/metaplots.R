@@ -325,7 +325,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   output <- list()
   output[["dt"]] <- final_dt
   
-  linestart <- data.table(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
+  lines3nt <- data.table(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(seq(3, cdsl, 3)), length(seq(-2, -cdsl, -3)))), line = c(seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3))))
   linered <- data.table(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
   
   if(multisamples != "separated"){
@@ -367,10 +367,10 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     plot <- plot + geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
       theme_bw(base_size = 30) +
       theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
-            axis.title.x = element_blank()) +
+            axis.title.x = element_blank(), panel.grid.minor.y = element_blank()) +
       facet_grid(. ~ reg, scales = "free", switch = "x") +
       theme(strip.background = element_blank(), strip.placement = "outside") +
-      geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
+      geom_vline(data = lines3nt, aes(xintercept = line), linetype = 3, color = "gray60")
     
     if(length(col_plot_sel) > 1){
       plot <- plot + theme(legend.position = c(0.98,1), legend.justification = c(1, 1),
@@ -418,10 +418,10 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
         geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
         theme_bw(base_size = 30) +
         theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
-              axis.title.x = element_blank()) +
+              axis.title.x = element_blank(), panel.grid.minor.y = element_blank()) +
         facet_grid(. ~ reg, scales = "free", switch = "x") +
         theme(strip.background = element_blank(), strip.placement = "outside") +
-        geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60")
+        geom_vline(data = lines3nt, aes(xintercept = line), linetype = 3, color = "gray60")
       
       if(frequency != TRUE){
         plot <- plot + labs(y = "P-site")
@@ -728,18 +728,20 @@ metaheatmap_psite <- function(data, annotation, sample, scale_factors = NULL,
   final_tab_heatmap[, reg := factor(reg, levels = c("start", "stop"), labels = c("Distance from start (nt)", "Distance from stop (nt)"))
                     ][, sample := factor(sample, levels = rev(unique(final_tab_heatmap$sample)))]
   
-  linestart <- data.frame(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3))), length(c(rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3))))), line = c(rev(seq(-3, -utr5l, -3)), seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3)), seq(1, utr3l, 3)))
+  lines3nt <- data.table(reg = rep(c("Distance from start (nt)", "Distance from stop (nt)"), times = c(length(seq(3, cdsl, 3)), length(seq(-2, -cdsl, -3)))), line = c(seq(3, cdsl, 3), rev(seq(-2, -cdsl, -3))))
   linered <- data.frame(reg = c("Distance from start (nt)", "Distance from stop (nt)"), line =c(0, 1))
   
   maxl <- max(final_tab_heatmap$reads)
   
   plot <- ggplot(final_tab_heatmap, aes(as.numeric(as.character(distance)), sample)) +
-    geom_vline(data = linestart, aes(xintercept = line), linetype = 3, color = "gray60") +
+    geom_vline(data = lines3nt, aes(xintercept = line), linetype = 3, color = "gray60") +
     geom_vline(data = linered, aes(xintercept = line), linetype = 1, color = "red") +
     geom_tile(aes(fill = reads), height = 0.7) +
-    labs(x = "", y = "", title = plot_title) +
-    theme_bw(base_size = 20) +
-    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), strip.placement = "outside") +
+    labs(title = plot_title) +
+    theme_bw(base_size = 25) +
+    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+          panel.grid.major.y = element_blank(), strip.placement = "outside",
+          axis.title.x = element_blank(), axis.title.y = element_blank()) +
     facet_grid(. ~ reg, scales = "free", switch = "x") +
     theme(plot.title = element_text(hjust = 0.5)) +
     theme(strip.background = element_blank())

@@ -463,6 +463,9 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     plotnamey <- sample[2]
   }
   
+  oldw <- getOption("warn")
+  options(warn=-1)
+  
   bs <- 30
   plot_list <- list()
   i = 1
@@ -486,8 +489,9 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       scale_x_discrete("Codon") +
       theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5, size = bs * 0.5)) +
       geom_text(aes(label = aa), vjust = -0.5, size = bs/6) +
-      theme(axis.text.x = element_text(colour = colour_codon)) +
-      scale_y_continuous("Usage index", limits = c(0,1.075), breaks = c(0,0.5,1))
+      theme(axis.text.x = element_text(colour = colour_codon), panel.grid.major.x = element_blank(),
+                                       panel.grid.minor.y = element_blank()) +
+      scale_y_continuous("Usage index", limits = c(0,1.075), breaks = c(0,0.25,0.5,0.75,1))
     plot_list[[paste0("plot_", samp)]] <- bp
   }
   
@@ -510,6 +514,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
       theme_bw(base_size = bs) +
       theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-15,0)) +
       theme(legend.text = element_text(margin = margin(l = -12, unit = "pt"))) +
+      theme(panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank()) +
       scale_x_continuous(name = plotnamex, limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       scale_y_continuous(name = plotnamey, limits = c(-0.3,1.3), breaks = c(0,0.25,0.5,0.75,1), expand = c(0,0)) +
       coord_cartesian(xlim = c(-0.05,1.05), ylim = c(-0.05,1.05)) +
@@ -557,5 +562,7 @@ codon_usage_psite <- function(data, annotation, sample, site = "psite",
     
     output[["plot_comparison"]] <- pcomp
   }
+  
+  options(warn = oldw)
   return(output)
 }

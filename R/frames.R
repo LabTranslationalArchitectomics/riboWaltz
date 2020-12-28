@@ -136,8 +136,10 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
   
   plot <- ggplot(final_frame_dt, aes(x = frame, y = percentage)) +
     geom_bar(stat = "identity") +
-    theme_bw(base_size = 20) +
-    labs(x = "Frame", y = "P-site signal (%)")
+    theme_bw(base_size = 22.5) +
+    labs(x = "Frame", y = "P-site signal (%)") +
+    theme(panel.grid.minor.x = element_blank(),
+          panel.grid.major.x = element_blank())
   
   if(region == "all") {
     plot <- plot + facet_grid(sample ~ region)
@@ -146,6 +148,8 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
     plot <- plot + facet_wrap( ~ sample, ncol = ceiling(sqrt(length(sample))))
     final_frame_dt <- final_frame_dt[order(sample, frame)]
   }
+  
+  plot <- plot + theme(strip.background = element_blank())
   
   if(identical(plot_title, "auto")) {
     
@@ -319,7 +323,6 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
       setnames(frame_dt, "psite_region", "region")
 
     } else {
-      
       dt <- dt[psite_region == region
                ][, frame := psite_from_start %% 3]
       
@@ -355,13 +358,12 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
   
   plot <- ggplot(final_frame_dt, aes(frame, as.numeric(as.character(length)))) +
     geom_tile(aes(fill = percentage)) +
-    scale_fill_gradient("P-site signal (%)  ", low = "white", high = "#104ec1",
+    scale_fill_gradient("P-site signal (%)  ", low = "white", high = "#061b63",
                         breaks = c(mins, mins/2 + maxs/2, maxs),
                         labels = c(round(mins), round(mins/2 + maxs/2), round(maxs))) +
     labs(x = "Frame", y = "Read length") +
-    theme_bw(base_size = 20) +
-    theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
-          panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
+    theme_bw(base_size = 22.5) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
     theme(legend.position = "top", legend.margin=margin(0,0,0,0), legend.box.margin=margin(5,0,-5,0)) +
     scale_y_continuous(limits = c(minl - 0.5, maxl + 0.5), breaks = seq(minl + ((minl) %% 2), maxl, by = max(2, floor((maxl - minl) / 7))))
   
@@ -372,6 +374,8 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
     plot <- plot + facet_wrap( ~ sample, ncol = ceiling(sqrt(length(sample))))
     final_frame_dt <- final_frame_dt[order(sample, length, frame)]
   }
+  
+  plot <- plot + theme(strip.background = element_blank())
   
   if(identical(plot_title, "auto") & !identical(region, "all")){
     if(region == "5utr") { plottitle <- "Region: 5' UTR" }

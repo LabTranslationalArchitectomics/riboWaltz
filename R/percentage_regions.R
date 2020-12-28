@@ -100,7 +100,9 @@ region_psite <- function(data, annotation, sample = NULL, transcripts = NULL,
     scale_fill_manual(name = "", values = colour) +
     theme_bw(base_size = bs) +
     theme(legend.key = element_blank()) +
-    theme(axis.title.x = element_blank()) +
+    theme(axis.title.x = element_blank(),
+          panel.grid.minor.x = element_blank(),
+          panel.grid.major.x = element_blank()) +
     scale_x_discrete(breaks = unique(final_melt_table$sample)) +
     facet_grid( . ~ class, scales = "free", space="free_x") +
     theme(strip.background = element_blank(), strip.text = element_blank()) +

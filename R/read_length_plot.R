@@ -45,7 +45,7 @@ rlength_distr <- function(data, sample, transcripts = NULL, cl = 100) {
     geom_bar(stat = "identity", fill = "gray80") +
     labs(title = sample, x = "Read length", y = "Count (%)") +
     theme_bw(base_size = 18) +
-    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(plot.title = element_text(hjust = 0.5), panel.grid.minor.x = element_blank()) +
     scale_x_continuous(limits = c(xmin - 0.5, xmax + 0.5), breaks = seq(xmin + ((xmin) %% 2), xmax, by = max(c(1, floor((xmax - xmin)/7)))))
 
   output <- list()
