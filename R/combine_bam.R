@@ -23,12 +23,13 @@
 #'   reads mapping on the negative strand should not be present and, if any,
 #'   they are automatically removed.
 #' @param name_samples Named character string vector specifying the desired name
-#'   for the output list elements. A character string for each BAM file in
-#'   \code{bamfolder} is required. Plase be careful to name each element of the
-#'   vector after the correct corresponding BAM file in \code{bamfolder},
-#'   leaving their path and extension out. No specific order is required.
-#'   Default is NULL i.e. list elements are named after the name of the BAM
-#'   files, leaving their path and extension out.
+#'   for the elements of the output list of data tables. A character string for
+#'   each BAM file in \code{bamfolder} is required. Plase be careful to name
+#'   each element of the vector after the correct corresponding BAM file in
+#'   \code{bamfolder}, leaving their path and extension out. No specific order
+#'   is required. Default is NULL i.e. list elements are named after the name of
+#'   the BAM files, leaving their path and extension out. See the example for
+#'   additional details.
 #' @param indel_threshold Positive integer value specifying the maximum number
 #'   of indels (insertions + deletions) allowed for each read. All reads
 #'   associated to more indels than specified are discarded (see
@@ -94,9 +95,23 @@
 #'   might indeed be stored in the FASTA file used for the alignment and
 #'   automatically transferred in the BAM.
 #' @return A list of data tables or a GRangesList object.
-#' @examples
-#' ## path_bam <- "path/to/BAM/files"
-#' ## bamtolist(bamfolder = path_bam, annotation = mm81cdna)
+#' @examples 
+#' ## Let's suppose there are two BAM files ("Samp1.bam" and "Samp2.bam") in
+#' ## "path/to/BAM/files". We want to acquire them and assign to the 
+#' ## corresponding data tables the names "Control" and "Treated", respectively.
+#' ## We first define the "name_samples" character string vector as follow:
+#' ##
+#' ##   name_of_bams <- c("Samp1", "Samp2")
+#' ##   names(name_of_bams) <- c("Control", "Treated")
+#' ##
+#' ## Then, we can acquire the two files: 
+#' ##
+#' ##   path_bam <- "path/to/BAM/files"
+#' ##   reads_list <- bamtolist(bamfolder = path_bam, name_samples = name_of_bams,
+#' ##                           annotation = annotation_dt)
+#' ##
+#' ## read_list will be a list of two data tables, named "Control" (with mapping
+#' ## reads from "Samp1.bam") and "Treated" (with mapping reads from"Samp2.bam")
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE, 
@@ -107,7 +122,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
 
   if (length(name_samples) == 0) {
     name_samples <- unlist(strsplit(name_bams, ".bam"))
-    names(name_samples) <- unlist(strsplit(name_bams, ".bam"))
+    names(name_samples) <- name_samples
   } else {
     if(is.null(names(name_samples)) | any(names(name_samples) == "") ){
       stop("name_samples must be a named character vector or NULL.")

@@ -352,8 +352,9 @@ For additional details please refers to the documentation provided by ?length_fi
   `metaprofile_psite` provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
 
     example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                                length_range = 28, utr5l = 20, cdsl = 40,
-                                                utr3l = 20, plot_title = "sample.transcript")
+                                                length_range = 28,
+												utr5l = 20, cdsl = 40, utr3l = 20, 
+												plot_title = "sample.transcript.length_range")
     example_metaprofile_28[["plot_Samp1"]]
 ![example_metaprofile_28](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
 
@@ -382,7 +383,8 @@ We can now run `metaprofile_psite`:
  Another way to visualize the trinucleotide periodicity along coding sequences is generating a metahaetmap. In this case the abundance of P-sites is represented by a continuous color scale and not by the height of a line chart as in metaprofiles. If multiple sets of transcripts are provided, the resulting heatmaps are arranged in one graphical output. Using the sample list generated in the previous example, `metaheatmap_psite` returns:
 
     example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
-                                             utr5l = 20, cdsl = 40, utr3l = 20, log = F)
+                                             utr5l = 20, cdsl = 40, utr3l = 20, log = F,
+											 plot_title = "Comparison metaheatmap")
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
 
@@ -405,9 +407,9 @@ We can now run `metaprofile_psite`:
  Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. Using the sample list generated in the previous examples, we can run `codon_usage_psite`:
 
 	example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
-						        sample = c("All", "Only_28"),
-						        fastapath = "path/to/transcriptome/FASTA/file",
-						        frequency_normalization = FALSE)
+						          sample = c("All", "Only_28"),
+						          fastapath = "path/to/transcriptome/FASTA/file",
+						          frequency_normalization = FALSE)
 	example_cu_scatter_2samples[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_2samples.png" width="320" />
@@ -427,10 +429,10 @@ We can now run `metaprofile_psite`:
  When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example. In both cases labels for a specified number of dots, reporting the coresponding triplet or amino acid symbol, can be added (see parameters *label_scatter*, *label_number* and *label_aminoacid*):
   
 	example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                              fastapath = "path/to/transcriptome/FASTA/file",
-                                              fasta_genome = FALSE, codon_values = cub_mouse,
-                                              frequency_normalization = FALSE, 
-					          label_scatter = TRUE, label_number = 5)
+                                                fastapath = "path/to/transcriptome/FASTA/file",
+                                                fasta_genome = FALSE, codon_values = cub_mouse,
+                                                frequency_normalization = FALSE, 
+					            label_scatter = TRUE, label_number = 5)
 	example_cu_scatter_cub[["plot_comparison"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_cub.png" width="320" />

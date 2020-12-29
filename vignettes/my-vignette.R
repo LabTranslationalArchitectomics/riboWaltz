@@ -122,7 +122,7 @@ example_metaprofile[["plot_Samp1"]]
 ## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/3.25, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE----
 example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                             length_range = 28, utr5l = 20, cdsl = 40,
-                                            utr3l = 20, plot_title = "sample.transcript")
+                                            utr3l = 20, plot_title = "sample.transcript.length_range")
 example_metaprofile_28[["plot_Samp1"]]
 
 ## ---- echo = TRUE-------------------------------------------------------------
@@ -143,7 +143,8 @@ example_metaprofile_comparison[["plot"]]
 
 ## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '700px', message = FALSE, warning = FALSE----
 example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
-                                            utr5l = 20, cdsl = 40, utr3l = 20, log = F)
+                                            utr5l = 20, cdsl = 40, utr3l = 20, log = F,
+                                            plot_title = "Comparison metaheatmap")
 example_metaheatmap[["plot"]]
 
 ## ---- echo = TRUE, eval = FALSE-----------------------------------------------

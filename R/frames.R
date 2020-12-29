@@ -22,6 +22,7 @@
 #'   "auto", the title of the plot reports the region specified by \code{region}
 #'   (if any) and the considered read length(s). Default is NULL i.e. no title
 #'   is plotted.
+#'   
 #' @return A list containing a ggplot2 object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
@@ -228,6 +229,11 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 #'   "auto", the title of the plot reports the region specified by \code{region}
 #'   (if any) and the considered read length(s). Default is NULL i.e. no title
 #'   is displayed.
+#' @param colour Character string specifying the colour of the plot. The colour
+#'   scheme is as follow: tiles corresponding to the lowest signal are always
+#'   white, tiles corresponding to the highest signal are of the specified
+#'   colour and the progression between these two colours follows a linear
+#'   gradient. Default is dark blue.
 #' @return A list containing a ggplot2 object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
@@ -245,7 +251,7 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 #' @export
 frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
                                region = "all", cl = 100, length_range = "all",
-                               plot_title = NULL){
+                               plot_title = NULL, colour = "#061b63"){
   
   if(length(sample) == 0) {
     sample <- names(data)
@@ -358,7 +364,7 @@ frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
   
   plot <- ggplot(final_frame_dt, aes(frame, as.numeric(as.character(length)))) +
     geom_tile(aes(fill = percentage)) +
-    scale_fill_gradient("P-site signal (%)  ", low = "white", high = "#061b63",
+    scale_fill_gradient("P-site signal (%)  ", low = "white", high = colour,
                         breaks = c(mins, mins/2 + maxs/2, maxs),
                         labels = c(round(mins), round(mins/2 + maxs/2), round(maxs))) +
     labs(x = "Frame", y = "Read length") +

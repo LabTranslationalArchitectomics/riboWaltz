@@ -29,7 +29,7 @@ metaprofile_psite(
 \item{sample}{Either character string or character string vector specifying
 the name of the sample(s) of interest. A named list of two or more
 character strings and/or character string vectors can be provided. In this
-case, each member of the list should include the name of the replicate(s)
+case, each element of the list should include the name of the replicate(s)
 of the samples of interest. Multiple samples/replicates included in
 character string vectors are handled according to \code{multisample}. If a
 list is provided, overlay or mirrored metaprofiles can be generated (see

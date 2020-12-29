@@ -11,7 +11,8 @@ frame_psite_length(
   region = "all",
   cl = 100,
   length_range = "all",
-  plot_title = NULL
+  plot_title = NULL,
+  colour = "#061b63"
 )
 }
 \arguments{
@@ -42,6 +43,12 @@ lengths are used. If specified, this parameter prevails over \code{cl}.}
 "auto", the title of the plot reports the region specified by \code{region}
 (if any) and the considered read length(s). Default is NULL i.e. no title
 is displayed.}
+
+\item{colour}{Character string specifying the colour of the plot. The colour
+scheme is as follow: tiles corresponding to the lowest signal are always
+white, tiles corresponding to the highest signal are of the specified
+colour and the progression between these two colours follows a linear
+gradient. Default is dark blue.}
 }
 \value{
 A list containing a ggplot2 object ("plot") and the data table with
