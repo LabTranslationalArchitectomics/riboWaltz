@@ -345,9 +345,10 @@ For additional details please refers to the documentation provided by ?length_fi
 	Other possible visualizations of two or more samples:
 		
 		example_length_dist_dodged <-  rlength_distr(comparison_list,
-							     sample = sample_list, cl = 99, multisamples = "average",
-								 plot_style = "dodged",
-								 colour = c("dodgerblue", "gray70"))
+							     sample = sample_list, cl = 99,
+							     multisamples = "average",
+							     plot_style = "dodged",
+							     colour = c("dodgerblue", "gray70"))
 		example_length_dist_dodged[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_dodged.png" width="450" />
@@ -357,9 +358,9 @@ For additional details please refers to the documentation provided by ?length_fi
 
 		example_length_dist_mirrored <-  rlength_distr(comparison_list,
 							       sample = sample_list,
-								   cl = 99, multisamples = "average",
-								   plot_style = "mirrored",
-								   colour = c("dodgerblue", "gray70"))
+							       cl = 99, multisamples = "average",
+							       plot_style = "mirrored",
+							       colour = c("dodgerblue", "gray70"))
 		example_length_dist_mirrored[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_mirrored.png" width="450" />
