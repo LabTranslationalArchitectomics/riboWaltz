@@ -441,9 +441,9 @@ For additional details please refers to the documentation provided by ?length_fi
   `metaprofile_psite` provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
 
     example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-						 length_range = 28,
-						 utr5l = 20, cdsl = 40, utr3l = 20,
-						 plot_title = "sample.transcript.length_range")
+						    length_range = 28,
+						    utr5l = 20, cdsl = 40, utr3l = 20,
+						    plot_title = "sample.transcript.length_range")
     example_metaprofile_28[["plot_Samp1"]]
 ![example_metaprofile_28](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
 
@@ -458,32 +458,32 @@ For additional details please refers to the documentation provided by ?length_fi
  Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see parameter *sample*).
 
     sample_list <- list("Only_28" = c("subsample_28nt"),
-                         "All" = c("whole_sample"))
+                        "All" = c("whole_sample"))
 
  We can now run `metaprofile_psite` setting *multisamples* to "average" and visualize the metaprofiles in three different ways, according to *plot_style*:
 
 	example_metaprofile_split <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-							multisamples = "average", plot_style = "split",
-							utr5l = 20, cdsl = 40, utr3l = 20,
-							frequency = TRUE, plot_title = "transcript",
-							colour = c("aquamarine4", "gray70"))
+						   multisamples = "average", plot_style = "split",
+						   utr5l = 20, cdsl = 40, utr3l = 20,
+						   frequency = TRUE, plot_title = "transcript",
+						   colour = c("aquamarine4", "gray70"))
 	example_metaprofile_split[["plot"]]
 ![example_metaprofile_split](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_split.png)
 
 
 	example_metaprofile_overlaid <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-							   multisamples = "average", plot_style = "overlaid",
-							   utr5l = 20, cdsl = 40, utr3l = 20,
-							   frequency = TRUE, plot_title = "transcript",
-							   colour = c("aquamarine4", "gray70"))
+							  multisamples = "average", plot_style = "overlaid",
+							  utr5l = 20, cdsl = 40, utr3l = 20,
+							  frequency = TRUE, plot_title = "transcript",
+							  colour = c("aquamarine4", "gray70"))
 	example_metaprofile_overlaid[["plot"]]
 ![example_metaprofile_overlaid](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_overlaid.png)
 
 	example_metaprofile_mirrored <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-							   multisamples = "average", plot_style = "mirrored",
-							   utr5l = 20, cdsl = 40, utr3l = 20,
-							   frequency = TRUE, plot_title = "transcript",
-							   colour = c("aquamarine4", "gray70"))
+							  multisamples = "average", plot_style = "mirrored",
+							  utr5l = 20, cdsl = 40, utr3l = 20,
+							  frequency = TRUE, plot_title = "transcript",
+							  colour = c("aquamarine4", "gray70"))
 	example_metaprofile_mirrored[["plot"]]
 ![example_metaprofile_mirrored](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_mirrored.png)
 
@@ -497,7 +497,7 @@ For additional details please refers to the documentation provided by ?length_fi
 
     example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
                                              utr5l = 20, cdsl = 40, utr3l = 20, log_colour = F, 
-					     plot_title = "Comparison metaheatmap")
+					         plot_title = "Comparison metaheatmap")
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
 
