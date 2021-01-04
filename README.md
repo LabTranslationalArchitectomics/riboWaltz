@@ -327,7 +327,7 @@ For additional details please refers to the documentation provided by ?length_fi
 	Then we define a named list containing the character strings specifying the name of the sample(s) of interest.
 
 		sample_list <- list("Only_start" = c("start_codon"),
-							"All" = c("whole_sample"))
+				    "All" = c("whole_sample"))
 				   
 	We can now visualize the two distributions in the same ggplot object in several ways, according to *plot_style*:
   
