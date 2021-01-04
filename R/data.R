@@ -1,9 +1,9 @@
 #' Annotation data table
 #'
-#' A dataset containing basic information about 109,712 mouse mRNAs (Ensembl v81
+#' A dataset containing basic information about 25,892 mouse mRNAs (Ensembl v81
 #' transcript annotation).
 #'
-#' @format A data table with 109,712 rows and 5 variables:
+#' @format A data table with 25,892 rows and 5 variables:
 #' \describe{
 #'   \item{transcript}{Name of the transcript (ENST ID and version, dot
 #'   separated)}
@@ -22,7 +22,7 @@
 #' dataset is provided, including only reads aligning on the translation
 #' initiation site. Please contact the authors for further information.
 #'
-#' @format A list of data tables with 1 object (named \emph{Samp1}) of 393,338
+#' @format A list of data tables with 1 object (named \emph{Samp1}) of 100,062
 #'   rows and 6 variables:
 #' \describe{
 #'   \item{transcript}{Name of the transcript (ENST ID and version, dot
@@ -71,39 +71,3 @@
 #'   \item{sample}{Name of the sample}
 #' }
 "psite_offset"
-
-
-#' Reads information data table updated with P-site details
-#'
-#' An example dataset that combines details on reads mapping on the mouse
-#' transcriptome (see \code{\link{reads_list}}) and length-specific ribosome
-#' P-site offsets (see \code{\link{psite_offset}}), as returned by
-#' \code{\link{psite_info}}.
-#'
-#' @format A list of data tables with 1 object (named \emph{Samp1}) of 393,338
-#'   rows and 10 variables:
-#' \describe{
-#'   \item{transcript}{Name of the transcript (ENST ID and version, dot
-#'   separated)}
-#'   \item{end5}{Position of the 5' end of the read with respect to the first
-#'   nucleotide of the transcript, in nucleotides}
-#'   \item{psite}{Position of the P-site with respect to the first nucleotide of
-#'   the transcript, in nucleotides}
-#'   \item{end3}{Position of the 3' end of the read with respect to the first
-#'   nucleotide of the transcript, in nucleotides}
-#'   \item{length}{Length of the read, in nucleotides (intended as the width of
-#'   the reference sequence region covered by the RNA fragment. For further
-#'   information about this choice please refer to section \code{Details} of
-#'   function \code{\link{bamtolist}})}
-#'   \item{cds_start}{Leftmost position of the CDS with respect to the first
-#'   nucleotide of the transcript, in nucleotides}
-#'   \item{cds_stop}{Rightmost position of the CDS with respect to the first
-#'   nucleotide of the transcript, in nucleotides}
-#'   \item{psite_from_start}{Position of the P-site with respect to the first
-#'   nucleotide of the annotated CDS (if any), in nucleotides}
-#'   \item{psite_from_stop}{Position of the P-site with respect to the last
-#'   nucleotide of the annotated CDS (if any), in nucleotides}
-#'   \item{psite_region}{Region of the transcript that includes the P-site
-#'   (5utr, cds, 3utr)}
-#' }
-"reads_psite_list"

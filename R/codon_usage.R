@@ -149,17 +149,21 @@
 #'   contains raw, normalized and scaled codon usage indexes, only raw and
 #'   scaled data otherwise.
 #' @examples
+#' ## ## compute and add the p-site datails
+#' ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+#' ## reads_psite_list <- psite_info(reads_list, psite_offset)
+#' ##
 #' ## ## codon usage from transcriptome alignment
 #' ## path_fasta <- "path/to/transcriptome/FASTA/file"
 #' ## codon_usage_psite(data = reads_psite_list, annotation = mm81cdna,
-#' ##                     sample = "Samp1",
-#' ##                     fastapath = path_fasta, fasta_genome = FALSE)
+#' ##                   sample = "Samp1",
+#' ##                   fastapath = path_fasta, fasta_genome = FALSE)
 #' ##
 #' ## ## codon usage from genome alignment
 #' ## path_fasta <- "path/to/genome/FASTA/file"
 #' ## codon_usage_psite(data = reads_psite_list, annotation = mm81cdna,
-#' ##                     sample = "Samp1",
-#' ##                     fastapath = path_fasta, fasta_genome = TRUE)
+#' ##                   sample = "Samp1",
+#' ##                   fastapath = path_fasta, fasta_genome = TRUE)
 #' @import data.table
 #' @import ggplot2
 #' @export

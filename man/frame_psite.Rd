@@ -48,13 +48,17 @@ values. It only handles annotated 5' UTRs, coding sequences and 3' UTRs,
 separately.
 }
 \examples{
-data(reads_psite_list)
-
-## Generate the bar plot for all read lengths:
-frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
-
-## Generate the bar plot restricting the analysis to coding sequences and
-## reads of 28 nucleotides:
-frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
-length_range = 28)
+## data(reads_list)
+##
+## ## compute and add p-site datails
+## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+## reads_psite_list <- psite_info(reads_list, psite_offset)
+##
+## ## Generate the bar plot for all read lengths:
+## frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
+## 
+## ## Generate the bar plot restricting the analysis to coding sequences and
+## ## reads of 28 nucleotides:
+## frame_sub <- frame_psite(reads_psite_list, sample = "Samp1",
+##                          region = "cds", length_range = 28)
 }

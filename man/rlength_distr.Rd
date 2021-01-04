@@ -4,37 +4,79 @@
 \alias{rlength_distr}
 \title{Read length distributions.}
 \usage{
-rlength_distr(data, sample, transcripts = NULL, cl = 100)
+rlength_distr(
+  data,
+  sample,
+  multisamples = "separated",
+  plot_style = "split",
+  transcripts = NULL,
+  cl = 100,
+  colour = NULL
+)
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},
 \code{\link{bedtolist}}, \code{\link{length_filter}} or
 \code{\link{psite_info}}.}
 
-\item{sample}{Character string specifying the name of the sample of interest.}
+\item{sample}{Either character string or character string vector specifying
+the name of the sample(s) of interest. A named list of two or more
+character strings and/or character string vectors can be provided. In this
+case, each element of the list should include the name of the replicate(s)
+of the samples of interest and the name assigned to the elements of the
+list are displayed in the plot. Multiple replicates specified in character
+string vectors are handled according to \code{multisample}.}
+
+\item{multisamples}{Either "separated" or "average". It specifies how to
+handle multiple samples and replicates. If "saparated", one bar plot for
+each sample included in \code{sample} is returned as an independent ggplot
+object. If "average" i) one bar plot is returned if \code{sample} is a
+character string vector or ii) one barplot is built for each element of
+\code{sample} when it is a list. If "average", the bar plots display for
+each length the mean signal and the corresponding standard error
+computed among the replicates. In this case a single ggplot object is
+returned, where multiple bar plots are organized and displayed according to
+\code{plot_style}. Default is "separated".}
+
+\item{plot_style}{Either "split", "dodged" or "mirrored". It specifies how to
+organize and display multiple bar plots. If "split", the bar plots are
+placed one next to the other, in independent boxes. If "dodged", all bar
+plots are included in one box, with each bar side by side with the others.
+If "mirrored" \code{sample} must be a list of exactly two elements and the
+two bar plots are mirrored along the x axis. Default is "split".}
 
 \item{transcripts}{Character string vector listing the name of transcripts to
 be included in the analysis. Default is NULL i.e. all transcripts are used.}
 
 \item{cl}{Integer value in [1,100] specifying a confidence level for
-restricting the plot to a sub-range of read lengths i.e. to the cl% of
-read lengths associated to the highest signals. Default is 100.}
+restricting the plot to a sub-range of read lengths. The new range is
+associated to the most abundant populations of reads accounting for the cl%
+of the sample. If multiple sample names are provided one range of read
+lengths is computed, such that at least the cl% of all sample are
+represented. Default is 100.}
+
+\item{colour}{Character string or character string vector specifying the
+colour of the bar plot(s). If \code{sample} is a list of multiple
+elements and \code{multisamples} is set to "average", a colour for
+each element of the list is required. If this parameter is not specified
+the R default palette is employed. Default is NULL.}
 }
 \value{
-List containing a ggplot2 object ("plot") and the data table with the
-  associated data ("dt").
+List containing one or more ggplot2 object(s) and the data table with
+  the associated data ("dt").
 }
 \description{
-This function generates read length distributions.
+This function generates read length distributions, displayed as bar plots.
+Multiple samples can be handled in several ways.
 }
 \examples{
 data(reads_list)
 
 ## Generate the length distribution for all read lengths:
 lendist_whole <- rlength_distr(reads_list, sample = "Samp1", cl = 100)
-lendist_whole[["plot"]]
+lendist_whole[["plot_Samp1"]]
 
 ## Generate the length distribution for a sub-range of read lengths:
 lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
-lendist_sub95[["plot"]]
+lendist_sub95[["plot_Samp1"]]
 }

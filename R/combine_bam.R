@@ -96,22 +96,22 @@
 #'   automatically transferred in the BAM.
 #' @return A list of data tables or a GRangesList object.
 #' @examples 
-#' ## Let's suppose there are two BAM files ("Samp1.bam" and "Samp2.bam") in
-#' ## "path/to/BAM/files". We want to acquire them and assign to the 
-#' ## corresponding data tables the names "Control" and "Treated", respectively.
-#' ## We first define the "name_samples" character string vector as follow:
+#' ## ## Let's suppose there are two BAM files ("Samp1.bam" and "Samp2.bam") in
+#' ## ## "path/to/BAM/files". We want to acquire them and assign to the 
+#' ## ## corresponding data tables the names "Control" and "Treated",
+#' ## ## respectively.
+#' ## ## We first define the "name_samples" character string vector as follow:
+#' ## name_of_bams <- c("Samp1", "Samp2")
+#' ## names(name_of_bams) <- c("Control", "Treated")
 #' ##
-#' ##   name_of_bams <- c("Samp1", "Samp2")
-#' ##   names(name_of_bams) <- c("Control", "Treated")
-#' ##
-#' ## Then, we can acquire the two files: 
-#' ##
-#' ##   path_bam <- "path/to/BAM/files"
-#' ##   reads_list <- bamtolist(bamfolder = path_bam, name_samples = name_of_bams,
+#' ## ## Then, we can acquire the two files: 
+#' ## path_bam <- "path/to/BAM/files"
+#' ## reads_list <- bamtolist(bamfolder = path_bam, name_samples = name_of_bams,
 #' ##                           annotation = annotation_dt)
 #' ##
-#' ## read_list will be a list of two data tables, named "Control" (with mapping
-#' ## reads from "Samp1.bam") and "Treated" (with mapping reads from"Samp2.bam")
+#' ## ## read_list will be a list of two data tables, named "Control" (with
+#' ## ## mapping reads from "Samp1.bam") and "Treated" (with mapping reads
+#' ## ## from"Samp2.bam")
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE, 

@@ -28,11 +28,15 @@
 #' @return A list containing a ggplot2 object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
-#' data(reads_psite_list)
-#' data(mm81cdna)
-#'
-#' reg_psite <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
-#' reg_psite[["plot"]]
+#' ## data(reads_list)
+#' ## data(mm81cdna)
+#' ##
+#' ## ## compute and add p-site datails
+#' ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+#' ## reads_psite_list <- psite_info(reads_list, psite_offset)
+#' ##
+#' ## reg_psite <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
+#' ## reg_psite[["plot"]]
 #' @import data.table
 #' @import ggplot2
 #' @export

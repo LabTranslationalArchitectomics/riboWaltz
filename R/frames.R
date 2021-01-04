@@ -26,15 +26,19 @@
 #' @return A list containing a ggplot2 object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
-#' data(reads_psite_list)
-#'
-#' ## Generate the bar plot for all read lengths:
-#' frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
-#'
-#' ## Generate the bar plot restricting the analysis to coding sequences and
-#' ## reads of 28 nucleotides:
-#' frame_sub <- frame_psite(reads_psite_list, sample = "Samp1", region = "cds",
-#' length_range = 28)
+#' ## data(reads_list)
+#' ##
+#' ## ## compute and add p-site datails
+#' ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+#' ## reads_psite_list <- psite_info(reads_list, psite_offset)
+#' ##
+#' ## ## Generate the bar plot for all read lengths:
+#' ## frame_whole <- frame_psite(reads_psite_list, sample = "Samp1")
+#' ## 
+#' ## ## Generate the bar plot restricting the analysis to coding sequences and
+#' ## ## reads of 28 nucleotides:
+#' ## frame_sub <- frame_psite(reads_psite_list, sample = "Samp1",
+#' ##                          region = "cds", length_range = 28)
 #' @import data.table
 #' @import ggplot2
 #' @export
@@ -219,9 +223,10 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 #'   According to this parameter the heatmaps are differently arranged to
 #'   optimise the organization and the visualization of the data.
 #' @param cl Integer value in [1,100] specifying a confidence level for
-#'   restricting the analysis to a sub-range of read lengths i.e. to the cl% of
-#'   read lengths associated to the highest signals. Default is 100.
-#'   This parameter has no effect if \code{length_range} is specified.
+#'   restricting the plot to a sub-range of read lengths. The new range is
+#'   associated to the most abundant populations of reads accounting for the cl%
+#'   of the sample. Default is 95. This parameter has no effect if
+#'   \code{length_range} is specified.
 #' @param length_range Integer or an integer vector specyfying the read
 #'   length(s) to be included in the analysis. Default is "all" i.e. all read
 #'   lengths are used. If specified, this parameter prevails over \code{cl}.
@@ -237,20 +242,24 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 #' @return A list containing a ggplot2 object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
-#' data(reads_psite_list)
-#'
-#' ## Generate the heatmap for all read lengths:
-#' frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
-#'
-#' ## Generate the heatmap restricting the analysis to coding sequences and a 
-#' ## sub-range of read lengths:
-#' frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
-#' region = "cds", cl = 90)
+#' ## data(reads_list)
+#' ##
+#' ## ## compute and add p-site datails
+#' ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+#' ## reads_psite_list <- psite_info(reads_list, psite_offset)
+#' ##
+#' ## ## Generate the heatmap for all read lengths:
+#' ## frame_len_whole <- frame_psite_length(reads_psite_list, sample = "Samp1")
+#' ##
+#' ## ## Generate the heatmap restricting the analysis to coding sequences and a 
+#' ## ## sub-range of read lengths:
+#' ## frame_len_sub <- frame_psite_length(reads_psite_list, sample = "Samp1",
+#' ##                                     region = "cds", cl = 90)
 #' @import data.table
 #' @import ggplot2
 #' @export
 frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
-                               region = "all", cl = 100, length_range = "all",
+                               region = "all", cl = 95, length_range = "all",
                                plot_title = NULL, colour = "#061b63"){
   
   if(length(sample) == 0) {

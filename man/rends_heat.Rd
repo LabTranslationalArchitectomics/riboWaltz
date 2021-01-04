@@ -33,8 +33,9 @@ shorter than \code{utr5l}, \eqn{2*}\code{cdsl} and \code{utr3l},
 respectively, are automatically discarded.}
 
 \item{cl}{Integer value in [1,100] specifying a confidence level for
-restricting the plot to a sub-range of read lengths i.e. to the cl% of
-read lengths associated to the highest signals. Default is 95.}
+restricting the plot to a sub-range of read lengths. The new range is
+associated to the most abundant populations of reads accounting for the cl%
+of the sample. Default is 95.}
 
 \item{utr5l}{Positive integer specifying the length (in nucleotides) of the
 5' UTR region flanking the start codon to be considered in the analysis.

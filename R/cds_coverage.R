@@ -18,15 +18,20 @@
 #'   end of the coding sequences to be excluded from the analisys. Default is 0.
 #' @return A data table.
 #' @examples
-#' data(reads_psite_list)
-#' data(mm81cdna)
-#'
-#' ## Compute the number of in-frame P-sites per whole coding sequence.
-#' psite_cds <- cds_coverage(reads_psite_list, mm81cdna)
-#'
-#' ## Compute the number of in-frame P-sites per the coding sequence exluding
-#' ## the first 15 nucleotides and the last 10 nucleotides.
-#' psite_cds <- cds_coverage(reads_psite_list, mm81cdna, start_nts = 15, stop_nts = 10)
+#' ## data(reads_list)
+#' ## data(mm81cdna)
+#' ##
+#' ## ## compute and add p-site datails
+#' ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+#' ## reads_psite_list <- psite_info(reads_list, psite_offset)
+#' ##
+#' ## ## Compute the number of in-frame P-sites per whole coding sequence.
+#' ## psite_cds <- cds_coverage(reads_psite_list, mm81cdna)
+#' ## 
+#' ## ## Compute the number of in-frame P-sites per the coding sequence exluding
+#' ## ## the first 15 nucleotides and the last 10 nucleotides.
+#' ## psite_cds <- cds_coverage(reads_psite_list, mm81cdna,
+#' ##                           start_nts = 15, stop_nts = 10)
 #' @import data.table
 #' @export
 cds_coverage <- function(data, annotation, start_nts = 0, stop_nts = 0) {

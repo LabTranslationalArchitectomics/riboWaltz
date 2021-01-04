@@ -9,7 +9,7 @@ metaprofile_psite(
   annotation,
   sample,
   multisamples = "separated",
-  mirrored = TRUE,
+  plot_style = "split",
   scale_factors = NULL,
   length_range = "all",
   transcripts = NULL,
@@ -17,7 +17,7 @@ metaprofile_psite(
   utr5l = 25,
   cdsl = 50,
   utr3l = 25,
-  colour = c("gray40", "dodgerblue"),
+  colour = NULL,
   plot_title = NULL
 )
 }
@@ -30,24 +30,29 @@ metaprofile_psite(
 the name of the sample(s) of interest. A named list of two or more
 character strings and/or character string vectors can be provided. In this
 case, each element of the list should include the name of the replicate(s)
-of the samples of interest. Multiple samples/replicates included in
-character string vectors are handled according to \code{multisample}. If a
-list is provided, overlay or mirrored metaprofiles can be generated (see
-\code{mirrored}) and the name assigned to its members are displayed in the
-metaprofile.}
+of the samples of interest and the name assigned to the elements of the
+list are displayed in the plot. Multiple replicates specified in character
+string vectors are handled according to \code{multisample}.}
 
-\item{multisamples}{Either "separated", "average" or "sum". This parameter is
-considered only if \code{sample} consists of or includes character string
-vectors of multiple sample names and specyfy how to handle them. If
-"saparated", one metaprofile for each sample is returned. If "average", one
-metaprofiles is returned, displaying for each nucleotide the mean signal
-and the corresponding standard deviation computed among samples. If "sum",
-one metaprofiles is returned, displaying for each nucleotide the sum of the
-signal of all samples. Default is "separated".}
+\item{multisamples}{Either "separated", "average" or "sum". It specifies how
+to handle multiple samples and replicates. If "saparated", one metaprofile
+for each sample included in \code{sample} is returned as an independent
+ggplot object. If "average" or "sum" i) one metaprofiles is returned if
+\code{sample} is a character string vector or ii) one metaprofiles is built
+for each element of \code{sample} when it is a list. If "average", the
+metaprofiles display for each nucleotide the mean signal and the
+corresponding standard error computed among the replicates. If "sum",
+the metaprofiles display for each nucleotide the sum of the signal of the
+replicates. In both cases a single ggplot object is returned, where
+multiple metaprofiles are organized and displayed according to
+\code{plot_style}. Default is "separated".}
 
-\item{mirrored}{Logical value whether to show mirrored metaprofiles when
-\code{sample} is a list of two elements. If FALSE, overlay metaprofiles are
-generated. Default is TRUE.}
+\item{plot_style}{Either "split", "ovelaid" or "mirrored". It specifies how
+to organize and display multiple metaprofiles. If "split", the metaprofiles
+are placed one below the other, in independent boxes. If "overlaid", all
+metaprofiles are superimposed. If "mirrored" \code{sample} must be a list
+of exactly two elements and the two metaprofiles are mirrored along the x
+axis. Default is "split".}
 
 \item{scale_factors}{Named numeric vector the same length as \code{sample}
 specifying the scale factors for generating metaprofiles from multiple
@@ -87,9 +92,8 @@ Default is 25.}
 \item{colour}{Character string or character string vector specifying the
 colour of the metaprofile(s). If \code{sample} is a list of multiple
 elements and \code{multisamples} is set to "average" or "sum", a colour for
-each element of the list is required. If this parameter is not specified,
-the two default colors (gray and blue) or the R default palette will be
-employed, according to the number of metaprofiles.}
+each element of the list is required. If this parameter is not specified
+the R default palette is employed. Default is NULL.}
 
 \item{plot_title}{Character string specifying the title of the plot. It can
 be any string provided by the user or "sample", "transcript" and
@@ -103,31 +107,38 @@ of the sample(s) and the read length(s). Default is NULL i.e. no title is
 displayed.}
 }
 \value{
-A list containing a ggplot2 object ("plot") and the data table with
-  the associated data ("dt").
+A list containing one or more ggplot2 object(s) and the data table
+  with the associated data ("dt").
 }
 \description{
-This function generates two metaprofiles displaying the abundance of P-sites
+This function generates metaprofiles displaying the abundance of P-sites
 around the start and the stop codon of annotated CDSs. For one sample the
 intensity of the signal in the metaprofiles corresponds, for each nucleotide,
 to the sum of the number of P-sites (defined by their leftmost position)
-mapping on that position for all transcripts. Multiple samples
-can be handled in several ways.
+mapping on that position for all transcripts. Multiple samples can be handled
+in several ways.
 }
 \examples{
-data(reads_psite_list)
-data(mm81cdna)
-
-## Generate metaprofiles employing all read lengths:
-metaprof_whole <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1")
-metaprof_whole[["plot"]]
-
-## Generate metaprofiles employing reads of 27, 28 and 29 nucleotides and a
-## subset of transcripts (in this example only transcripts with at least one
-## P-site mapping on the translation initiation site are kept):
-sample_name <- "Samp1"
-sub_reads_psite_list <- reads_psite_list[[sample_name]][psite_from_start == 0]
-transcript_names <- as.character(sub_reads_psite_list$transcript)
-metaprof_sub <- metaprofile_psite(reads_psite_list, mm81cdna, sample = sample_name,
-length_range = 27:29, transcripts = transcript_names)
+## data(reads_list)
+## data(mm81cdna)
+##
+## ## compute and add p-site datails
+## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+## reads_psite_list <- psite_info(reads_list, psite_offset)
+##
+## ## Generate metaprofiles employing all read lengths:
+## metaprof_whole <- metaprofile_psite(reads_psite_list, mm81cdna,
+##                                     sample = "Samp1")
+## metaprof_whole[["plot_Samp1"]]
+## 
+## ## Generate metaprofiles employing reads of 27, 28 and 29 nucleotides and
+## ## a subset of transcripts (in this example only transcripts with at least
+## ## one P-site mapping on the translation initiation site are kept):
+## sample_name <- "Samp1"
+## sub_reads_psite_list <- reads_psite_list[[sample_name]][psite_from_start == 0]
+## transcript_names <- as.character(sub_reads_psite_list$transcript)
+## metaprof_sub <- metaprofile_psite(reads_psite_list, mm81cdna,
+##                                   sample = sample_name,
+##                                   length_range = 27:29,
+##                                   transcripts = transcript_names)
 }

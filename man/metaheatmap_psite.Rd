@@ -97,27 +97,36 @@ The intensity of signal in the metaprofiles corresponds, for each
   replicates.
 }
 \examples{
-data(reads_psite_list)
-
-## Generate metaheatmaps employing all read lengths:
-metaheat_whole <- metaheatmap_psite(reads_psite_list, mm81cdna, sample = list("Whole"=c("Samp1")))
-
-## Generate metaprofiles employing reads of 27, 28 and 29 nucleotides and a
-## subset of transcripts (in this example only transcripts with at least one
-## P-site mapping on the translation initiation site are kept):
-sample_name <- "Samp1"
-sub_reads_psite_list <- reads_psite_list[[sample_name]][psite_from_start == 0]
-transcript_names <- as.character(sub_reads_psite_list$transcript)
-metaheat_sub <- metaheatmap_psite(reads_psite_list, mm81cdna, sample = list("sub"=sample_name),
-length_range = 27:29, transcripts = transcript_names, plot_title = "auto")
-
-## Generate two sets of metaheatmaps, displayed in the same plot. In this
-## example one set of metaheatmaps is based on all read lengths while the
-## other one is generated employing only reads of 28 nucleotides:
-sample_name <- "Samp1"
-metaheat_df <- list()
-metaheat_df[["subsample_28nt"]] <- reads_psite_list[[sample_name]][length == 28]
-metaheat_df[["whole_sample"]] <- reads_psite_list[[sample_name]]
-sample_list <- list("Only_28" = c("subsample_28nt"), "All" = c("whole_sample"))
-metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna, sample = sample_list)
+## data(reads_list)
+## data(mm81cdna)
+##
+## ## compute and add p-site datails
+## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+## reads_psite_list <- psite_info(reads_list, psite_offset)
+##
+## ## Generate metaheatmaps employing all read lengths:
+## metaheat_whole <- metaheatmap_psite(reads_psite_list, mm81cdna,
+##                                     sample = list("Whole"=c("Samp1")))
+##
+## ## Generate metaprofiles employing reads of 27, 28 and 29 nucleotides and
+## ## a subset of transcripts (in this example only transcripts with at least
+## ## one P-site mapping on the translation initiation site are kept):
+## sample_name <- "Samp1"
+## sub_reads_psite_list <- reads_psite_list[[sample_name]][psite_from_start == 0]
+## transcript_names <- as.character(sub_reads_psite_list$transcript)
+## metaheat_sub <- metaheatmap_psite(reads_psite_list, mm81cdna,
+##                                   sample = list("sub"=sample_name),
+## length_range = 27:29, transcripts = transcript_names, plot_title = "auto")
+##
+## ## Generate two sets of metaheatmaps, displayed in the same plot. In this
+## ## example one set of metaheatmaps is based on all read lengths while the
+## ## other one is generated employing only reads of 28 nucleotides:
+## sample_name <- "Samp1"
+## metaheat_df <- list()
+## metaheat_df[["subsample_28nt"]] <- reads_psite_list[[sample_name]][length == 28]
+## metaheat_df[["whole_sample"]] <- reads_psite_list[[sample_name]]
+## sample_list <- list("Only_28" = c("subsample_28nt"),
+##                     "All" = c("whole_sample"))
+## metaheat_comparison <- metaheatmap_psite(metaheat_df, mm81cdna,
+##                                          sample = sample_list)
 }

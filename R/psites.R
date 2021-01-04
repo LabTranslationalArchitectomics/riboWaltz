@@ -85,7 +85,7 @@
 #' @import ggplot2
 #' @export
 psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
-                  plot = FALSE, plot_dir = NULL, plot_format="png", cl = 99,
+                  plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99,
                   log_file = FALSE, log_file_dir = NULL) {
   
   if(log_file == T | log_file == TRUE){

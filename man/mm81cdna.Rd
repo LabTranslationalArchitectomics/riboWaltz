@@ -5,7 +5,7 @@
 \alias{mm81cdna}
 \title{Annotation data table}
 \format{
-A data table with 109,712 rows and 5 variables:
+A data table with 25,892 rows and 5 variables:
 \describe{
   \item{transcript}{Name of the transcript (ENST ID and version, dot
   separated)}
@@ -19,7 +19,7 @@ A data table with 109,712 rows and 5 variables:
 mm81cdna
 }
 \description{
-A dataset containing basic information about 109,712 mouse mRNAs (Ensembl v81
+A dataset containing basic information about 25,892 mouse mRNAs (Ensembl v81
 transcript annotation).
 }
 \keyword{datasets}

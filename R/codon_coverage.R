@@ -34,13 +34,17 @@
 #'   coding sequence length is not divisible by 3 are automatically discarded.
 #' @return A data table or a GRanges object.
 #' @examples
-#' data(reads_psite_list)
-#' data(mm81cdna)
-#'
+#' ## data(reads_list)
+#' ## data(mm81cdna)
+#' ##
+#' ## ## compute and add p-site datails
+#' ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
+#' ## reads_psite_list <- psite_info(reads_list, psite_offset)
+#' ##
 #' ## Compute the codon coverage based on the number of ribosome footprint per
 #' ## codon, setting the minimum overlap between reads and triplets to 3 nts:
 #' ## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, min_overlap = 3)
-#'
+#' ## 
 #' ## Compute the coverage based on the number of P-sites per codon:
 #' ## coverage_dt <- codon_coverage(reads_psite_list, mm81cdna, psite = TRUE)
 #' @import data.table

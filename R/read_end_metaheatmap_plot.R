@@ -15,8 +15,9 @@
 #'   shorter than \code{utr5l}, \eqn{2*}\code{cdsl} and \code{utr3l},
 #'   respectively, are automatically discarded.
 #' @param cl Integer value in [1,100] specifying a confidence level for
-#'   restricting the plot to a sub-range of read lengths i.e. to the cl% of
-#'   read lengths associated to the highest signals. Default is 95.
+#'   restricting the plot to a sub-range of read lengths. The new range is
+#'   associated to the most abundant populations of reads accounting for the cl%
+#'   of the sample. Default is 95.
 #' @param utr5l Positive integer specifying the length (in nucleotides) of the
 #'   5' UTR region flanking the start codon to be considered in the analysis.
 #'   Default is 50.
@@ -108,7 +109,7 @@ rends_heat <- function(data, annotation, sample, transcripts = NULL, cl = 95,
   p <- ggplot(final_tab, aes(dist, length)) +
     geom_tile(aes(fill = count)) +
     labs(title = paste(sample, "5' / 3' read end metaheatmaps", sep = " - "), y = "Read length") +
-    theme_bw(base_size = 20) +
+    theme_bw(base_size = 22) +
     theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(), axis.title.x = element_blank()) +
     facet_grid(end ~ region, scales = "free", switch = "x") +
     theme(strip.background = element_blank(), strip.placement = "outside") +

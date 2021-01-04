@@ -37,22 +37,22 @@ Please cite the following article (available [here](https://journals.plos.org/pl
   Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G. ***riboWaltz: Optimization of ribosome P-site positioning in ribosome profiling data.*** *PLoS Comput Biol. 2018 Aug 13;14(8):e1006169.*
   
   
-  ## Before starting
+## Before starting
   
-  ### Dependencies
+### Dependencies
   
   __riboWaltz__ requires R version >= 3.3.0 and the following packages:
   
   * CRAN
-+ data.table (>= 1.10.4.3)
-+ ggplot2 (>= 2.2.1)
-+ ggrepel (>= 0.6.5)
-* Bioconductor
-+ Biostrings (>= 2.46.0)
-+ GenomicAlignments (>= 1.14.1)
-+ GenomicFeatures (>= 1.24.5)
-+ GenomicRanges (>= 1.24.3)
-+ IRanges (>= 2.12.0)
+    + data.table (>= 1.10.4.3)
+    + ggplot2 (>= 2.2.1)
+    + ggrepel (>= 0.6.5)
+  * Bioconductor
+    + Biostrings (>= 2.46.0)
+    + GenomicAlignments (>= 1.14.1)
+    + GenomicFeatures (>= 1.24.5)
+    + GenomicRanges (>= 1.24.3)
+    + IRanges (>= 2.12.0)
 
 All dependencies are automatically installed running the code in the next section.
 
@@ -143,19 +143,20 @@ Then, one or multiple BED files produced by `bamtobed` are read, converted into 
 
 Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of read lengths according to the aim of the experiment. For this reason, __riboWaltz__ provides multiple options for treating read lengths, included in function `length_filter`:
   
-  1. Manual mode: only read lengths specified by the user are kept
+1. Manual mode: only read lengths specified by the user are kept
 
-```{r, eval = FALSE, echo = TRUE}
-filtered_list <- length_filter(data = reads_list, length_filter_mode = "custom",
+    ```{r, eval = FALSE, echo = TRUE}
+    filtered_list <- length_filter(data = reads_list, length_filter_mode = "custom",
                                length_filter_vector = 27:30)
-```
+    ```
 
 2. Periodicity threshold mode: only read lengths satisfying a periodicity threshold (i.e. a higher percentage of read extremities falls in one of the three reading frames along the CDS) are kept.
 
-```{r, eval = FALSE, echo = TRUE}
-filtered_list <- length_filter(data = reads_list, length_filter_mode = "periodicity",
+    ```{r, eval = FALSE, echo = TRUE}
+    filtered_list <- length_filter(data = reads_list, length_filter_mode = "periodicity",
                                periodicity_threshold = 70)
-```
+    ```
+
 For additional details please refer to the documentation provided by ?length_filter.
 
 
@@ -201,10 +202,7 @@ knitr::include_graphics("meta_psite_length31.png")
   <br>
   After the identification of the P-site offsets, the original data tables containing reads information must be updated accordingly. `psite_info` attaches to each data table four columns reporting i) the P-site position with respect to the 1st nucleotide of the transcript, ii) the P-site position with respect to the start and the stop codon of the annotated coding sequence (if any) and iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: for transcripts not associated to any annotated CDS the position of the P-site with respect to the start and the stop codon is set to NA. Here an example:
   
-```{r, echo = FALSE, eval = TRUE, include = FALSE}
-data(reads_psite_list)
-```
-```{r, echo = TRUE, eval = FALSE}
+```{r, echo = TRUE, eval = TRUE}
 reads_psite_list <- psite_info(reads_list, psite_offset)
 head(reads_psite_list[["Samp1"]])
 ```
@@ -219,7 +217,7 @@ Nucleotide sequences covered by the P-site, A-site or the E-site are required fo
 
 
 ## Codon and CDS coverage
-__riboAbacus__ includes two functions, `codon_coverage` and `cds_coverage`, providing quantitative information based on P-sites positions. 
+__riboWaltz__ includes two functions, `codon_coverage` and `cds_coverage`, providing quantitative information based on P-sites positions. 
 
 ### Codon coverage
 
@@ -268,26 +266,137 @@ All functions in __riboWaltz__ generating graphical outputs return a list of at 
 
 Two preliminary plots can be generated before the identification of the P-sites.
 
-The first plot, provided by `rlength_distr`, shows the distribution of reads lengths for a specified sample. It can be exploited for i) identifying multiple populations of read length, associated to different ribosome conformations and ii) exploring the contribution of each length bin to the final P-site determination. Here an example with the default parameters:
+The first preliminary plot, provided by `rlength_distr`, shows the distribution of reads lengths for a specified sample. It can be exploited for i) identifying multiple populations of read length, associated to different ribosome conformations and ii) exploring the contribution of each length bin to the final P-site determination. Here an example with the default parameters:
   
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 4, fig.asp = 1, fig.align = 'center', out.width = '275px', warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_length_dist <- rlength_distr(reads_list, sample = "Samp1")
-example_length_dist[["plot"]]
+example_length_dist[["plot_Samp1"]]
+```
+```{r, out.width = '275px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_length_dist.png")
 ```
 <br>
   Note that wide ranges of read lengths might result in squeezed distributions. To restrict the plot to a sub-range of read lengths  `rlength_distr` provides the *cl* parameter. It specifies a confidence level that automatically select the most abundant populations of reads discarding from the plot the (100-cl)% of read lengths associated to the lowest signals. The distribution showed above for a confidence level of 99% appears as follow:
   
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 4, fig.asp = 1, fig.align = 'center', out.width = '275px', warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_length_dist_zoom <- rlength_distr(reads_list, sample = "Samp1", cl = 99)
-example_length_dist_zoom[["plot"]]
+example_length_dist_zoom[["plot_Samp1"]]
+```
+```{r, out.width = '275px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_length_dist_zoom.png")
 ```
 <br>
-  The second plot, provided by `rends_heat`, consists of four metaheatmaps. It displays the abundance of the 5' and 3' extremity of reads mapping on and around the start and the stop codon of annotated CDSs, stratified by their length. As for the previous plot, it is possible to restrict the graphical output to a sub-range of read lengths by specifying the *cl* parameter:
+  It is possible to use `rlength_distr` to merge sample replicates and to visualize and compare multiple samples thank to the parameters *multisamples* and *plot_style*: `rlength_distr` can generate a collection of bar plot using reads from either a variety of biological conditions or subsets of the same dataset. Here some examples:
   
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '700px', message = FALSE, warning = FALSE}
+1. visualize the distribution of reads lengths merging the replicates of the same sample. Here we build a "second replicate" of our dataset by extracting random reads from *Samp1*: 
+  
+```{r, echo = FALSE}
+    set.seed(10)
+```
+    ```{r, eval = FALSE, echo = TRUE}
+    reads_list[["Samp2"]] <- reads_list[["Samp1"]][sample(.N, 1000)]
+    ```
+    Now we can merge the two "replicates" and visualize the mean signal and the corresponding standard error (very small, due to the procedure employed for the generation of the second "replicate") for each length. By passing *sample* as a named list, we ensure that the name of its element is used as title for the plot: 
+  
+    ```{r, eval = FALSE, echo = TRUE}
+    example_length_dist_rep <-  rlength_distr(reads_list,
+                                              sample = list("Samp_avg" = c("Samp1", "Samp2")),
+                                              cl = 99, multisamples = "average",
+                                              colour = "gray70")
+    example_length_dist_rep[["plot"]]
+    ```
+    ```{r, out.width = '275px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+    knitr::include_graphics("example_length_dist_rep.png")
+    ```
+  
+2. compare the distribution of reads lengths for multiple samples. We first build a second sample that contains only the reads of *Samp1* mapping on the start codon, generating a list of data tables with the reads of interest: 
+ 
+    ```{r, eval = FALSE, echo = TRUE}
+    comparison_list <- list()
+    comparison_list[["start_codon"]] <- reads_list[["Samp1"]][end5 <= cds_start & end3 >= cds_start]
+    comparison_list[["whole_sample"]] <- reads_list[["Samp1"]]
+    ```
+    Then we define a named list containing the character strings specifying the name of the sample(s) of interest.
+    ```{r, eval = FALSE, echo = TRUE}
+    sample_list <- list("Only_start" = c("start_codon"),
+                       "All" = c("whole_sample"))
+    ```
+    We can now visualize the two distributions in the same ggplot object in several ways, according to *plot_style*:
+  
+    ```{r, eval = FALSE, echo = TRUE}
+    example_length_dist_split <-  rlength_distr(comparison_list,
+                                                sample = sample_list,
+                                                cl = 99, multisamples = "average",
+                                                plot_style = "split",
+                                                colour = c("dodgerblue", "gray70"))
+    example_length_dist_split[["plot"]]
+    ```
+    ```{r, out.width = '500px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+    knitr::include_graphics("example_length_dist_split.png")
+    ```
+  
+    Note that *multisamples* is still set to "average". This is required to ensure that the element of the list will be   handled as groups of samples. Otherwise, if *multisamples* is set to "separated", *sample* is unlisted, coerced to character string and each sample will be returned as an individual ggplot object.
+  
+    Other possible visualizations of two or more samples:
+    ```{r, eval = FALSE, echo = TRUE}
+    example_length_dist_dodged <-  rlength_distr(comparison_list,
+                                                 sample = sample_list,
+                                                 cl = 99, multisamples = "average",
+                                                 plot_style = "dodged",
+                                                 colour = c("dodgerblue", "gray70"))
+    example_length_dist_dodged[["plot"]]
+    ```
+    ```{r, out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+    knitr::include_graphics("example_length_dist_dodged.png")
+    ```
+
+    ```{r, eval = FALSE, echo = TRUE}
+    example_length_dist_mirrored <-  rlength_distr(comparison_list,
+                                                   sample = sample_list,
+                                                   cl = 99, multisamples = "average",
+                                                   plot_style = "mirrored",
+                                                   colour = c("dodgerblue", "gray70"))
+    example_length_dist_mirrored[["plot"]]
+    ```
+    ```{r, out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+    knitr::include_graphics("example_length_dist_mirrored.png")
+    ```
+
+
+3. a combination of example 1 and 2: multiple samples and replicates.
+    ```{r, eval = FALSE, echo = TRUE}
+    comparison_list <- list()
+    comparison_list[["start_codon"]] <- reads_list[["Samp1"]][end5 <= cds_start & end3 >= cds_start]
+    comparison_list[["whole_sample1"]] <- reads_list[["Samp1"]]
+    comparison_list[["whole_sample2"]] <- reads_list[["Samp2"]]
+
+    sample_list <- list("Only_start" = c("start_codon"),
+                       "All" = c("whole_sample1", "whole_sample2"))
+    ```
+    Also in this case *plot_style* can be set to "split" (as in the following example), "dodged" and "mirrored".
+    ```{r, eval = FALSE, echo = TRUE}
+    example_length_dist_split_rep <-  rlength_distr(comparison_list,
+                                                    sample = sample_list,
+                                                    cl = 99, multisamples = "average",
+                                                    plot_style = "split",
+                                                    colour = c("dodgerblue", "gray70"))
+    example_length_dist_split_rep[["plot"]]
+    ```
+    ```{r, out.width = '500px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+    knitr::include_graphics("example_length_dist_split_rep.png")
+    ```
+<br>
+<br>
+
+The second preliminary plot, provided by `rends_heat`, consists of four metaheatmaps. It displays the abundance of the 5' and 3' extremity of reads mapping on and around the start and the stop codon of annotated CDSs, stratified by their length. As for the previous plot, it is possible to restrict the graphical output to a sub-range of read lengths by specifying the *cl* parameter:
+  
+```{r, eval = FALSE, echo = TRUE}
 example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 85,
                                    utr5l = 25, cdsl = 40, utr3l = 25)
 example_ends_heatmap[["plot"]]
+```
+```{r, out.width = '700px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_ends_heatmap.png")
 ```
 <br>
   This plot is particularly useful for manually detect the optimal read extremity to correct temporary P-site offsets (see the *extremity* parameter of function `psite`). In our example the signals coming from the 5' and the 3' extremity of reads mapping around the translation initiation site (TIS) show a clear difference. The distance between 5' ends and TIS varies according to read length (shorter the read, lower the distance) while the distance between 3' ends and TIS is almost constant. This property points to the more stable 3' end as the optimal extremity. In agreement with this conclusion, the 3' end is also automatically identified as the optimal extremity by the function `psite` run on the example dataset with the default options (see section *__P-site offset__* above).
@@ -299,9 +408,6 @@ example_ends_heatmap[["plot"]]
 
 Ribosome profiling data should highlight the CDS of transcripts as the region with the higher percentage of reads. To verify this property the function `region_psite` computes the percentage of P-sites falling in the three annotated transcript regions (5' UTR, CDS and 3' UTR). The bar plot of the resulting values includes a bar called "RNAs" displaying the expected read distribution from a random fragmentation of RNA. It reports the percentage of regions length for the transcripts included in the analysis, based on the cumulative nucleotide length of 5' UTRs, CDSs and 3' UTRs. Here an example with the default parameters, where the expected P-site enrichment on the CDS emerges:
   
-```{r, echo = FALSE, eval = TRUE, include = FALSE, warning = FALSE}
-example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
-```
 ```{r, echo = TRUE, eval = FALSE}
 example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
 example_psite_region[["plot"]]
@@ -317,15 +423,21 @@ knitr::include_graphics("example_psite_per_region.png")
 
 A fundamental characteristic of ribosome profiling data is the trinucleotide periodicity of ribosome footprints along coding sequences. Functions `frame_psite_length` and `frame_psite` show if, and to which extent, the identified P-sites results in codon periodicity on the CDS. Both functions compute the percentage of P-sites falling in the three possible translation reading frames for 5’ UTRs, CDSs and 3’ UTRs with one difference: `frame_psite_length` analyses all read lengths separately and generates a heatmap for each transcript region, while `frame_psite` processes all reads at once, returning three bar plots. Here the outputs for the example dataset:
   
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 10, fig.asp = 1/1.9, fig.align = 'center', out.width = '450px', message = FALSE, warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_frames_stratified <- frame_psite_length(reads_psite_list, sample = "Samp1",
                                                 region = "all", cl = 90)
 example_frames_stratified[["plot"]]
 ```
+```{r, out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_frames_stratified.png")
+```
 <br>
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 10, fig.asp = 1/2.3, fig.align = 'center', out.width = '450px', message = FALSE, warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_frames <- frame_psite(reads_psite_list, sample = "Samp1", region = "all")
 example_frames[["plot"]]
+```
+```{r, out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_frames.png")
 ```
 <br>
   Both plots show an enrichment of P-sites in the first frame on the coding sequence but not the UTRs, as expected for ribosome protected fragments from protein coding mRNAs.
@@ -337,56 +449,96 @@ example_frames[["plot"]]
 
 A visual representation of the trinucleotide periodicity along coding sequences is provided by the function `metaprofile_psite`. It generates metaprofiles (the merge of single, transcript-specific profiles) based on P-sites mapping around the start and the stop codon of annotated CDSs. Multiple replicates can be combined in a single plot by providing scale factors from any normalization chosen by the user. Metaprofiles can be based on the whole dataset (as in the example below), on subsets of transcripts or on single RNAs.
 
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/3.25, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                          utr5l = 20, cdsl = 40, utr3l = 20,
                                          plot_title = "sample.transcript")
 example_metaprofile[["plot_Samp1"]]
 ```
+```{r, out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_metaprofile.png")
+```
 <br>
   `metaprofile_psite` provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
   
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/3.25, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
                                             length_range = 28, utr5l = 20, cdsl = 40,
-                                            utr3l = 20, plot_title = "sample.transcript.length_range")
+                                            utr3l = 20, colour = "aquamarine4",
+                                            plot_title = "sample.transcript.length_range")
 example_metaprofile_28[["plot_Samp1"]]
 ```
+```{r, out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_metaprofile_28.png")
+```
 <br>
-It is also possible to use `metaprofile_psite` for comparing multiple samples or populations of reads (e.g. with different length): for the same set of transcripts, `metaprofile_psite` can generate a collection of metaprofiles using reads from either a variety of biological conditions or subsets of the same dataset.
+It is also possible to use `metaprofile_psite` to merge sample replicates and to visualize and compare multiple samples thank to the parameters *multisamples* and *plot_style*: for the same set of transcripts, `metaprofile_psite` can generate a collection of metaprofiles using reads from either a variety of biological conditions or subsets of the same dataset. Note that multiple replicates can be handled as already illustrated for `rlength_distr`.
 
 Here an example: let's suppose we want to investigate if, and to which extent, trinucleotide periodicity of reads of 28 nucleotides differs from trinucleotide periodicity based on all read lengths. As first step we create a list of data tables with the reads of interest:
 
-```{r, echo = TRUE}
+```{r, eval = FALSE, echo = TRUE}
 comparison_list <- list()
 comparison_list[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
 comparison_list[["whole_sample"]] <- reads_psite_list[["Samp1"]]
 ```
   Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see parameter *sample*).
 
-```{r, echo = TRUE}
+```{r, eval = FALSE, echo = TRUE}
 sample_list <- list("Only_28" = c("subsample_28nt"),
                    "All" = c("whole_sample"))
 ```
-  We can now run `metaprofile_psite`:
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE}
-example_metaprofile_comparison <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         frequency = TRUE, plot_title = "transcript",
-                                         mirrored = TRUE, colour = c("aquamarine4", "gray40"))
-example_metaprofile_comparison[["plot"]]
+  We can now run `metaprofile_psite` setting *multisamples* to "average" and visualize the metaprofiles in three different ways, according to *plot_style*:
+```{r, eval = FALSE, echo = TRUE}
+example_metaprofile_split <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+                                               multisamples = "average", plot_style = "split",
+                                               utr5l = 20, cdsl = 40, utr3l = 20,
+                                               frequency = TRUE, plot_title = "transcript",
+                                               colour = c("aquamarine4", "gray70"))
+example_metaprofile_split[["plot"]]
+```
+```{r, out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_metaprofile_split.png")
+```
+```{r, eval = FALSE, echo = TRUE}
+example_metaprofile_overlaid <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+                                                  multisamples = "average", plot_style = "overlaid",
+                                                  utr5l = 20, cdsl = 40, utr3l = 20,
+                                                  frequency = TRUE, plot_title = "transcript",
+                                                  colour = c("aquamarine4", "gray70"))
+example_metaprofile_overlaid[["plot"]]
+```
+```{r, out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_metaprofile_overlaid.png")
+```
+```{r, eval = FALSE, echo = TRUE}
+example_metaprofile_mirrored <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+                                                  multisamples = "average", plot_style = "mirrored",
+                                                  utr5l = 20, cdsl = 40, utr3l = 20,
+                                                  frequency = TRUE, plot_title = "transcript",
+                                                  colour = c("aquamarine4", "gray70"))
+example_metaprofile_mirrored[["plot"]]
+```
+```{r, out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_metaprofile_mirrored.png")
 ```
 <br>
-  Another way to visualize the trinucleotide periodicity along coding sequences is generating a metahaetmap. In this case the abundance of P-sites is represented by a continuous color scale and not by the height of a line chart as in metaprofiles. If multiple sets of transcripts are provided, the resulting heatmaps are arranged in one graphical output. Using the sample list generated in the previous example, `metaheatmap_psite` returns:
+Another way to visualize the trinucleotide periodicity along coding sequences is to generate a metahaetmap by `metaheatmap_psite`. In this case the abundance of P-sites is represented by a continuous color scale. If multiple samples are provided (i.e. multiple sets of reads, that can only be specified by objects of type list in *sample*), the resulting heatmaps are arranged in one graphical output. 
+  
+*NOTE*: the function `metaheatmap_psite` is deprecated. The original purpose of this was the comparison of multiple samples in the same plot, while for single samples `metaprofile_psite` was supposed to be the reference function. However, `metaprofile_psite` has gradually been updated and can now handle multiple samples and replicates. Moreover, in plots returned by `metaprofile_psite`, variations in the signal along the transcripts are proportional to the height of a line rather than to the color of tiles and can be better appreciated.
+  
+Using the sample list generated in the previous example, `metaheatmap_psite` returns:
 
-```{r, echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '700px', message = FALSE, warning = FALSE}
+```{r, eval = FALSE, echo = TRUE}
 example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
-                                            utr5l = 20, cdsl = 40, utr3l = 20, log = F,
-                                            plot_title = "Comparison metaheatmap")
+                                         utr5l = 20, cdsl = 40, utr3l = 20, log_colour = F,
+                                         plot_title = "Comparison metaheatmap")
 example_metaheatmap[["plot"]]
 ```
+```{r, out.width = '700px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("example_metaheatmap.png")
+```
 <br>
- The output includes two heatmaps, one for each data table. The plot shows a clear trinucleotide periodicity for both datasets and a signal on the 5th codon stonger than on the TIS only for reads of 28 nucleotides, in agreement with the metaprofiles showed above. 
+ The output includes two heatmaps, one for each data table.
 
 
 
@@ -397,9 +549,9 @@ example_metaheatmap[["plot"]]
 
 ```{r, echo = TRUE, eval = FALSE}
 example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                          fastapath = "path/to/transcriptome/FASTA/file",
-                                          fasta_genome = FALSE,
-                                          frequency_normalization = FALSE) 
+                                        fastapath = "path/to/transcriptome/FASTA/file",
+                                        fasta_genome = FALSE,
+                                        frequency_normalization = FALSE) 
 example_cu_barplot[["plot"]]
 ```
 ```{r, out.width = '690px', fig.retina = NULL, echo = FALSE}
@@ -413,9 +565,9 @@ knitr::include_graphics("example_cu_barplot.png")
   
 ```{r, echo = TRUE, eval = FALSE}
 example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, sample = c("All", "Only_28"),
-                                          fastapath = "path/to/transcriptome/FASTA/file",
-                                          fasta_genome = FALSE,
-                                          frequency_normalization = FALSE)
+                                                 fastapath = "path/to/transcriptome/FASTA/file",
+                                                 fasta_genome = FALSE,
+                                                 frequency_normalization = FALSE)
 example_cu_scatter_2samples[["plot_comparison"]]
 ```
 ```{r, out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"}
@@ -435,10 +587,10 @@ When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as 
   
 ```{r, echo=TRUE, eval=FALSE}
 example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                     fastapath = "path/to/transcriptome/FASTA/file",
-                                     fasta_genome = FALSE, codon_values = cub_mouse,
-                                     frequency_normalization = FALSE,
-                                     label_scatter = TRUE, label_number = 5)
+                                            fastapath = "path/to/transcriptome/FASTA/file",
+                                            fasta_genome = FALSE, codon_values = cub_mouse,
+                                            frequency_normalization = FALSE,
+                                            label_scatter = TRUE, label_number = 5)
 example_cu_scatter_cub[["plot_comparison"]]
 ```
 ```{r, out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"}

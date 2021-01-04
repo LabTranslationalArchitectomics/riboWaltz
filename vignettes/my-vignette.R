@@ -23,11 +23,11 @@ head(reads_list[["Samp1"]])
 
 ## ---- eval = FALSE, echo = TRUE-----------------------------------------------
 #  filtered_list <- length_filter(data = reads_list, length_filter_mode = "custom",
-#                                 length_filter_vector = 27:30)
+#                             length_filter_vector = 27:30)
 
 ## ---- eval = FALSE, echo = TRUE-----------------------------------------------
 #  filtered_list <- length_filter(data = reads_list, length_filter_mode = "periodicity",
-#                                 periodicity_threshold = 70)
+#                             periodicity_threshold = 70)
 
 ## ---- eval = TRUE, echo = FALSE, message = FALSE, warning = FALSE-------------
 data(reads_list)
@@ -47,12 +47,9 @@ head(psite_offset, 10)
 knitr::include_graphics("meta_psite_length28.png")
 knitr::include_graphics("meta_psite_length31.png")
 
-## ---- echo = FALSE, eval = TRUE, include = FALSE------------------------------
-data(reads_psite_list)
-
-## ---- echo = TRUE, eval = FALSE-----------------------------------------------
-#  reads_psite_list <- psite_info(reads_list, psite_offset)
-#  head(reads_psite_list[["Samp1"]])
+## ---- echo = TRUE, eval = TRUE------------------------------------------------
+reads_psite_list <- psite_info(reads_list, psite_offset)
+head(reads_psite_list[["Samp1"]])
 
 ## ---- echo = FALSE, eval = TRUE-----------------------------------------------
 head(reads_psite_list[["Samp1"]])
@@ -81,21 +78,105 @@ cds_coverage_example <- cds_coverage(reads_psite_list, mm81cdna)
 ## ---- echo = FALSE, eval = TRUE-----------------------------------------------
 head(cds_coverage_example)
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 4, fig.asp = 1, fig.align = 'center', out.width = '275px', warning = FALSE----
-example_length_dist <- rlength_distr(reads_list, sample = "Samp1")
-example_length_dist[["plot"]]
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist <- rlength_distr(reads_list, sample = "Samp1")
+#  example_length_dist[["plot_Samp1"]]
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 4, fig.asp = 1, fig.align = 'center', out.width = '275px', warning = FALSE----
-example_length_dist_zoom <- rlength_distr(reads_list, sample = "Samp1", cl = 99)
-example_length_dist_zoom[["plot"]]
+## ---- out.width = '275px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist.png")
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '700px', message = FALSE, warning = FALSE----
-example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 85,
-                                   utr5l = 25, cdsl = 40, utr3l = 25)
-example_ends_heatmap[["plot"]]
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist_zoom <- rlength_distr(reads_list, sample = "Samp1", cl = 99)
+#  example_length_dist_zoom[["plot_Samp1"]]
 
-## ---- echo = FALSE, eval = TRUE, include = FALSE, warning = FALSE-------------
-example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
+## ---- out.width = '275px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist_zoom.png")
+
+## ---- echo = FALSE------------------------------------------------------------
+    set.seed(10)
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  reads_list[["Samp2"]] <- reads_list[["Samp1"]][sample(.N, 1000)]
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist_rep <-  rlength_distr(reads_list,
+#                                            sample = list("Samp_avg" = c("Samp1", "Samp2")),
+#                                            cl = 99, multisamples = "average",
+#                                            colour = "gray70")
+#  example_length_dist_rep[["plot"]]
+
+## ---- out.width = '275px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist_rep.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  comparison_list <- list()
+#  comparison_list[["start_codon"]] <- reads_list[["Samp1"]][end5 <= cds_start & end3 >= cds_start]
+#  comparison_list[["whole_sample"]] <- reads_list[["Samp1"]]
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  sample_list <- list("Only_start" = c("start_codon"),
+#                     "All" = c("whole_sample"))
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist_split <-  rlength_distr(comparison_list,
+#                                              sample = sample_list,
+#                                              cl = 99, multisamples = "average",
+#                                              plot_style = "split",
+#                                              colour = c("dodgerblue", "gray70"))
+#  example_length_dist_split[["plot"]]
+
+## ---- out.width = '500px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist_split.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist_dodged <-  rlength_distr(comparison_list,
+#                                               sample = sample_list,
+#                                               cl = 99, multisamples = "average",
+#                                               plot_style = "dodged",
+#                                               colour = c("dodgerblue", "gray70"))
+#  example_length_dist_dodged[["plot"]]
+
+## ---- out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist_dodged.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist_mirrored <-  rlength_distr(comparison_list,
+#                                                 sample = sample_list,
+#                                                 cl = 99, multisamples = "average",
+#                                                 plot_style = "mirrored",
+#                                                 colour = c("dodgerblue", "gray70"))
+#  example_length_dist_mirrored[["plot"]]
+
+## ---- out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist_mirrored.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  comparison_list <- list()
+#  comparison_list[["start_codon"]] <- reads_list[["Samp1"]][end5 <= cds_start & end3 >= cds_start]
+#  comparison_list[["whole_sample1"]] <- reads_list[["Samp1"]]
+#  comparison_list[["whole_sample2"]] <- reads_list[["Samp2"]]
+#  
+#  sample_list <- list("Only_start" = c("start_codon"),
+#                     "All" = c("whole_sample1", "whole_sample2"))
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_length_dist_split_rep <-  rlength_distr(comparison_list,
+#                                                  sample = sample_list,
+#                                                  cl = 99, multisamples = "average",
+#                                                  plot_style = "split",
+#                                                  colour = c("dodgerblue", "gray70"))
+#  example_length_dist_split_rep[["plot"]]
+
+## ---- out.width = '500px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_length_dist_split_rep.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 85,
+#                                     utr5l = 25, cdsl = 40, utr3l = 25)
+#  example_ends_heatmap[["plot"]]
+
+## ---- out.width = '700px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_ends_heatmap.png")
 
 ## ---- echo = TRUE, eval = FALSE-----------------------------------------------
 #  example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
@@ -104,54 +185,96 @@ example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1
 ## ---- out.width = '260px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
 knitr::include_graphics("example_psite_per_region.png")
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 10, fig.asp = 1/1.9, fig.align = 'center', out.width = '450px', message = FALSE, warning = FALSE----
-example_frames_stratified <- frame_psite_length(reads_psite_list, sample = "Samp1",
-                                                region = "all", cl = 90)
-example_frames_stratified[["plot"]]
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_frames_stratified <- frame_psite_length(reads_psite_list, sample = "Samp1",
+#                                                  region = "all", cl = 90)
+#  example_frames_stratified[["plot"]]
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 10, fig.asp = 1/2.3, fig.align = 'center', out.width = '450px', message = FALSE, warning = FALSE----
-example_frames <- frame_psite(reads_psite_list, sample = "Samp1", region = "all")
-example_frames[["plot"]]
+## ---- out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_frames_stratified.png")
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/3.25, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE----
-example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         plot_title = "sample.transcript")
-example_metaprofile[["plot_Samp1"]]
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_frames <- frame_psite(reads_psite_list, sample = "Samp1", region = "all")
+#  example_frames[["plot"]]
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/3.25, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE----
-example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                            length_range = 28, utr5l = 20, cdsl = 40,
-                                            utr3l = 20, plot_title = "sample.transcript.length_range")
-example_metaprofile_28[["plot_Samp1"]]
+## ---- out.width = '450px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_frames.png")
 
-## ---- echo = TRUE-------------------------------------------------------------
-comparison_list <- list()
-comparison_list[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
-comparison_list[["whole_sample"]] <- reads_psite_list[["Samp1"]]
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+#                                           utr5l = 20, cdsl = 40, utr3l = 20,
+#                                           plot_title = "sample.transcript")
+#  example_metaprofile[["plot_Samp1"]]
 
-## ---- echo = TRUE-------------------------------------------------------------
-sample_list <- list("Only_28" = c("subsample_28nt"),
-                   "All" = c("whole_sample"))
+## ---- out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_metaprofile.png")
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '690px', message = FALSE, warning = FALSE----
-example_metaprofile_comparison <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         frequency = TRUE, plot_title = "transcript",
-                                         mirrored = TRUE, colour = c("aquamarine4", "gray40"))
-example_metaprofile_comparison[["plot"]]
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+#                                              length_range = 28, utr5l = 20, cdsl = 40,
+#                                              utr3l = 20, colour = "aquamarine4",
+#                                              plot_title = "sample.transcript.length_range")
+#  example_metaprofile_28[["plot_Samp1"]]
 
-## ---- echo = TRUE, fig.show = 'hold', fig.width = 15, fig.asp = 1/2.5, fig.align = 'center', out.width = '700px', message = FALSE, warning = FALSE----
-example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
-                                            utr5l = 20, cdsl = 40, utr3l = 20, log = F,
-                                            plot_title = "Comparison metaheatmap")
-example_metaheatmap[["plot"]]
+## ---- out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_metaprofile_28.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  comparison_list <- list()
+#  comparison_list[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
+#  comparison_list[["whole_sample"]] <- reads_psite_list[["Samp1"]]
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  sample_list <- list("Only_28" = c("subsample_28nt"),
+#                     "All" = c("whole_sample"))
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_metaprofile_split <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+#                                                 multisamples = "average", plot_style = "split",
+#                                                 utr5l = 20, cdsl = 40, utr3l = 20,
+#                                                 frequency = TRUE, plot_title = "transcript",
+#                                                 colour = c("aquamarine4", "gray70"))
+#  example_metaprofile_split[["plot"]]
+
+## ---- out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_metaprofile_split.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_metaprofile_overlaid <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+#                                                    multisamples = "average", plot_style = "overlaid",
+#                                                    utr5l = 20, cdsl = 40, utr3l = 20,
+#                                                    frequency = TRUE, plot_title = "transcript",
+#                                                    colour = c("aquamarine4", "gray70"))
+#  example_metaprofile_overlaid[["plot"]]
+
+## ---- out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_metaprofile_overlaid.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_metaprofile_mirrored <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
+#                                                    multisamples = "average", plot_style = "mirrored",
+#                                                    utr5l = 20, cdsl = 40, utr3l = 20,
+#                                                    frequency = TRUE, plot_title = "transcript",
+#                                                    colour = c("aquamarine4", "gray70"))
+#  example_metaprofile_mirrored[["plot"]]
+
+## ---- out.width = '690px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_metaprofile_mirrored.png")
+
+## ---- eval = FALSE, echo = TRUE-----------------------------------------------
+#  example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
+#                                           utr5l = 20, cdsl = 40, utr3l = 20, log_colour = F,
+#                                           plot_title = "Comparison metaheatmap")
+#  example_metaheatmap[["plot"]]
+
+## ---- out.width = '700px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
+knitr::include_graphics("example_metaheatmap.png")
 
 ## ---- echo = TRUE, eval = FALSE-----------------------------------------------
 #  example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-#                                            fastapath = "path/to/transcriptome/FASTA/file",
-#                                            fasta_genome = FALSE,
-#                                            frequency_normalization = FALSE)
+#                                          fastapath = "path/to/transcriptome/FASTA/file",
+#                                          fasta_genome = FALSE,
+#                                          frequency_normalization = FALSE)
 #  example_cu_barplot[["plot"]]
 
 ## ---- out.width = '690px', fig.retina = NULL, echo = FALSE--------------------
@@ -159,9 +282,9 @@ knitr::include_graphics("example_cu_barplot.png")
 
 ## ---- echo = TRUE, eval = FALSE-----------------------------------------------
 #  example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, sample = c("All", "Only_28"),
-#                                            fastapath = "path/to/transcriptome/FASTA/file",
-#                                            fasta_genome = FALSE,
-#                                            frequency_normalization = FALSE)
+#                                                   fastapath = "path/to/transcriptome/FASTA/file",
+#                                                   fasta_genome = FALSE,
+#                                                   frequency_normalization = FALSE)
 #  example_cu_scatter_2samples[["plot_comparison"]]
 
 ## ---- out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
@@ -176,10 +299,10 @@ head(cub_mouse)
 
 ## ---- echo=TRUE, eval=FALSE---------------------------------------------------
 #  example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-#                                       fastapath = "path/to/transcriptome/FASTA/file",
-#                                       fasta_genome = FALSE, codon_values = cub_mouse,
-#                                       frequency_normalization = FALSE,
-#                                       label_scatter = TRUE, label_number = 5)
+#                                              fastapath = "path/to/transcriptome/FASTA/file",
+#                                              fasta_genome = FALSE, codon_values = cub_mouse,
+#                                              frequency_normalization = FALSE,
+#                                              label_scatter = TRUE, label_number = 5)
 #  example_cu_scatter_cub[["plot_comparison"]]
 
 ## ---- out.width = '300px', fig.retina = NULL, echo = FALSE, fig.align = "center"----
