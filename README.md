@@ -310,7 +310,7 @@ For additional details please refers to the documentation provided by ?length_fi
 	Now we can merge the two "replicates" and visualize the mean signal and the corresponding standard error (very small, due to the procedure employed for the generation of the second "replicate") for each length. By passing *sample* as a named list, we ensure that the name of its element is used as title for the plot: 
   
 		example_length_dist_rep <-  rlength_distr(reads_list,
-												  sample = list("Samp_avg" = c("Samp1", "Samp2")),
+		sample = list("Samp_avg" = c("Samp1", "Samp2")),
 												  cl = 99, multisamples = "average",
 												  colour = "gray70")
 		example_length_dist_rep[["plot"]]
