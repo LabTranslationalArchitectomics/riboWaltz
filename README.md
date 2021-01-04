@@ -310,9 +310,9 @@ For additional details please refers to the documentation provided by ?length_fi
 	Now we can merge the two "replicates" and visualize the mean signal and the corresponding standard error (very small, due to the procedure employed for the generation of the second "replicate") for each length. By passing *sample* as a named list, we ensure that the name of its element is used as title for the plot: 
   
 		example_length_dist_rep <- rlength_distr(reads_list,
-							 sample = list("Samp_avg" = c("Samp1", "Samp2")),
-							 cl = 99, multisamples = "average",
-							 colour = "gray70")
+							  sample = list("Samp_avg" = c("Samp1", "Samp2")),
+							  cl = 99, multisamples = "average",
+							  colour = "gray70")
 		example_length_dist_rep[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep.png" width="275" />
@@ -327,14 +327,14 @@ For additional details please refers to the documentation provided by ?length_fi
 	Then we define a named list containing the character strings specifying the name of the sample(s) of interest.
 
 		sample_list <- list("Only_start" = c("start_codon"),
-				    "All" = c("whole_sample"))
+				     "All" = c("whole_sample"))
 				   
 	We can now visualize the two distributions in the same ggplot object in several ways, according to *plot_style*:
   
 		example_length_dist_split <-  rlength_distr(comparison_list,
-							    sample = sample_list,
-							    plot_style = "split",
-							    colour = c("dodgerblue", "gray70"))
+							     sample = sample_list,
+							     plot_style = "split",
+							     colour = c("dodgerblue", "gray70"))
 		example_length_dist_split[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_split.png" width="500" />
@@ -345,10 +345,10 @@ For additional details please refers to the documentation provided by ?length_fi
 	Other possible visualizations of two or more samples:
 		
 		example_length_dist_dodged <-  rlength_distr(comparison_list,
-							     sample = sample_list, cl = 99,
-							     multisamples = "average",
-							     plot_style = "dodged",
-							     colour = c("dodgerblue", "gray70"))
+							      sample = sample_list, cl = 99,
+							      multisamples = "average",
+							      plot_style = "dodged",
+							      colour = c("dodgerblue", "gray70"))
 		example_length_dist_dodged[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_dodged.png" width="450" />
@@ -357,10 +357,10 @@ For additional details please refers to the documentation provided by ?length_fi
 	Other possible visualizations of two or more samples:
 
 		example_length_dist_mirrored <-  rlength_distr(comparison_list,
-							       sample = sample_list,
-							       cl = 99, multisamples = "average",
-							       plot_style = "mirrored",
-							       colour = c("dodgerblue", "gray70"))
+							        sample = sample_list,
+							        cl = 99, multisamples = "average",
+							        plot_style = "mirrored",
+							        colour = c("dodgerblue", "gray70"))
 		example_length_dist_mirrored[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_mirrored.png" width="450" />
@@ -374,15 +374,15 @@ For additional details please refers to the documentation provided by ?length_fi
 		comparison_list[["whole_sample2"]] <- reads_list[["Samp2"]]
 
 		sample_list <- list("Only_start" = c("start_codon"),
-							"All" = c("whole_sample1", "whole_sample2"))
+						      "All" = c("whole_sample1", "whole_sample2"))
 
 	Also in this case *plot_style* can be set to "split" (as in the following example), "dodged" and "mirrored".
   
 		example_length_dist_split_rep <-  rlength_distr(comparison_list,
-								sample = sample_list,
-								cl = 99, multisamples = "average",
-								plot_style = "split",
-								colour = c("dodgerblue", "gray70"))
+								 sample = sample_list,
+								 cl = 99, multisamples = "average",
+								 plot_style = "split",
+								 colour = c("dodgerblue", "gray70"))
 		example_length_dist_split_rep[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_split_rep.png" width="500" />
@@ -441,9 +441,9 @@ For additional details please refers to the documentation provided by ?length_fi
   `metaprofile_psite` provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
 
     example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                                length_range = 28, 
-												utr5l = 20, cdsl = 40, utr3l = 20,
-												plot_title = "sample.transcript.length_range")
+						 length_range = 28,
+						 utr5l = 20, cdsl = 40, utr3l = 20,
+						 plot_title = "sample.transcript.length_range")
     example_metaprofile_28[["plot_Samp1"]]
 ![example_metaprofile_28](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
 
@@ -458,32 +458,32 @@ For additional details please refers to the documentation provided by ?length_fi
  Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see parameter *sample*).
 
     sample_list <- list("Only_28" = c("subsample_28nt"),
-                       "All" = c("whole_sample"))
+                         "All" = c("whole_sample"))
 
  We can now run `metaprofile_psite` setting *multisamples* to "average" and visualize the metaprofiles in three different ways, according to *plot_style*:
 
 	example_metaprofile_split <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-												   multisamples = "average", plot_style = "split",
-												   utr5l = 20, cdsl = 40, utr3l = 20,
-												   frequency = TRUE, plot_title = "transcript",
-												   colour = c("aquamarine4", "gray70"))
+							multisamples = "average", plot_style = "split",
+							utr5l = 20, cdsl = 40, utr3l = 20,
+							frequency = TRUE, plot_title = "transcript",
+							colour = c("aquamarine4", "gray70"))
 	example_metaprofile_split[["plot"]]
 ![example_metaprofile_split](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_split.png)
 
 
 	example_metaprofile_overlaid <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-													  multisamples = "average", plot_style = "overlaid",
-													  utr5l = 20, cdsl = 40, utr3l = 20,
-													  frequency = TRUE, plot_title = "transcript",
-													  colour = c("aquamarine4", "gray70"))
+							   multisamples = "average", plot_style = "overlaid",
+							   utr5l = 20, cdsl = 40, utr3l = 20,
+							   frequency = TRUE, plot_title = "transcript",
+							   colour = c("aquamarine4", "gray70"))
 	example_metaprofile_overlaid[["plot"]]
 ![example_metaprofile_overlaid](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_overlaid.png)
 
 	example_metaprofile_mirrored <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-													  multisamples = "average", plot_style = "mirrored",
-													  utr5l = 20, cdsl = 40, utr3l = 20,
-													  frequency = TRUE, plot_title = "transcript",
-													  colour = c("aquamarine4", "gray70"))
+							   multisamples = "average", plot_style = "mirrored",
+							   utr5l = 20, cdsl = 40, utr3l = 20,
+							   frequency = TRUE, plot_title = "transcript",
+							   colour = c("aquamarine4", "gray70"))
 	example_metaprofile_mirrored[["plot"]]
 ![example_metaprofile_mirrored](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_mirrored.png)
 
@@ -496,8 +496,8 @@ For additional details please refers to the documentation provided by ?length_fi
  Using the sample list generated in the previous example, `metaheatmap_psite` returns:
 
     example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
-                                             utr5l = 20, cdsl = 40, utr3l = 20, log_colour = F,
-						plot_title = "Comparison metaheatmap")
+                                             utr5l = 20, cdsl = 40, utr3l = 20, log_colour = F, 
+					     plot_title = "Comparison metaheatmap")
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
 
