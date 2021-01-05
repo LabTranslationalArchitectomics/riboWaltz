@@ -186,10 +186,10 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 1. Reads are duplicates if they share both the 5' estremity and the 3' extremity.
 
 		filtered_list <- duplicates_filter(data = example_reads_list,
-										extremity = "both")
+						    extremity = "both")
 		filtered_list[["Samp_example"]]
 		
-		|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
 		|:------:|:-----:|:------:|:------:|:------:|:------:|
 		|  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
 		|  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
@@ -200,11 +200,11 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 2. Reads are duplicates if they only share the 5' estremity. Among duplicated reads we keep the shortes one.
 
 		filtered_list <- duplicates_filter(data = example_reads_list,
-										extremity = "5end",
-										keep = "shortest")
+						   extremity = "5end",
+						   keep = "shortest")
 		filtered_list[["Samp_example"]]
 		
-		|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
 		|:------:|:-----:|:------:|:------:|:------:|:------:|
 		|  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
 		|  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
@@ -213,11 +213,11 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 3. Reads are duplicates if they only share the 3' estremity. Among duplicated reads we keep the longest one.
 
 		filtered_list <- duplicates_filter(data = example_reads_list,
-										extremity = "3end",
-										keep = "longest")
+						   extremity = "3end",
+						   keep = "longest")
 		filtered_list[["Samp_example"]]
     
-		|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
 		|:------:|:-----:|:------:|:------:|:------:|:------:|
 		|  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
 		|  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
@@ -236,11 +236,11 @@ Different lengths of ribosome protected fragments may derive from alternative ri
 2. Manual mode: only read lengths specified by the user are kept.
 
 		filtered_list <- length_filter(data = example_reads_list,
-					    length_filter_mode = "custom",
+					        length_filter_mode = "custom",
 						length_range = 29:30)
 		filtered_list[["Samp_example"]]
 						
-		|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
 		|:------:|:-----:|:------:|:------:|:------:|:------:|
 		|  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
 		|  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
