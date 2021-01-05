@@ -18,21 +18,74 @@ library(riboWaltz)
 ## ---- eval = FALSE------------------------------------------------------------
 #  help(package = riboWaltz)
 
+## ---- eval = FALSE------------------------------------------------------------
+#    reads_list <- bamtolist(bamfolder = "path/to/BAM/files", annotation = annotation_dt)
+
 ## -----------------------------------------------------------------------------
 head(reads_list[["Samp1"]])
 
-## ---- eval = FALSE, echo = TRUE-----------------------------------------------
-#  filtered_list <- length_filter(data = reads_list, length_filter_mode = "custom",
-#                             length_filter_vector = 27:30)
+## ---- eval = FALSE------------------------------------------------------------
+#    bamtobed(bamfolder = "path/to/BAM/files", bedfolder = "path/to/output/directory")
+
+## ---- eval = FALSE------------------------------------------------------------
+#    reads_list <- bedtolist(bedfolder = "path/to/BED/files", annotation = annotation_dt)
+
+## ---- eval = TRUE, echo = FALSE-----------------------------------------------
+library(data.table)
+example_reads_list <- list()
+example_reads_list[["Samp_example"]] <- data.table(transcript = rep("ENSMUST00000000001.4", 6),
+                                                   end5 = c(92, 92, 92, 94, 94, 95),
+                                                   end3 = c(119, 119, 122, 122, 123, 123))
+example_reads_list[["Samp_example"]][, length := end3 - end5 + 1
+                                     ][, cds_start := 142
+                                       ][, cds_stop := 1206]
+
+## ---- eval = TRUE, echo = TRUE------------------------------------------------
+example_reads_list[["Samp_example"]]
+
+## ---- eval = TRUE, echo = TRUE, results = "hide"------------------------------
+filtered_list <- duplicates_filter(data = example_reads_list,
+                                   extremity = "both")
+filtered_list[["Samp_example"]]
+
+## ---- echo = FALSE, eval = TRUE-----------------------------------------------
+filtered_list[["Samp_example"]]
+
+## ---- eval = TRUE, echo = TRUE, results = "hide"------------------------------
+filtered_list <- duplicates_filter(data = example_reads_list,
+                                   extremity = "5end",
+                                   keep = "shortest")
+filtered_list[["Samp_example"]]
+
+## ---- echo = FALSE, eval = TRUE-----------------------------------------------
+filtered_list[["Samp_example"]]
+
+## ---- eval = TRUE, echo = TRUE, results = "hide"------------------------------
+filtered_list <- duplicates_filter(data = example_reads_list,
+                                   extremity = "3end",
+                                   keep = "longest")
+filtered_list[["Samp_example"]]
+
+## ---- echo = FALSE, eval = TRUE-----------------------------------------------
+filtered_list[["Samp_example"]]
 
 ## ---- eval = FALSE, echo = TRUE-----------------------------------------------
-#  filtered_list <- length_filter(data = reads_list, length_filter_mode = "periodicity",
-#                             periodicity_threshold = 70)
+#  filtered_list <- length_filter(data = example_reads_list,
+#                                 length_filter_mode = "periodicity",
+#                                 periodicity_threshold = 70)
+
+## ---- eval = TRUE, echo = TRUE, results = "hide"------------------------------
+filtered_list <- length_filter(data = example_reads_list,
+                               length_filter_mode = "custom",
+                               length_range = 29:30)
+filtered_list[["Samp_example"]]
+
+## ---- echo = FALSE, eval = TRUE-----------------------------------------------
+filtered_list[["Samp_example"]]
 
 ## ---- eval = TRUE, echo = FALSE, message = FALSE, warning = FALSE-------------
 data(reads_list)
 data(mm81cdna)
-library(data.table)
 
 ## -----------------------------------------------------------------------------
 head(mm81cdna)
@@ -47,7 +100,7 @@ head(psite_offset, 10)
 knitr::include_graphics("meta_psite_length28.png")
 knitr::include_graphics("meta_psite_length31.png")
 
-## ---- echo = TRUE, eval = TRUE------------------------------------------------
+## ---- echo = TRUE, eval = TRUE, results = "hide"------------------------------
 reads_psite_list <- psite_info(reads_list, psite_offset)
 head(reads_psite_list[["Samp1"]])
 

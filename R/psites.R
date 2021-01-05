@@ -11,7 +11,8 @@
 #' P-site offsets computed through the process.
 #'
 #' @param data List of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
+#'   \code{\link{bedtolist}}, \code{\link{duplicates_filter}} or
+#'   \code{\link{length_filter}}.
 #' @param flanking Integer value specifying for the selected reads the minimum
 #'   number of nucleotides that must flank the reference codon in both
 #'   directions. Default is 6.

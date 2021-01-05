@@ -50,8 +50,8 @@ is performed.}
 
 \item{granges}{Logical value whether to return a GRangesList object. Default
 is FALSE i.e. a list of data tables is returned instead (the required input
-for \code{\link{length_filter}}, \code{\link{psite}},
-\code{\link{psite_info}}, \code{\link{rends_heat}} and
+for \code{\link{duplicates_filter}}, \code{\link{length_filter}},
+\code{\link{psite}}, \code{\link{psite_info}}, \code{\link{rends_heat}} and
 \code{\link{rlength_distr}}).}
 }
 \value{

@@ -127,7 +127,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   
   if(!identical(length_range, "all") & !inherits(length_range, "numeric") & !inherits(length_range, "integer")){
     cat("\n")
-    warning("class of length_range is neither numeric nor integer. It is set to \"all\"\n", call. = FALSE)
+    warning("class of length_range is neither numeric nor integer. Set to default \"all\"\n", call. = FALSE)
     length_range = "all"
   }
   
@@ -185,7 +185,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   
   if(is.list(sample) & length(sample) > 2 & plot_style == "mirrored") {
     cat("\n")
-    warning("parameter sample is a list of dimension > 2.\nparameter plot_style is set to \"split\"\n", call. = FALSE)
+    warning("parameter sample is a list of dimension > 2.\nparameter plot_style set to default \"split\"\n", call. = FALSE)
     plot_style == "split"
   }
   
@@ -196,14 +196,14 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   
   if(!(multisamples %in% c("separated", "average", "sum"))){
     cat("\n")
-    warning("parameter multisamples must be either  \"separated\", \"average\" or \"sum\"\nit is set to \"separated\"\n", call. = FALSE)
+    warning("parameter multisamples must be either  \"separated\", \"average\" or \"sum\"\nset to default \"separated\"\n", call. = FALSE)
     multisamples = "separated"
   }
   
   if(multisamples != "separated" & 
      !(plot_style %in% c("mirrored", "overlaid", "split"))){
     cat("\n")
-    warning("parameter plot_style must be either \"split\", \"mirrored\" or \"overlaid\"\nit is set to \"split\"\n", call. = FALSE)
+    warning("parameter plot_style must be either \"split\", \"mirrored\" or \"overlaid\"\nset to default \"split\"\n", call. = FALSE)
     plot_style = "split"
   }
   
@@ -215,7 +215,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   if(multisamples %in% c("average", "sum") & ((is.character(sample) & length(sample) == 1) |
                                               (is.list(sample) & length(as.character(unlist(sample))) == 1))){
     cat("\n")
-    warning("parameter multisamples is set to either \"average\" or \"sum\" but only one sample is provided\nparameter multisample will be set to \"separated\"", call. = FALSE)
+    warning("parameter multisamples is set to either \"average\" or \"sum\" but only one sample is provided\nset to default \"separated\"", call. = FALSE)
     multisamples = "separated"
   }
   

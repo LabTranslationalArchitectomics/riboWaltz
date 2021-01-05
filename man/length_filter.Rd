@@ -6,52 +6,61 @@
 \usage{
 length_filter(
   data,
-  length_filter_mode,
-  length_filter_vector = NULL,
+  sample = NULL,
+  length_filter_mode = "periodicity",
   periodicity_threshold = 50,
+  length_range = NULL,
   granges = FALSE
 )
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}} or \code{\link{psite_info}}.}
+\code{\link{bedtolist}} or \code{\link{duplicates_filter}}.}
 
-\item{length_filter_mode}{Either "custom" or "periodicity". It specifies how
-read length selection should be performed. "custom": only read lengths
-specified by the user are kept (see \code{length_filter_vector});
-"periodicity": only read lengths satisfying a periodicity threshold (see
-\code{periodicity_threshold}) are kept. The latter mode enables the removal
-of all reads with low or no periodicity.}
+\item{sample}{Character string or character string vector specifying the name
+of the sample(s) to process. Default is NULL i.e. all samples are
+processed.}
 
-\item{length_filter_vector}{Integer or integer vector specifying one read
-length or a range of read lengths to keep, respectively. This parameter is
-considered only if \code{length_filter_mode} is set to "custom".}
+\item{length_filter_mode}{Either "periodicity" or "custom". It specifies how
+read length selection should be performed. "periodicity": only read lengths
+satisfying a periodicity threshold (see \code{periodicity_threshold}) are
+kept. It ensures the removal of all reads with low or no periodicity;
+"custom": only read lengths specified by the user are kept (see
+\code{length_range}). Default is "periodicity".}
 
 \item{periodicity_threshold}{Integer in [10, 100]. Only read lengths
 satisfying this threshold (i.e. a higher percentage of read extremities
 falls in one of the three reading frames along the CDS) are kept. This
-parameter is considered only if \code{length_filter_mode} is to
+parameter is considered only if \code{length_filter_mode} is set to
 "periodicity". Default is 50.}
+
+\item{length_range}{Integer or integer vector specifying one read
+length or a range of read lengths to keep, respectively. This parameter is
+considered only if \code{length_filter_mode} is set to "custom".}
 
 \item{granges}{Logical value whether to return a GRangesList object. Default
 is FALSE i.e. a list of data tables is returned instead (the required input
-for \code{\link{psite}}, \code{\link{psite_info}}, \code{\link{rends_heat}}
-and \code{\link{rlength_distr}}).}
+for \code{\link{duplicates_filter}}, \code{\link{psite}},
+\code{\link{psite_info}}, \code{\link{rends_heat}} and
+\code{\link{rlength_distr}}).}
 }
 \value{
 A list of data tables or a GRangesList object.
 }
 \description{
-Read length filtering.
+This function provides multiple options for filtering the reads according to
+their length. Read lengths to keep are either specified by the user or
+automatichally selected on the basis of the trinucleotide periodicity of reads
+mapping on the CDS.
 }
 \examples{
 data(reads_list)
 
 ## Keep reads of length between 27 and 30 nucleotides (included):
 filtered_list <- length_filter(reads_list, length_filter_mode = "custom",
-length_filter_vector = 27:30)
+                               length_range = 27:30)
 
 ## Keep reads of lengths satisfying a periodicity threshold (70\%):
 filtered_list <- length_filter(reads_list, length_filter_mode = "periodicity",
-periodicity_threshold = 70)
+                               periodicity_threshold = 70)
 }

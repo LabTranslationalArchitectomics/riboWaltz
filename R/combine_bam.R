@@ -39,10 +39,10 @@
 #'   field (see \code{Details}). All characters before the first occurrence of
 #'   the specified separator are kept. Default is NULL i.e. no string splitting
 #'   is performed.
-##' @param granges Logical value whether to return a GRangesList object. Default
+#' @param granges Logical value whether to return a GRangesList object. Default
 #'   is FALSE i.e. a list of data tables is returned instead (the required input
-#'   for \code{\link{length_filter}}, \code{\link{psite}},
-#'   \code{\link{psite_info}}, \code{\link{rends_heat}} and
+#'   for \code{\link{duplicates_filter}}, \code{\link{length_filter}},
+#'   \code{\link{psite}}, \code{\link{psite_info}}, \code{\link{rends_heat}} and
 #'   \code{\link{rlength_distr}}).
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
@@ -115,7 +115,7 @@
 #' @import data.table
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE, 
-                      name_samples = NULL, indel_threshold = 5, 
+                      name_samples = NULL, indel_threshold = 5,
                       refseq_sep = NULL, granges = FALSE) {
 
   name_bams <- list.files(path = bamfolder, pattern = ".bam$")
@@ -143,7 +143,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
   }
 
   sample_reads_list <- list()
-  for (current_sample in names(name_samples)) {
+  for(current_sample in names(name_samples)) {
     current_bam <- paste0(current_sample,".bam")
 
     cat(sprintf("Reading %s\n", current_bam))
@@ -215,7 +215,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     
     nreads <- nrow(dt)
     cat(sprintf("Output reads: %s M\n", format(round((nreads / 1000000), 3), nsmall = 3)))
-
+    
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
@@ -228,7 +228,6 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
       GenomicRanges::strand(dt) <- "+"
     }
     
-
     sample_reads_list[[name_samples[current_sample]]] <- dt
     cat("Done!", current_bam, "has been loaded as", name_samples[current_sample], "\n\n")
     

@@ -19,7 +19,8 @@ psite(
 }
 \arguments{
 \item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}} or \code{\link{length_filter}}.}
+\code{\link{bedtolist}}, \code{\link{duplicates_filter}} or
+\code{\link{length_filter}}.}
 
 \item{flanking}{Integer value specifying for the selected reads the minimum
 number of nucleotides that must flank the reference codon in both
