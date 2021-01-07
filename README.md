@@ -446,11 +446,11 @@ Different lengths of ribosome protected fragments may derive from alternative ri
 
 	Also in this case *plot_style* can be set to "split" (as in the following example), "dodged" and "mirrored".
   
-		example_length_dist_split_rep <-  rlength_distr(comparison_list,
-								 sample = sample_list,
-								 cl = 99, multisamples = "average",
-								 plot_style = "split",
-								 colour = c("dodgerblue", "gray70"))
+		example_length_dist_split_rep <- rlength_distr(comparison_list,
+								sample = sample_list,
+								cl = 99, multisamples = "average",
+								plot_style = "split",
+								colour = c("dodgerblue", "gray70"))
 		example_length_dist_split_rep[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_split_rep.png" width="500" />

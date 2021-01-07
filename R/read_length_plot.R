@@ -82,20 +82,20 @@ rlength_distr <- function(data, sample, multisamples = "separated",
   if(is.list(sample) & length(sample) > 2 & plot_style == "mirrored") {
     cat("\n")
     warning("parameter sample is a list of dimension > 2.\nparameter plot_style set to default \"split\"\n", call. = FALSE)
-    plot_style == "split"
+    plot_style <- "split"
   }
   
   if(!(multisamples %in% c("average", "separated"))){
     cat("\n")
     warning("parameter multisamples must be either \"separated\" or \"average\"\nset to default \"separated\"\n", call. = FALSE)
-    multisamples = "separated"
+    multisamples <- "separated"
   }
   
   if(multisamples == "average" & 
      !(plot_style %in% c("mirrored", "dodged", "split"))){
     cat("\n")
     warning("parameter plot_style must be either \"split\", \"mirrored\" or \"dodged\"\nset to default \"split\"\n", call. = FALSE)
-    plot_style = "split"
+    plot_style <- "split"
   }
   
   if(multisamples == "average" & ((is.list(sample) & length(sample) == 1) |
@@ -110,7 +110,7 @@ rlength_distr <- function(data, sample, multisamples = "separated",
                                   (is.list(sample) & length(as.character(unlist(sample))) == 1))){
     cat("\n")
     warning("parameter multisamples is set to \"average\" but only one sample is provided\nset to default \"separated\"", call. = FALSE)
-    multisamples = "separated"
+    multisamples <- "separated"
   }
   
   if(is.character(sample) | (is.list(sample) & length(sample) == 1)){

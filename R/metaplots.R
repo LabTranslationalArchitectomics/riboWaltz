@@ -186,7 +186,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   if(is.list(sample) & length(sample) > 2 & plot_style == "mirrored") {
     cat("\n")
     warning("parameter sample is a list of dimension > 2.\nparameter plot_style set to default \"split\"\n", call. = FALSE)
-    plot_style == "split"
+    plot_style <- "split"
   }
   
   if(frequency == TRUE & length(scale_factors) != 0){
@@ -197,14 +197,14 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
   if(!(multisamples %in% c("separated", "average", "sum"))){
     cat("\n")
     warning("parameter multisamples must be either  \"separated\", \"average\" or \"sum\"\nset to default \"separated\"\n", call. = FALSE)
-    multisamples = "separated"
+    multisamples <- "separated"
   }
   
   if(multisamples != "separated" & 
      !(plot_style %in% c("mirrored", "overlaid", "split"))){
     cat("\n")
     warning("parameter plot_style must be either \"split\", \"mirrored\" or \"overlaid\"\nset to default \"split\"\n", call. = FALSE)
-    plot_style = "split"
+    plot_style <- "split"
   }
   
   if(multisamples %in% c("average", "sum") & ((is.list(sample) & length(sample) == 1) |
