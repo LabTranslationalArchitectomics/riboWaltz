@@ -9,11 +9,12 @@
 #'   of the sample(s) to process. Default is NULL i.e. all samples are
 #'   processed.
 #' @param extremity Either "both", "5end", "3end". It specifies the criterion to
-#'   define what should be considered as duplicates. Reads are marked as
-#'   duplicates if they share: both the 5' estremity and the 3' extremity
-#'   ("both"), only the 5' extremity ("5end"), only the same 3' extremity ("3end
-#'   "). For "5end" and "3end", reads of different lengths can be marked as
-#'   duplicates. See \code{keep} to choose which one should be kept.
+#'   define which reads should be considered duplicates. Reads are marked as
+#'   duplicates if they map on the same transcript and share: both the 5'
+#'   estremity and the 3' extremity ("both"), only the 5' extremity ("5end"),
+#'   only the same 3' extremity ("3end "). For "5end" and "3end", reads of
+#'   different lengths can be marked as duplicates. See \code{keep} to choose
+#'   which one should be kept.
 #' @param keep Either "shortest" or "longest". It specifies wheter to keep the
 #'   shortest or the longest read when duplicates display different lengths.
 #'   This parameter is considered only if \code{extremity} is set to "5end" or
@@ -84,15 +85,15 @@ duplicates_filter <- function(data, sample = NULL, extremity = "both",
     
     if(!is.null(extremity)){
       if(extremity == "both") {
-        dt <- unique(dt, by = c("end5", "end3"))
+        dt <- unique(dt, by = c("transcript" ,"end5", "end3"))
       } else {
         if(keep == "longest"){
           dt <- dt[order(transcript, end5, -end3)]
         }
         if(extremity == "5end") {
-          dt <- unique(dt, by = "end5")
+          dt <- unique(dt, by = c("transcript", "end5"))
         } else {
-          dt <- unique(dt, by = "end3")
+          dt <- unique(dt, by = c("transcript", "end3"))
         }
       }
     } 

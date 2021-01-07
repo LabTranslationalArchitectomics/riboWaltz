@@ -21,11 +21,12 @@ of the sample(s) to process. Default is NULL i.e. all samples are
 processed.}
 
 \item{extremity}{Either "both", "5end", "3end". It specifies the criterion to
-define what should be considered as duplicates. Reads are marked as
-duplicates if they share: both the 5' estremity and the 3' extremity
-("both"), only the 5' extremity ("5end"), only the same 3' extremity ("3end
-"). For "5end" and "3end", reads of different lengths can be marked as
-duplicates. See \code{keep} to choose which one should be kept.}
+define which reads should be considered duplicates. Reads are marked as
+duplicates if they map on the same transcript and share: both the 5'
+estremity and the 3' extremity ("both"), only the 5' extremity ("5end"),
+only the same 3' extremity ("3end "). For "5end" and "3end", reads of
+different lengths can be marked as duplicates. See \code{keep} to choose
+which one should be kept.}
 
 \item{keep}{Either "shortest" or "longest". It specifies wheter to keep the
 shortest or the longest read when duplicates display different lengths.
