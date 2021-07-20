@@ -166,7 +166,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Filtering steps
 
- __riboWaltz__ provides two functions aimed at filtering the reads by removing duplicated reads (`duplicates_filter`) and/or selecting specific read lengths (`length_filter`). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some example based on the following _ad hoc_ dataset: 
+ __riboWaltz__ provides two functions aimed at filtering the reads by removing duplicated reads (`duplicates_filter`) and/or selecting specific read lengths (`length_filter`). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some examples based on the following _ad hoc_ dataset: 
 
 	example_reads_list[["Samp_example"]]
 
