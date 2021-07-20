@@ -128,8 +128,8 @@ transcripts without annotated CDS are set to 0.
 ## ## corresponding data tables the names "Control" and "Treated",
 ## ## respectively.
 ## ## We first define the "name_samples" character string vector as follow:
-## name_of_bams <- c("Samp1", "Samp2")
-## names(name_of_bams) <- c("Control", "Treated")
+## name_of_bams <- c("Control", "Treated")
+## names(name_of_bams) <- c("Samp1", "Samp2")
 ##
 ## ## Then, we can acquire the two files: 
 ## path_bam <- "path/to/BAM/files"

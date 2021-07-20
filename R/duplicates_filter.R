@@ -19,6 +19,15 @@
 #'   shortest or the longest read when duplicates display different lengths.
 #'   This parameter is considered only if \code{extremity} is set to "5end" or
 #'   "3end". Default is "shortest".
+#' @param txt Logical value whether to write in a txt file statistics on the
+#'   filtering step. Similar information are displayed by default in the
+#'   console. Default is FALSE.
+#' @param txt_file Character string specifying the path, name and extension
+#'   (e.g. "PATH/NAME.extension") of the plain text file where statistics on the
+#'   filtering step shuold be written. If the specified folder doesn't exist, it
+#'   is automatically created. If NULL (the default), the information are
+#'   written in \emph{"duplicates_filtering.txt"}, saved in the working
+#'   directory. This parameter is considered only if \code{txt} is TRUE.
 #' @param granges Logical value whether to return a GRangesList object. Default
 #'   is FALSE i.e. a list of data tables is returned instead (the required input
 #'   for \code{\link{length_filter}}, \code{\link{psite}},
@@ -50,7 +59,8 @@
 #' @import data.table
 #' @export
 duplicates_filter <- function(data, sample = NULL, extremity = "both",
-                              keep = "shortest", granges = FALSE){
+                              keep = "shortest", granges = FALSE,
+                              txt = FALSE, txt_file = NULL){
   
   check_sample <- setdiff(unlist(sample), names(data))
   if(length(check_sample) != 0){
@@ -75,6 +85,23 @@ duplicates_filter <- function(data, sample = NULL, extremity = "both",
       keep = "shortest"
     }
   }
+  
+  if (txt == T | txt == TRUE) {
+    options(warn=-1)
+    if (length(txt_file) == 0) {
+      dir <- getwd()
+      txt_file <- paste0(dir, "/duplicates_filtering.txt")
+    } else {
+      txt_file_split <- strsplit(txt_file, "/")[[1]]
+      txt_dir <- paste(txt_file_split[-length(txt_file_split)], collapse = "/")
+      if (!dir.exists(txt_dir)) {
+        dir.create(txt_dir, recursive = TRUE)
+      }
+    }
+    options(warn=0)
+    
+    cat("sample\tinitial_reads\tfinal_reads\tpercentage_kept\tpercentage_removed\n", file = txt_file)
+  }
 
   for(samp in sample){
     cat(sprintf("processing %s\n", samp))
@@ -82,6 +109,11 @@ duplicates_filter <- function(data, sample = NULL, extremity = "both",
     
     nreads <- nrow(dt)
     cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 3)))
+    
+    if (txt == T | txt == TRUE) {
+      cat(sprintf("%s\t", samp), file = txt_file, append = TRUE)
+      cat(sprintf("%i\t", nreads), file = txt_file, append = TRUE)
+    }
     
     if(!is.null(extremity)){
       if(extremity == "both") {
@@ -104,6 +136,12 @@ duplicates_filter <- function(data, sample = NULL, extremity = "both",
                 format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 3), 
                 format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 3) ))
     cat(sprintf("reads kept: %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 3)))
+    
+    if (txt == T | txt == TRUE) {
+      cat(sprintf("%i\t", nrow(dt)), file = txt_file, append = TRUE)
+      cat(sprintf("%.2f\t", round((nrow(dt) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+      cat(sprintf("%.2f\n", round(((nreads - nrow(dt)) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+    }
     
     if (granges == T || granges == TRUE) {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,

@@ -255,13 +255,13 @@ rlength_distr <- function(data, sample, multisamples = "separated",
       plot <- plot + geom_bar(stat = "identity", position = position_dodge(0.9))
       if(length(col_plot_se_sel) != 0){
         plot <- plot + geom_errorbar(aes(ymin = mean - se, ymax = mean + se, color = sample),
-                                     width = 0.25, size = 1.1, na.rm = T, position = position_dodge(0.9))
+                                     width = 0.40, size = 1.1, na.rm = T, position = position_dodge(0.9))
       }
     } else {
       plot <- plot + geom_bar(stat = "identity")
       if(length(col_plot_se_sel) != 0){
         plot <- plot + geom_errorbar(aes(ymin = mean - se, ymax = mean + se, color = sample),
-                                     width = 0.25, size = 1.1, na.rm = T)
+                                     width = 0.35, size = 1.1, na.rm = T)
       }
     }
     

@@ -10,7 +10,9 @@ length_filter(
   length_filter_mode = "periodicity",
   periodicity_threshold = 50,
   length_range = NULL,
-  granges = FALSE
+  granges = FALSE,
+  txt = FALSE,
+  txt_file = NULL
 )
 }
 \arguments{
@@ -43,6 +45,17 @@ is FALSE i.e. a list of data tables is returned instead (the required input
 for \code{\link{duplicates_filter}}, \code{\link{psite}},
 \code{\link{psite_info}}, \code{\link{rends_heat}} and
 \code{\link{rlength_distr}}).}
+
+\item{txt}{Logical value whether to write in a txt file statistics on the
+filtering step. Similar information are displayed by default in the
+console. Default is FALSE.}
+
+\item{txt_file}{Character string specifying the path, name and extension
+(e.g. "PATH/NAME.extension") of the plain text file where statistics on the
+filtering step shuold be written. If the specified folder doesn't exist, it
+is automatically created. If NULL (the default), the information are
+written in \emph{"length_filtering.txt"}, saved in the working directory.
+This parameter is considered only if \code{txt} is TRUE.}
 }
 \value{
 A list of data tables or a GRangesList object.

@@ -1,8 +1,7 @@
-language: R
-sudo: false
+language: r
 cache: packages
 
-r-packages:
+r_packages:
   - data.table
   - ggplot2
   - ggrepel

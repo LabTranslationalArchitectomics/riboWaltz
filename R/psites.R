@@ -39,14 +39,17 @@
 #'   generating occupancy metaprofiles for to a sub-range of read lengths i.e.
 #'   for the cl% of read lengths associated to the highest signals. Default is
 #'   99. This parameter is considered only if \code{plot} is TRUE.
-#' @param log_file Logical value whether to generate a plain text file, called
-#'   \emph{best_offset.txt}, that reports the extremity used for the correction
-#'   step and the best offset for each sample. Default is FALSE.
-#' @param log_file_dir Character string specifying the directory where the log
-#'   file shuold be saved. If the specified folder doesn't exist, it is
-#'   automatically created. If NULL (the default), the file is stored in the
-#'   working directory. This parameter is considered only if \code{log_file} is
-#'   TRUE.
+#' @param txt Logical value whether to write in a txt file reporting the
+#'   extremity used for the correction step and the best offset for each sample.
+#'   Similar information are displayed by default in the console. Default is
+#'   FALSE.
+#' @param txt_file Character string specifying the path, name and extension
+#'   (e.g. "PATH/NAME.extension") of the plain text file where the extremity
+#'   used for the correction step and the best offset for each sample shuold be
+#'   written. If the specified folder doesn't exist, it is automatically
+#'   created. If NULL (the default), the information are written in
+#'   \emph{"best_offset.txt"}, saved in the working directory. This parameter is
+#'   considered only if \code{txt} is TRUE.
 #' @details The P-site offset (PO) is defined as the distance between the
 #'   extremities of a read and the first nucleotide of the P-site itself. The
 #'   function processes all samples separately starting from reads mapping on
@@ -81,19 +84,25 @@
 #' @export
 psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
                   plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99,
-                  log_file = FALSE, log_file_dir = NULL) {
+                  txt = FALSE, txt_file = NULL) {
   
-  if(log_file == T | log_file == TRUE){
-    if(length(log_file_dir) == 0){
-      log_file_dir <- getwd()
+  if (txt == T | txt == TRUE) {
+    options(warn=-1)
+    if (length(txt_file) == 0) {
+      dir <- getwd()
+      txt_file <- paste0(dir, "/duplicates_filtering.txt")
+    } else {
+      txt_file_split <- strsplit(txt_file, "/")[[1]]
+      txt_dir <- paste(txt_file_split[-length(txt_file_split)], collapse = "/")
+      if (!dir.exists(txt_dir)) {
+        dir.create(txt_dir, recursive = TRUE)
+      }
     }
-    if (!dir.exists(log_file_dir)) {
-      dir.create(log_file_dir)
-    }
-    logpath <- paste0(log_file_dir, "/best_offset.txt")
-    cat("sample\texremity\toffset(nts)\n", file = logpath)
+    options(warn=0)
+    
+    cat("sample\texremity\toffset(nts)\n", file = txt_file)
   }
-  
+
   names <- names(data)
   offset <- NULL
   for (n in names) { 
@@ -177,8 +186,8 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     
     cat(sprintf("best offset: %i nts from the %s\n", abs(best_offset), gsub("end", "' end", line_plot)))
     
-    if(log_file == T | log_file == TRUE){
-      cat(sprintf("%s\t%s\t%i\n", n, gsub("end", "'end", line_plot), abs(best_offset)), file = logpath, append = TRUE)
+    if(txt == T | txt == TRUE){
+      cat(sprintf("%s\t%s\t%i\n", n, gsub("end", "'end", line_plot), abs(best_offset)), file = txt_file, append = TRUE)
     }
     
     t <- table(factor(dt$length, levels = lev))
@@ -494,6 +503,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
     cat(sprintf("processing %s\n", n))
     dt <- data[[n]]
     suboff <- offset[sample == n, .(length,corrected_offset_from_3)]
+    
     cat("1. adding p-site position\n")
     dt[suboff,  on = 'length', psite := i.corrected_offset_from_3]
     dt[, psite := end3 - psite]
@@ -502,11 +512,13 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
        ][cds_stop == 0, psite_from_start := 0]
     dt[, psite_from_stop := psite - cds_stop
        ][cds_stop == 0, psite_from_stop := 0]
+    
     cat("2. adding transcript region\n")
     dt[, psite_region := "5utr"
        ][psite_from_start >= 0 & psite_from_stop <= 0, psite_region := "cds"
          ][psite_from_stop > 0, psite_region := "3utr"
            ][cds_stop == 0, psite_region := NA]
+    
     if(length(site) != 0){
       cat("3. adding nucleotide sequence(s)\n")
       if("psite" %in% site){

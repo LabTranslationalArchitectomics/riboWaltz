@@ -24,6 +24,15 @@
 #' @param length_range Integer or integer vector specifying one read
 #'   length or a range of read lengths to keep, respectively. This parameter is
 #'   considered only if \code{length_filter_mode} is set to "custom".
+#' @param txt Logical value whether to write in a txt file statistics on the
+#'   filtering step. Similar information are displayed by default in the
+#'   console. Default is FALSE.
+#' @param txt_file Character string specifying the path, name and extension
+#'   (e.g. "PATH/NAME.extension") of the plain text file where statistics on the
+#'   filtering step shuold be written. If the specified folder doesn't exist, it
+#'   is automatically created. If NULL (the default), the information are
+#'   written in \emph{"length_filtering.txt"}, saved in the working directory.
+#'   This parameter is considered only if \code{txt} is TRUE.
 #' @param granges Logical value whether to return a GRangesList object. Default
 #'   is FALSE i.e. a list of data tables is returned instead (the required input
 #'   for \code{\link{duplicates_filter}}, \code{\link{psite}},
@@ -45,7 +54,8 @@
 length_filter <- function(data, sample = NULL,
                           length_filter_mode = "periodicity",
                           periodicity_threshold = 50,
-                          length_range = NULL, granges = FALSE){
+                          length_range = NULL, granges = FALSE,
+                          txt = FALSE, txt_file = NULL){
   
   check_sample <- setdiff(unlist(sample), names(data))
   if(length(check_sample) != 0){
@@ -75,19 +85,37 @@ length_filter <- function(data, sample = NULL,
     stop("periodicity_threshold must be an integer between 10 and 100 \n\n")
   }
   
+  if (txt == T | txt == TRUE) {
+    options(warn=-1)
+    if (length(txt_file) == 0) {
+      dir <- getwd()
+      txt_file <- paste0(dir, "/length_filtering.txt")
+    } else {
+      txt_file_split <- strsplit(txt_file, "/")[[1]]
+      txt_dir <- paste(txt_file_split[-length(txt_file_split)], collapse = "/")
+      if (!dir.exists(txt_dir)) {
+        dir.create(txt_dir, recursive = TRUE)
+      }
+    }
+    options(warn=0)
+    
+    cat("sample\tinitial_reads\tfinal_reads\tpercentage_kept\tpercentage_removed\n", file = txt_file)
+  }
+    
   for(samp in sample) {
     cat(sprintf("processing %s\n", samp))
     dt <- data[[samp]]
     
     nreads <- nrow(dt)
     cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 2)))
+    
+    if (txt == T | txt == TRUE) {
+      cat(sprintf("%s\t", samp), file = txt_file, append = TRUE)
+      cat(sprintf("%i\t", nreads), file = txt_file, append = TRUE)
+    }
 
     if(identical(length_filter_mode, "custom")) {
       dt <- dt[length %in% length_range]
-      cat(sprintf("%s M  (%s %%) reads removed\n", 
-                  format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 2), 
-                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
-      cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 2)))
     } else {
       if(identical(length_filter_mode, "periodicity")){
         nreads <- nrow(dt)
@@ -110,12 +138,18 @@ length_filter <- function(data, sample = NULL,
         
         keep_length <- intersect(keep_length5, keep_length3)
         dt <- dt[length %in% keep_length]
-        
-        cat(sprintf("%s M  (%s %%) reads removed\n", 
-                    format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 2), 
-                    format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
-        cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 2)))
       }
+    }
+    
+    cat(sprintf("%s M  (%s %%) reads removed\n", 
+                format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 2), 
+                format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
+    cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 2)))
+    
+    if (txt == T | txt == TRUE) {
+      cat(sprintf("%i\t", nrow(dt)), file = txt_file, append = TRUE)
+      cat(sprintf("%.2f\t", round((nrow(dt) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+      cat(sprintf("%.2f\n", round(((nreads - nrow(dt)) / nreads) * 100, 2)), file = txt_file, append = TRUE)
     }
 
     if (granges == T || granges == TRUE) {

@@ -233,7 +233,7 @@ Different lengths of ribosome protected fragments may derive from alternative ri
 
 ## Annotation data table
 
-A reference annotation file is required by many functions included in the package. The annotation file must be a data table of at least five columns reporting, for each reference transcript, its name, its length and the length of its annotated 5' UTR, CDS and 3'UTR. Please note: if a transcript region is not annotated its length is set to 0. The annotation file can be either provided by the user or generated starting from GTF files or TxDb objects by running the function `create_annotation`. Please make sure the GTF or the TxDb object the derives from the same release of the sequences used in the alignment step. Here an example of the output:
+A reference annotation file is required by many functions included in the package. The annotation file must be a data table of at least five columns reporting, for each reference transcript, its name, its length and the length of its annotated 5' UTR, CDS and 3'UTR. Please note: if a transcript region is not annotated its length is set to 0. The annotation file can be either provided by the user or generated starting from GTF/GFF files or TxDb objects by running the function `create_annotation`. Please make sure the GTF/GFF or the TxDb object the derives from the same release of the sequences used in the alignment step. Here an example of the output:
   
 ```{r, eval = TRUE, echo = FALSE, message = FALSE, warning = FALSE}
 data(reads_list)
@@ -277,7 +277,7 @@ head(reads_psite_list[["Samp1"]])
 ```{r, echo = FALSE, eval = TRUE}
 head(reads_psite_list[["Samp1"]])
 ```
-Optionally, additional columns reporting the three nucleotides covered by the P-site, the A-site and the E-site are attached. This feature requires transcript or chromosome nucleotide sequences in FASTA format. Alternatively, a BSGenome data package can be used for sequence retrieval. Nucleotide sequences of a genome assembly and BSGenome data package must be coupled with a GTF file or a TxDb object providing genomic annotations. For further details please refer to the documentation of `psite_info` running ?psite_info.
+Optionally, additional columns reporting the three nucleotides covered by the P-site, the A-site and the E-site are attached. This feature requires transcript or chromosome nucleotide sequences in FASTA format. Alternatively, a BSGenome data package can be used for sequence retrieval. Nucleotide sequences of a genome assembly and BSGenome data package must be coupled with a GTF/GFF file or a TxDb object providing genomic annotations. For further details please refer to the documentation of `psite_info` running ?psite_info.
 
 Nucleotide sequences covered by the P-site, A-site or the E-site are required for performing further analyses such as to compute the number of in-frame P-sites, the percentage of P-sites falling in the three transcript regions, verify the trinucleotide periodicity of the reads along the coding sequence and generate metaplots, as discussed in the next sections.
 
@@ -596,7 +596,7 @@ knitr::include_graphics("example_metaprofile_mirrored.png")
 <br>
 Another way to visualize the trinucleotide periodicity along coding sequences is to generate a metahaetmap by `metaheatmap_psite`. In this case the abundance of P-sites is represented by a continuous color scale. If multiple samples are provided (i.e. multiple sets of reads, that can only be specified by objects of type list in *sample*), the resulting heatmaps are arranged in one graphical output. 
   
-*NOTE*: the function `metaheatmap_psite` is deprecated. The original purpose of this was the comparison of multiple samples in the same plot, while for single samples `metaprofile_psite` was supposed to be the reference function. However, `metaprofile_psite` has gradually been updated and can now handle multiple samples and replicates. Moreover, in plots returned by `metaprofile_psite`, variations in the signal along the transcripts are proportional to the height of a line rather than to the color of tiles and can be better appreciated.
+*NOTE*: the function `metaheatmap_psite` is deprecated. The original purpose of this function was the comparison of multiple samples in the same plot, while for single samples `metaprofile_psite` was supposed to be the reference function. However, `metaprofile_psite` has gradually been updated and can now handle multiple samples and replicates. Moreover, in plots returned by `metaprofile_psite`, variations in the signal along the transcripts are proportional to the height of a line rather than to the color of tiles and can be better appreciated.
   
 Using the sample list generated in the previous example, `metaheatmap_psite` returns:
 
@@ -610,7 +610,6 @@ example_metaheatmap[["plot"]]
 knitr::include_graphics("example_metaheatmap.png")
 ```
 <br>
- The output includes two heatmaps, one for each data table.
 
 
 
