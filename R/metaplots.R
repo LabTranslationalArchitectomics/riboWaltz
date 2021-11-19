@@ -522,13 +522,13 @@ f_title_plot <- function(plot_title_v, multisamples, sample_l, data, samp, ntr,
       }
     } else {
       length_sample <- data[[samp]]$length
-      lmin_temp <- quantile(length_sample, 0.05)
-      lmax_temp <- quantile(length_sample, 0.95)
-      length_sample <- unique(length_sample[length_sample %between% c(lmin_temp, lmax_temp)])
       
       if(!identical(length_range, "all")){
         length_range_pl <- sort(intersect(length_sample, length_range))
       } else {
+        lmin_temp <- quantile(length_sample, 0.05)
+        lmax_temp <- quantile(length_sample, 0.95)
+        length_sample <- unique(length_sample[length_sample %between% c(lmin_temp, lmax_temp)])
         length_range_pl <- sort(length_sample)
       }
     }

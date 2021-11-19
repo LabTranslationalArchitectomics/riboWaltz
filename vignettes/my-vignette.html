@@ -14,7 +14,7 @@
 <meta name="author" content="Toma Tebaldi (toma.tebaldi@gmail.com)" />
 <meta name="author" content="Gabriella Viero (gabriella.viero@cnr.it)" />
 
-<meta name="date" content="2021-07-20" />
+<meta name="date" content="2021-11-03" />
 
 <title>riboWaltz</title>
 
@@ -315,7 +315,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h4 class="author">Fabio Lauria (<a href="mailto:fab.lauria.88@gmail.com" class="email">fab.lauria.88@gmail.com</a>)</h4>
 <h4 class="author">Toma Tebaldi (<a href="mailto:toma.tebaldi@gmail.com" class="email">toma.tebaldi@gmail.com</a>)</h4>
 <h4 class="author">Gabriella Viero (<a href="mailto:gabriella.viero@cnr.it" class="email">gabriella.viero@cnr.it</a>)</h4>
-<h4 class="date">2021-07-20</h4>
+<h4 class="date">2021-11-03</h4>
 
 
 <div id="TOC">
@@ -447,7 +447,7 @@ text-align: justify}
 </div>
 <div id="filtering-steps" class="section level2">
 <h2>Filtering steps</h2>
-<p><strong>riboWaltz</strong> provides two functions aimed at filtering the reads by removing duplicated reads (<code>duplicates_filter</code>) and/or selecting specific read lengths (<code>length_filter</code>). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some example based on the following <em>ad hoc</em> dataset:</p>
+<p><strong>riboWaltz</strong> provides two functions aimed at filtering the reads by removing duplicated reads (<code>duplicates_filter</code>) and/or selecting specific read lengths (<code>length_filter</code>). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some examples based on the following <em>ad hoc</em> dataset:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">example_reads_list[[<span class="st">&quot;Samp_example&quot;</span>]]</a></code></pre></div>
 <pre><code>##              transcript end5 end3 length cds_start cds_stop
 ## 1: ENSMUST00000000001.4   92  119     28       142     1206

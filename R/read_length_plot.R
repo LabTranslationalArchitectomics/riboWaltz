@@ -10,7 +10,7 @@
 #'   the name of the sample(s) of interest. A named list of two or more
 #'   character strings and/or character string vectors can be provided. In this
 #'   case, each element of the list should include the name of the replicate(s)
-#'   of the samples of interest and the name assigned to the elements of the
+#'   of the samples of interest. The name assigned to the elements of the
 #'   list are displayed in the plot. Multiple replicates specified in character
 #'   string vectors are handled according to \code{multisample}.
 #' @param multisamples Either "separated" or "average". It specifies how to
