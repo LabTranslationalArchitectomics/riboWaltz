@@ -36,10 +36,6 @@ jobs:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-       
-      - name: install ffmpeg
-        if: runner.os == 'Linux'
-        run: sudo apt-get install -y libavfilter-dev 
         
       - name: install latex
         if: runner.os == 'Linux'
@@ -56,7 +52,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
       
       - name: Set up R  ${{ matrix.config.r }}
-        uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
+        uses: r-lib/actions/setup-r@v1
         with:
           r-version:  ${{ matrix.config.r }}
       
