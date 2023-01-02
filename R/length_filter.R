@@ -5,8 +5,9 @@
 #' automatichally selected on the basis of the trinucleotide periodicity of reads
 #' mapping on the CDS.
 #'
-#' @param data List of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}} or \code{\link{duplicates_filter}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{bamtolist}}, \code{\link{bedtolist}} or
+#'   \code{\link{duplicates_filter}}.
 #' @param sample Character string or character string vector specifying the name
 #'   of the sample(s) to process. Default is NULL i.e. all samples are
 #'   processed.
@@ -33,11 +34,9 @@
 #'   is automatically created. If NULL (the default), the information are
 #'   written in \emph{"length_filtering.txt"}, saved in the working directory.
 #'   This parameter is considered only if \code{txt} is TRUE.
-#' @param granges Logical value whether to return a GRangesList object. Default
-#'   is FALSE i.e. a list of data tables is returned instead (the required input
-#'   for \code{\link{duplicates_filter}}, \code{\link{psite}},
-#'   \code{\link{psite_info}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr}}).
+#' @param output_class Either "datatable" or "granges". It specifies the format
+#'   of the output i.e. a list of data tables or a GRangesList object. Default
+#'   is "datatable".
 #' @return A list of data tables or a GRangesList object.
 #' @examples
 #' data(reads_list)
@@ -54,7 +53,7 @@
 length_filter <- function(data, sample = NULL,
                           length_filter_mode = "periodicity",
                           periodicity_threshold = 50,
-                          length_range = NULL, granges = FALSE,
+                          length_range = NULL, output_class = "datatable",
                           txt = FALSE, txt_file = NULL){
   
   check_sample <- setdiff(unlist(sample), names(data))
@@ -80,8 +79,8 @@ length_filter <- function(data, sample = NULL,
   }
   
   if(length_filter_mode == "periodicity" & ((!is.numeric(periodicity_threshold)
-     & !is.integer(periodicity_threshold)) | periodicity_threshold < 10
-     | periodicity_threshold > 100)){
+                                             & !is.integer(periodicity_threshold)) | periodicity_threshold < 10
+                                            | periodicity_threshold > 100)){
     stop("periodicity_threshold must be an integer between 10 and 100 \n\n")
   }
   
@@ -101,58 +100,73 @@ length_filter <- function(data, sample = NULL,
     
     cat("sample\tinitial_reads\tfinal_reads\tpercentage_kept\tpercentage_removed\n", file = txt_file)
   }
+  
+  for(samp in names(data)){
     
-  for(samp in sample) {
-    cat(sprintf("processing %s\n", samp))
     dt <- data[[samp]]
     
-    nreads <- nrow(dt)
-    cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 2)))
-    
-    if (txt == T | txt == TRUE) {
-      cat(sprintf("%s\t", samp), file = txt_file, append = TRUE)
-      cat(sprintf("%i\t", nreads), file = txt_file, append = TRUE)
-    }
-
-    if(identical(length_filter_mode, "custom")) {
-      dt <- dt[length %in% length_range]
-    } else {
-      if(identical(length_filter_mode, "periodicity")){
-        nreads <- nrow(dt)
-        
-        subdt5 <- dt[cds_start != 0 &
-                       (end5 - cds_start) >= 0 &
-                       (cds_stop - end5) >= 0]
-        subdt5[, end5_frame := as.factor((end5 - cds_start) %% 3)]
-        t_end5 <- subdt5[, .N, by = list(length, end5_frame)
-                         ][, end5_perc := (N / sum(N)) * 100, by = length]
-        keep_length5 <- unique(t_end5[end5_perc >= periodicity_threshold, length])
-        
-        subdt3 <- dt[cds_start != 0 &
-                       (end3 - cds_start) >= 0 &
-                       (cds_stop - end3) >= 0]
-        subdt3[, end3_frame := as.factor((end3 - cds_start) %% 3)]
-        t_end3 <- subdt3[, .N, by = list(length, end3_frame)
-                         ][, end3_perc := (N / sum(N)) * 100, by = length]
-        keep_length3 <- unique(t_end3[end3_perc >= periodicity_threshold, length])
-        
-        keep_length <- intersect(keep_length5, keep_length3)
-        dt <- dt[length %in% keep_length]
+    if(samp %in% sample){
+      cat(sprintf("processing %s\n", samp))
+      
+      if(class(dt)[1] == "GRanges"){
+        dt <- as.data.table(dt)[, c("width", "strand") := NULL
+                                ][, seqnames := as.character(seqnames)]
+        setnames(dt, c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
+      }
+      
+      nreads <- nrow(dt)
+      cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 2)))
+      
+      if (txt == T | txt == TRUE) {
+        cat(sprintf("%s\t", samp), file = txt_file, append = TRUE)
+        cat(sprintf("%i\t", nreads), file = txt_file, append = TRUE)
+      }
+      
+      if(identical(length_filter_mode, "custom")) {
+        dt <- dt[length %in% length_range]
+      } else {
+        if(identical(length_filter_mode, "periodicity")){
+          nreads <- nrow(dt)
+          
+          subdt5 <- dt[cds_start != 0 &
+                         (end5 - cds_start) >= 0 &
+                         (cds_stop - end5) >= 0]
+          subdt5[, end5_frame := as.factor((end5 - cds_start) %% 3)]
+          t_end5 <- subdt5[, .N, by = list(length, end5_frame)
+                           ][, end5_perc := (N / sum(N)) * 100, by = length]
+          keep_length5 <- unique(t_end5[end5_perc >= periodicity_threshold, length])
+          
+          subdt3 <- dt[cds_start != 0 &
+                         (end3 - cds_start) >= 0 &
+                         (cds_stop - end3) >= 0]
+          subdt3[, end3_frame := as.factor((end3 - cds_start) %% 3)]
+          t_end3 <- subdt3[, .N, by = list(length, end3_frame)
+                           ][, end3_perc := (N / sum(N)) * 100, by = length]
+          keep_length3 <- unique(t_end3[end3_perc >= periodicity_threshold, length])
+          
+          keep_length <- intersect(keep_length5, keep_length3)
+          dt <- dt[length %in% keep_length]
+        }
+      }
+      
+      cat(sprintf("%s M  (%s %%) reads removed\n", 
+                  format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 2), 
+                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
+      cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 2)))
+      
+      if (txt == T | txt == TRUE) {
+        cat(sprintf("%i\t", nrow(dt)), file = txt_file, append = TRUE)
+        cat(sprintf("%.2f\t", round((nrow(dt) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+        cat(sprintf("%.2f\n", round(((nreads - nrow(dt)) / nreads) * 100, 2)), file = txt_file, append = TRUE)
       }
     }
     
-    cat(sprintf("%s M  (%s %%) reads removed\n", 
-                format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 2), 
-                format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 2) ))
-    cat(sprintf("reads (kept): %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 2)))
-    
-    if (txt == T | txt == TRUE) {
-      cat(sprintf("%i\t", nrow(dt)), file = txt_file, append = TRUE)
-      cat(sprintf("%.2f\t", round((nrow(dt) / nreads) * 100, 2)), file = txt_file, append = TRUE)
-      cat(sprintf("%.2f\n", round(((nreads - nrow(dt)) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+    if(nrow(dt) == 0){
+      cat(sprintf("Sample %s has no more reads. It won't be included in the output", samp))
+      next
     }
-
-    if (granges == T || granges == TRUE) {
+    
+    if(output_class == "granges"){
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
                                                     ignore.strand = TRUE,
@@ -167,7 +181,7 @@ length_filter <- function(data, sample = NULL,
     data[[samp]] <- dt
   }
   
-  if (granges == T || granges == TRUE) {
+  if(output_class == "granges"){
     data <- GenomicRanges::GRangesList(data)
   }
   

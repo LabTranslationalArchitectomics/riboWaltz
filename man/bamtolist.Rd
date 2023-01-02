@@ -11,7 +11,7 @@ bamtolist(
   name_samples = NULL,
   indel_threshold = 5,
   refseq_sep = NULL,
-  granges = FALSE
+  output_class = "datatable"
 )
 }
 \arguments{
@@ -48,11 +48,9 @@ field (see \code{Details}). All characters before the first occurrence of
 the specified separator are kept. Default is NULL i.e. no string splitting
 is performed.}
 
-\item{granges}{Logical value whether to return a GRangesList object. Default
-is FALSE i.e. a list of data tables is returned instead (the required input
-for \code{\link{duplicates_filter}}, \code{\link{length_filter}},
-\code{\link{psite}}, \code{\link{psite_info}}, \code{\link{rends_heat}} and
-\code{\link{rlength_distr}}).}
+\item{output_class}{Either "datatable" or "granges". It specifies the format
+of the output i.e. a list of data tables or a GRangesList object. Default
+is "datatable".}
 }
 \value{
 A list of data tables or a GRangesList object.

@@ -18,9 +18,9 @@ psite(
 )
 }
 \arguments{
-\item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}}, \code{\link{duplicates_filter}} or
-\code{\link{length_filter}}.}
+\item{data}{Either list of data tables or GRangesList object from
+\code{\link{bamtolist}}, \code{\link{bedtolist}},
+\code{\link{duplicates_filter}} or \code{\link{length_filter}}.}
 
 \item{flanking}{Integer value specifying for the selected reads the minimum
 number of nucleotides that must flank the reference codon in both
@@ -65,8 +65,8 @@ FALSE.}
 used for the correction step and the best offset for each sample shuold be
 written. If the specified folder doesn't exist, it is automatically
 created. If NULL (the default), the information are written in
-\emph{"best_offset.txt"}, saved in the working directory. This parameter is
-considered only if \code{txt} is TRUE.}
+\emph{"best_offset.txt"} and saved in the working directory. This parameter
+is considered only if \code{txt} is TRUE.}
 }
 \value{
 A data table.

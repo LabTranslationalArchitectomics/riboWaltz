@@ -5,7 +5,8 @@
 #' values. It only handles annotated 5' UTRs, coding sequences and 3' UTRs,
 #' separately.
 #'
-#' @param data List of data tables from \code{\link{psite_info}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{psite_info}}.
 #' @param sample Character string vector specifying the name of the sample(s) of
 #'   interest. Default is NULL i.e. all samples in \code{data} are processed.
 #' @param transcripts Character string vector listing the name of transcripts to
@@ -22,7 +23,6 @@
 #'   "auto", the title of the plot reports the region specified by \code{region}
 #'   (if any) and the considered read length(s). Default is NULL i.e. no title
 #'   is plotted.
-#'   
 #' @return A list containing a ggplot2 object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
@@ -44,6 +44,17 @@
 #' @export
 frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
                         length_range = "all", plot_title = NULL){
+  
+  if(class(data[[1]])[1] == "GRanges"){
+    data_tmp <- list()
+    for(i in names(data)){
+      data_tmp[[i]] <- as.data.table(data[[i]])[, c("width", "strand") := NULL
+                                                ][, seqnames := as.character(seqnames)]
+      setnames(data_tmp[[i]], c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
+    }
+    data <- data_tmp
+  }
+
   if(length(sample) == 0) {
     sample <- names(data)
   }
@@ -57,10 +68,10 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
   if(!identical(length_range, "all")){
     for(samp in sample){
       
-      if(length(transcripts) == 0) {
-        dt <- data[[samp]]
-      } else {
-        dt <- data[[samp]][transcript %in% transcripts]
+      dt <-data[[samp]]
+
+      if(length(transcripts) != 0) {
+        dt <- dt[transcript %in% transcripts]
       }
       
       len_check <- unique(dt$length)
@@ -85,12 +96,12 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
   
   length_temp <- vector()
   
-  for (samp in sample) {
+  for(samp in sample) {
     
-    if(identical(length_range, "all")){
-      dt <- data[[samp]]
-    } else {
-      dt <- data[[samp]][length %in% length_range]
+    dt <- data[[samp]]
+    
+    if(!identical(length_range, "all")){
+      dt <- dt[length %in% length_range]
     }
     
     if (length(transcripts) != 0) {
@@ -131,6 +142,7 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
     
     length_temp <- unique(c(length_temp, data[[samp]]$length))
   }
+  
   final_frame_dt[, sample := factor(sample, levels = unique(sample))]
   
   if(!identical(length_range, "all")){
@@ -212,7 +224,8 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 #' Similar to \code{\link{frame_psite}}, but the results are stratified by read
 #' lengths and plotted as heatmaps.
 #'
-#' @param data List of data tables from \code{\link{psite_info}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{psite_info}}.
 #' @param sample Character string vector specifying the name of the sample(s) of
 #'   interest. Default is NULL i.e. all samples in \code{data} are processed.
 #' @param transcripts Character string vector listing the name of transcripts to
@@ -261,6 +274,16 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 frame_psite_length <- function(data, sample = NULL, transcripts = NULL,
                                region = "all", cl = 95, length_range = "all",
                                plot_title = NULL, colour = "#061b63"){
+  
+  if(class(data[[1]])[1] == "GRanges"){
+    data_tmp <- list()
+    for(i in names(data)){
+      data_tmp[[i]] <- as.data.table(data[[i]])[, c("width", "strand") := NULL
+                                                ][, seqnames := as.character(seqnames)]
+      setnames(data_tmp[[i]], c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
+    }
+    data <- data_tmp
+  }
   
   if(length(sample) == 0) {
     sample <- names(data)

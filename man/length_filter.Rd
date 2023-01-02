@@ -10,14 +10,15 @@ length_filter(
   length_filter_mode = "periodicity",
   periodicity_threshold = 50,
   length_range = NULL,
-  granges = FALSE,
+  output_class = "datatable",
   txt = FALSE,
   txt_file = NULL
 )
 }
 \arguments{
-\item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}} or \code{\link{duplicates_filter}}.}
+\item{data}{Either list of data tables or GRangesList object from
+\code{\link{bamtolist}}, \code{\link{bedtolist}} or
+\code{\link{duplicates_filter}}.}
 
 \item{sample}{Character string or character string vector specifying the name
 of the sample(s) to process. Default is NULL i.e. all samples are
@@ -40,11 +41,9 @@ parameter is considered only if \code{length_filter_mode} is set to
 length or a range of read lengths to keep, respectively. This parameter is
 considered only if \code{length_filter_mode} is set to "custom".}
 
-\item{granges}{Logical value whether to return a GRangesList object. Default
-is FALSE i.e. a list of data tables is returned instead (the required input
-for \code{\link{duplicates_filter}}, \code{\link{psite}},
-\code{\link{psite_info}}, \code{\link{rends_heat}} and
-\code{\link{rlength_distr}}).}
+\item{output_class}{Either "datatable" or "granges". It specifies the format
+of the output i.e. a list of data tables or a GRangesList object. Default
+is "datatable".}
 
 \item{txt}{Logical value whether to write in a txt file statistics on the
 filtering step. Similar information are displayed by default in the

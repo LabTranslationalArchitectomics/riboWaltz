@@ -39,11 +39,9 @@
 #'   field (see \code{Details}). All characters before the first occurrence of
 #'   the specified separator are kept. Default is NULL i.e. no string splitting
 #'   is performed.
-#' @param granges Logical value whether to return a GRangesList object. Default
-#'   is FALSE i.e. a list of data tables is returned instead (the required input
-#'   for \code{\link{duplicates_filter}}, \code{\link{length_filter}},
-#'   \code{\link{psite}}, \code{\link{psite_info}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr}}).
+#' @param output_class Either "datatable" or "granges". It specifies the format
+#'   of the output i.e. a list of data tables or a GRangesList object. Default
+#'   is "datatable".
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
@@ -116,7 +114,7 @@
 #' @export
 bamtolist <- function(bamfolder, annotation, transcript_align = TRUE, 
                       name_samples = NULL, indel_threshold = 5,
-                      refseq_sep = NULL, granges = FALSE) {
+                      refseq_sep = NULL, output_class = "datatable") {
 
   name_bams <- list.files(path = bamfolder, pattern = ".bam$")
 
@@ -216,7 +214,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     nreads <- nrow(dt)
     cat(sprintf("Output reads: %s M\n", format(round((nreads / 1000000), 3), nsmall = 3)))
     
-    if (granges == T || granges == TRUE) {
+    if (output_class == "granges") {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
                                                     ignore.strand = TRUE,
@@ -233,7 +231,7 @@ bamtolist <- function(bamfolder, annotation, transcript_align = TRUE,
     
   }
   
-  if (granges == T || granges == TRUE) {
+  if (output_class == "granges") {
     sample_reads_list <- GenomicRanges::GRangesList(sample_reads_list)
   }
   
@@ -312,11 +310,9 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #'   field (see \code{Details}). All characters before the first occurrence of
 #'   the specified separator are kept. Default is NULL i.e. no string splitting
 #'   is performed.
-#' @param granges Logical value whether to return a GRangesList object. Default
-#'   is FALSE i.e. a list of data tables is returned instead (the required input
-#'   for \code{\link{length_filter}}, \code{\link{psite}},
-#'   \code{\link{psite_info}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr}}).
+#' @param output_class Either "datatable" or "granges". It specifies the format
+#'   of the output i.e. a list of data tables or a GRangesList object. Default
+#'   is "datatable".
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
@@ -350,7 +346,7 @@ bamtobed <- function(bamfolder, bedfolder = NULL) {
 #' @export
 bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
                       name_samples = NULL, refseq_sep = FALSE, 
-                      granges = FALSE) {
+                      output_class = "datatable") {
   names <- list.files(path = bedfolder, pattern = ".bed$")
   if (length(name_samples) == 0) {
     name_samples <- unlist(strsplit(names, ".bed"))
@@ -422,7 +418,7 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     nreads <- nrow(dt)
     cat(sprintf("Output reads: %s M\n", format(round((nreads / 1000000), 3), nsmall = 3)))
     
-    if(granges == T || granges == TRUE) {
+    if(output_class == "granges") {
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
                                                     ignore.strand = TRUE,
@@ -437,7 +433,7 @@ bedtolist <- function(bedfolder, annotation, transcript_align = TRUE,
     sample_reads_list[[name_samples[i]]] <- dt
   }
   
-  if(granges == T || granges == TRUE) {
+  if(output_class == "granges") {
     sample_reads_list <- GenomicRanges::GRangesList(sample_reads_list)
   }
   

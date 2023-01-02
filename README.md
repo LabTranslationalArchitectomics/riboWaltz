@@ -12,6 +12,8 @@
 * [Before starting](https://github.com/LabTranslationalArchitectomics/riboWaltz#before-starting)
 	- [Dependencies](https://github.com/LabTranslationalArchitectomics/riboWaltz#dependencies)
 	- [Installation](https://github.com/LabTranslationalArchitectomics/riboWaltz#installation)
+		+ [R](https://github.com/LabTranslationalArchitectomics/riboWaltz#r)
+		+ [Conda](https://github.com/LabTranslationalArchitectomics/riboWaltz#conda)
 	- [Loading](https://github.com/LabTranslationalArchitectomics/riboWaltz#loading)
 	- [Getting help](https://github.com/LabTranslationalArchitectomics/riboWaltz#getting-help)
 * [From BAM files to P-site offsets](https://github.com/LabTranslationalArchitectomics/riboWaltz#from-bam-files-to-p-site-offsets)
@@ -85,6 +87,8 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Installation
 
+#### R
+
  To install __riboWaltz__ directly from GitHub the *devtools* package is required. If not already installed on your system, run
     
     install.packages("devtools")
@@ -97,7 +101,13 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
  Please note: to install __riboWaltz__ generating the vignette replace the last command with:
   
     install_github("LabTranslationalArchitectomics/riboWaltz", dependencies = TRUE, 
-			build_opts = c("--no-resave-data", "--no-manual"))
+			build_vignettes = TRUE)
+			
+#### Conda
+
+ __riboWaltz__ is also available through [Conda](https://anaconda.org/bioconda/ribowaltz) and can be installed into the current environment by: 
+
+	conda install -c bioconda ribowaltz
 
 
 
@@ -111,7 +121,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ### Getting help
 
- The following sections illustrate how to make use of __riboWalz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. Similar information are reported in the vignette returned by
+ The following sections illustrate how to make use of __riboWaltz__ by introducing all functions included in the package and reporting most of the data structures and graphical outputs generated with the default options. Similar information are reported in the vignette returned by
  
 	browseVignettes("riboWaltz")
  
@@ -131,15 +141,21 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 ## From BAM files to P-site offsets
 
-### Remark
+### Remarks
+
+#### Note 1
 
  __riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
 
  The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see the section "Output in transcript coordinates" of its manual), is an example of tool providing such a feature.
+ 
+##### Note 2
+
+Multiple functions described below can accept and return both list of data tables and GRangesList objects. For convenience, all example datasets included in the package and the whole ReadMe are based on and refers to data tables.
 
 ### Acquiring input files
 
- One or multiple BAM files are read, converted into data tables or GRanges objects and arranged in a list or a GRangesList, respectively, by running function `bamtolist`. It only requires the path to the folder storing the BAM files and an annotation data table (see below for additional information). It is suggested to rename the BAM files before their acquisition in order to maintain the same nomenclatures through the whole analysis. However, it is possible to assign new names to the samples during their acquisition thanks to the *name_samples* parameter. If the BAM file(s) come from a transcriptome alignment (intended as an alignment against reference transcript sequences), reads mapping on the negative strand should not be present and, if any, they are automatically removed. The syntax for running `bamtolist` is:
+ One or multiple BAM files are read, converted into data tables and arranged in a list by running function `bamtolist`. It only requires the path to the folder storing the BAM files and an annotation data table (see below for additional information). It is suggested to rename the BAM files before their acquisition in order to maintain the same nomenclatures through the whole analysis. However, it is possible to assign new names to the samples during their acquisition thanks to the *name_samples* parameter. If the BAM file(s) come from a transcriptome alignment (intended as an alignment against reference transcript sequences), reads mapping on the negative strand should not be present and, if any, they are automatically removed. The syntax for running `bamtolist` is:
   
 	reads_list <- bamtolist(bamfolder = "path/to/BAM/files", annotation = annotation_dt)
 	
@@ -154,30 +170,30 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
   |  ENSMUST00000000001.4  |  140  |  167  |  28  |  142  |  1206  |
   |  ENSMUST00000000001.4  |  142  |  170  |  29  |  142  |  1206  |
   
- Alternatively, BAM files can be first converted into BED files by the function `bamtobed` and then into a list of data tables or a GRangesList object through the function `bedtolist`. Please note: `bamtobed` relies on the *bamtobed* utility of the *BEDTools* suite ([here](http://bedtools.readthedocs.io/en/latest/content/installation.html) the instructions for the installation). Since the *BEDTools* suite has been developed for command line environments, `bamtobed` can be only run on UNIX, LINUX and Apple OS X operating systems. Once BED files are generated, it is possible to switch to any other machine without further restrictions. Nevertheless, the authors suggest the use of `bamtolist`.
+ Alternatively, BAM files can be first converted into BED files by the function `bamtobed` and then into a list of data tables through the function `bedtolist`. Please note: `bamtobed` relies on the *bamtobed* utility of the *BEDTools* suite ([here](http://bedtools.readthedocs.io/en/latest/content/installation.html) the instructions for the installation). Since the *BEDTools* suite has been developed for command line environments, `bamtobed` can be only run on UNIX, LINUX and Apple OS X operating systems. Once BED files are generated, it is possible to switch to any other machine without further restrictions. Nevertheless, the authors suggest the use of `bamtolist`.
   
  `bamtobed` generate BED files that contain, for each read: i) the name of the corresponding reference sequence (i.e. of the transcript on which it aligns); ii) its leftmost and rightmost position with respect to the 1st nucleotide of the reference sequence; iii) its length; iv) the strand on which it aligns. `bamtobed` requires the path to the folder storing the BAM files and, optionally, the path to the directory where the BED files should be stored. The The syntax for running `bamtobed` is: 
 
     bamtobed(bamfolder = "path/to/BAM/files", bedfolder = "path/to/output/directory")
 
- Then, one or multiple BED files produced by `bamtobed` are read, converted into data tables or GRanges objects and arranged in a list or a GRangesList, respectively, by running `bedtolist`. It also attaches two columns to the original data containing, for each read, the leftmost and rightmost position of the annotated CDS of the reference sequence (if any) with respect to its 1st nucleotide. Please note: start and stop codon positions for transcripts without annotated CDS are set to 0. `bedtolist` requires the path to the folder storing the BED files and an annotation file. Its syntax is as follow:
+ Then, one or multiple BED files produced by `bamtobed` are read, converted into data tables and arranged in a list by running `bedtolist`. It also attaches two columns to the original data containing, for each read, the leftmost and rightmost position of the annotated CDS of the reference sequence (if any) with respect to its 1st nucleotide. Please note: start and stop codon positions for transcripts without annotated CDS are set to 0. `bedtolist` requires the path to the folder storing the BED files and an annotation file. Its syntax is as follow:
 
     reads_list <- bedtolist(bedfolder = "path/to/BED/files", annotation = annotation_dt)
 
 ### Filtering steps
 
- __riboWaltz__ provides two functions aimed at filtering the reads by removing duplicated reads (`duplicates_filter`) and/or selecting specific read lengths (`length_filter`). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some examples based on the following _ad hoc_ dataset: 
+ __riboWaltz__ provides two functions aimed at filtering the reads by removing duplicated reads (`duplicates_filter`) and/or selecting specific read lengths (`length_filter`). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some examples based on the following _ad hoc_ dataset (note: row IDs were stored in an additional column to keep track of retained and removed lines):
 
 	example_reads_list[["Samp_example"]]
 
-  |  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
-  |:------:|:-----:|:------:|:------:|:------:|:------:|
-  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
-  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
-  |  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
-  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
-  |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
-  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
+  |  row_ID  |  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+  |:------:|:------:|:-----:|:------:|:------:|:------:|:------:|
+  |  1  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
+  |  2  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
+  |  3  |  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
+  |  4  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
+  |  5  |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
+  |  6  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
 
 #### Removal of duplicated reads
 
@@ -189,13 +205,13 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 						    extremity = "both")
 		filtered_list[["Samp_example"]]
 		
-	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
-	|:------:|:-----:|:------:|:------:|:------:|:------:|
-	|  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
+	|  row_ID  |  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+	|:------:|:------:|:-----:|:------:|:------:|:------:|:------:|
+	|  1  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
+	|  3  |  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
+	|  4  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
+	|  5  |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
+	|  6  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
 
 2. Reads are duplicates if they map on the same transcript and only share the 5' estremity. Among duplicated reads we keep the shortes one.
 
@@ -204,11 +220,11 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 						    keep = "shortest")
 		filtered_list[["Samp_example"]]
 		
-	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
-	|:------:|:-----:|:------:|:------:|:------:|:------:|
-	|  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
+	|  row_ID  |  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
+	|:------:|:------:|:-----:|:------:|:------:|:------:|:------:|
+	|  1  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
+	|  4  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
+	|  6  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
     
 3. Reads are duplicates if they map on the same transcript and only share the 3' estremity. Among duplicated reads we keep the longest one.
 
@@ -219,13 +235,15 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
     
 	|  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
 	|:------:|:-----:|:------:|:------:|:------:|:------:|
-	|  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
-	|  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
+	|  1  |  ENSMUST00000000001.4  |  92  |  119  |  28  |  142  |  1206  |
+	|  3  |  ENSMUST00000000001.4  |  92  |  122  |  31  |  142  |  1206  |
+	|  5  |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
 
 #### Selection of read lengths
 
-Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of read lengths according to the aim of the experiment. For this reason, __riboWaltz__ provides multiple options for treating read lengths, included in function `length_filter`:
+Different lengths of ribosome protected fragments may derive from alternative ribosome conformations. Therefore, the researcher should be free to modify the tolerance for the selection of read lengths according to the aim of the experiment. Furthermore, short reads (<20 nts) might not be representative of prokaryotic or eukaryotic ribosomes, which usually cover ~23 nts and ~28 nts, respectively. To keep biologically meaningful data and avoid potential issues in downstream analyses (e.g. the addition of specific columns through function `psite_info` and its parameter *site* and the generation of plots provided by `codon_usage_psite`), it is strongly suggested to filter short reads out. Otherwise, due to unusual P-site localization they might be automatically discarded while running `psite_info`.
+
+To handle read lengths, __riboWaltz__ provides multiple options included in function `length_filter`:
   
 1. Periodicity threshold mode: only read lengths satisfying a periodicity threshold (i.e. a higher percentage of read extremities falls in one of the three reading frames along the CDS) are kept.
 
@@ -242,9 +260,9 @@ Different lengths of ribosome protected fragments may derive from alternative ri
 						
 	 |  transcript  |  end5  |  end3  |  length  |  cds_start  |  cds_stop  |
 	 |:------:|:-----:|:------:|:------:|:------:|:------:|
-	 |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
-	 |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
-	 |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
+	 |  4  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
+	 |  5  |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
+	 |  6  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
 
 ### Annotation data table
   

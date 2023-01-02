@@ -16,12 +16,13 @@ psite_info(
   txdb = NULL,
   dataSource = NA,
   organism = NA,
-  granges = FALSE
+  output_class = "datatable"
 )
 }
 \arguments{
-\item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}} or \code{\link{length_filter}}.}
+\item{data}{Either list of data tables or GRangesList object from
+\code{\link{bamtolist}}, \code{\link{bedtolist}},
+\code{\link{duplicates_filter}} or \code{\link{length_filter}}.}
 
 \item{offset}{Data table from \code{\link{psite}}.}
 
@@ -98,9 +99,9 @@ please refer to the description of \emph{organism} of the
 \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 \code{GenomicFeatures} package.}
 
-\item{granges}{Logical value whether to return a GRangesList object. Default
-is FALSE i.e. a list of data tables (the required input for downstream
-analyses and graphical outputs provided by riboWaltz) is returned instead.}
+\item{output_class}{Either "datatable" or "granges". It specifies the format
+of the output i.e. a list of data tables or a GRangesList object. Default
+is "datatable".}
 }
 \value{
 A list of data tables or a GRangesList object.
@@ -112,11 +113,15 @@ table in a list four columns reporting i) the P-site position with respect to
 the 1st nucleotide of the transcript, ii) the P-site position with respect to
 the start and the stop codon of the annotated coding sequence (if any) and
 iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the
-P-site. Please note: for transcripts not associated to any annotated CDS the
-position of the P-site with respect to the start and the stop codon is set to
-NA. Optionally, additional columns reporting the three nucleotides covered by
-the P-site, the A-site and the E-site are attached, based on FASTA files or
-BSgenome data packages containing the transcript nucleotide sequences.
+P-site. Please note: 1) for transcripts not associated to any annotated CDS
+the P-site position with respect to the start and the stop codon is
+set to NA; 2) P-sites of short reads (<20 nts) might be located very close to
+the 5' or 3' extremity, with no biological meaning and causing potential
+downstream issues; for these reasons, all read lengths showing this feature
+will be removed. Optionally, additional columns reporting the three
+nucleotides covered by the P-site, the A-site and the E-site are attached,
+based on FASTA files or BSgenome data packages containing the transcript
+nucleotide sequences.
 }
 \details{
 \strong{riboWaltz} only works for read alignments based on

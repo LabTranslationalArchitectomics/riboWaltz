@@ -15,28 +15,30 @@ rlength_distr(
 )
 }
 \arguments{
-\item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}}, \code{\link{length_filter}} or
-\code{\link{psite_info}}.}
+\item{data}{Either list of data tables or GRangesList object from
+\code{\link{bamtolist}}, \code{\link{bedtolist}},
+\code{\link{length_filter}} or \code{\link{psite_info}}.}
 
 \item{sample}{Either character string or character string vector specifying
-the name of the sample(s) of interest. A named list of two or more
+the name of the sample(s) of interest. A named list of one or more
 character strings and/or character string vectors can be provided. In this
-case, each element of the list should include the name of the replicate(s)
-of the samples of interest. The name assigned to the elements of the
-list are displayed in the plot. Multiple replicates specified in character
-string vectors are handled according to \code{multisample}.}
+case i) each list element should include the name of the replicate(s)
+related to the sample of interest and ii) the name assigned to the elements
+of the list are displayed in the plot. Multiple replicates specified in
+character string vectors are handled according to \code{multisample}.}
 
-\item{multisamples}{Either "separated" or "average". It specifies how to
-handle multiple samples and replicates. If "saparated", one bar plot for
-each sample included in \code{sample} is returned as an independent ggplot
-object. If "average" i) one bar plot is returned if \code{sample} is a
-character string vector or ii) one barplot is built for each element of
-\code{sample} when it is a list. If "average", the bar plots display for
-each length the mean signal and the corresponding standard error
-computed among the replicates. In this case a single ggplot object is
-returned, where multiple bar plots are organized and displayed according to
-\code{plot_style}. Default is "separated".}
+\item{multisamples}{Either "separated", "average" or "sum". It specifies how
+to handle multiple samples and replicates. If "saparated", one metaprofile
+for each sample included in \code{sample} is returned as an independent
+ggplot object. If \code{sample} is a list, it is unlisted, coerced to
+character string and handled accordingly. If "average" or "sum" i) one
+metaprofiles is returned if \code{sample} is a character string vector or
+ii) one metaprofiles is built for each element of \code{sample} when it is
+a list. If "average", the metaprofiles display for each nucleotide the mean
+signal and the corresponding standard error computed among the replicates.
+In this case a single ggplot object is returned, where multiple bar plots
+are organized and displayed according to \code{plot_style}. Default is
+"separated".}
 
 \item{plot_style}{Either "split", "dodged" or "mirrored". It specifies how to
 organize and display multiple bar plots. If "split", the bar plots are

@@ -9,14 +9,15 @@ duplicates_filter(
   sample = NULL,
   extremity = "both",
   keep = "shortest",
-  granges = FALSE,
+  output_class = "datatable",
   txt = FALSE,
   txt_file = NULL
 )
 }
 \arguments{
-\item{data}{List of data tables from \code{\link{bamtolist}},
-\code{\link{bedtolist}} or \code{\link{length_filter}}.}
+\item{data}{Either list of data tables or GRangesList object from
+\code{\link{bamtolist}}, \code{\link{bedtolist}} or
+\code{\link{length_filter}}.}
 
 \item{sample}{Character string or character string vector specifying the name
 of the sample(s) to process. Default is NULL i.e. all samples are
@@ -35,11 +36,9 @@ shortest or the longest read when duplicates display different lengths.
 This parameter is considered only if \code{extremity} is set to "5end" or
 "3end". Default is "shortest".}
 
-\item{granges}{Logical value whether to return a GRangesList object. Default
-is FALSE i.e. a list of data tables is returned instead (the required input
-for \code{\link{length_filter}}, \code{\link{psite}},
-\code{\link{psite_info}}, \code{\link{rends_heat}} and
-\code{\link{rlength_distr}}).}
+\item{output_class}{Either "datatable" or "granges". It specifies the format
+of the output i.e. a list of data tables or a GRangesList object. Default
+is "datatable".}
 
 \item{txt}{Logical value whether to write in a txt file statistics on the
 filtering step. Similar information are displayed by default in the

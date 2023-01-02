@@ -16,7 +16,8 @@ frame_psite_length(
 )
 }
 \arguments{
-\item{data}{List of data tables from \code{\link{psite_info}}.}
+\item{data}{Either list of data tables or GRangesList object from
+\code{\link{psite_info}}.}
 
 \item{sample}{Character string vector specifying the name of the sample(s) of
 interest. Default is NULL i.e. all samples in \code{data} are processed.}

@@ -10,9 +10,9 @@
 #' collection of read length-specific occupancy metaprofiles displaying the
 #' P-site offsets computed through the process.
 #'
-#' @param data List of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}}, \code{\link{duplicates_filter}} or
-#'   \code{\link{length_filter}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{bamtolist}}, \code{\link{bedtolist}},
+#'   \code{\link{duplicates_filter}} or \code{\link{length_filter}}.
 #' @param flanking Integer value specifying for the selected reads the minimum
 #'   number of nucleotides that must flank the reference codon in both
 #'   directions. Default is 6.
@@ -48,8 +48,8 @@
 #'   used for the correction step and the best offset for each sample shuold be
 #'   written. If the specified folder doesn't exist, it is automatically
 #'   created. If NULL (the default), the information are written in
-#'   \emph{"best_offset.txt"}, saved in the working directory. This parameter is
-#'   considered only if \code{txt} is TRUE.
+#'   \emph{"best_offset.txt"} and saved in the working directory. This parameter
+#'   is considered only if \code{txt} is TRUE.
 #' @details The P-site offset (PO) is defined as the distance between the
 #'   extremities of a read and the first nucleotide of the P-site itself. The
 #'   function processes all samples separately starting from reads mapping on
@@ -85,12 +85,12 @@
 psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
                   plot = FALSE, plot_dir = NULL, plot_format = "png", cl = 99,
                   txt = FALSE, txt_file = NULL) {
-  
+
   if (txt == T | txt == TRUE) {
     options(warn=-1)
     if (length(txt_file) == 0) {
       dir <- getwd()
-      txt_file <- paste0(dir, "/duplicates_filtering.txt")
+      txt_file <- paste0(dir, "/best_offset.txt")
     } else {
       txt_file_split <- strsplit(txt_file, "/")[[1]]
       txt_dir <- paste(txt_file_split[-length(txt_file_split)], collapse = "/")
@@ -108,6 +108,13 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
   for (n in names) { 
     cat(sprintf("processing %s\n", n))
     dt <- data[[n]]
+    
+    if(class(dt)[1] == "GRanges"){
+      dt <- as.data.table(dt)[, c("width", "strand") := NULL
+                              ][, seqnames := as.character(seqnames)]
+      setnames(dt, c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
+    }
+    
     lev <- sort(unique(dt$length))
     if(start == T | start == TRUE){
       base <- 0
@@ -204,7 +211,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
       setnames(offset_temp, c("length", "total_percentage", "stop_percentage", "around_stop", "offset_from_5", "offset_from_3", "corrected_offset_from_5", "corrected_offset_from_3", "sample"))
       xlab_plot<-"Distance from stop (nt)"
     }
-    
+
     # plot
     if (plot == T | plot == TRUE) {
       options(warn=-1)
@@ -290,14 +297,19 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #' the 1st nucleotide of the transcript, ii) the P-site position with respect to
 #' the start and the stop codon of the annotated coding sequence (if any) and
 #' iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the
-#' P-site. Please note: for transcripts not associated to any annotated CDS the
-#' position of the P-site with respect to the start and the stop codon is set to
-#' NA. Optionally, additional columns reporting the three nucleotides covered by
-#' the P-site, the A-site and the E-site are attached, based on FASTA files or
-#' BSgenome data packages containing the transcript nucleotide sequences.
+#' P-site. Please note: 1) for transcripts not associated to any annotated CDS
+#' the P-site position with respect to the start and the stop codon is
+#' set to NA; 2) P-sites of short reads (<20 nts) might be located very close to
+#' the 5' or 3' extremity, with no biological meaning and causing potential
+#' downstream issues; for these reasons, all read lengths showing this feature
+#' will be removed. Optionally, additional columns reporting the three
+#' nucleotides covered by the P-site, the A-site and the E-site are attached,
+#' based on FASTA files or BSgenome data packages containing the transcript
+#' nucleotide sequences.
 #'
-#' @param data List of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{bamtolist}}, \code{\link{bedtolist}},
+#'   \code{\link{duplicates_filter}} or \code{\link{length_filter}}.
 #' @param offset Data table from \code{\link{psite}}.
 #' @param site Either "psite, "asite", "esite" or a combination of these
 #'   strings. It specifies if additional column(s) reporting the three
@@ -363,9 +375,9 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #'   please refer to the description of \emph{organism} of the
 #'   \code{\link[GenomicFeatures]{makeTxDbFromGFF}} function included in the
 #'   \code{GenomicFeatures} package.
-#' @param granges Logical value whether to return a GRangesList object. Default
-#'   is FALSE i.e. a list of data tables (the required input for downstream
-#'   analyses and graphical outputs provided by riboWaltz) is returned instead.
+#' @param output_class Either "datatable" or "granges". It specifies the format
+#'   of the output i.e. a list of data tables or a GRangesList object. Default
+#'   is "datatable".
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
@@ -395,7 +407,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 psite_info <- function(data, offset, site = NULL, fastapath = NULL, 
                        fasta_genome = TRUE, refseq_sep = NULL, bsgenome = NULL,
                        gtfpath = NULL, txdb = NULL, dataSource = NA,
-                       organism = NA, granges = FALSE) {
+                       organism = NA, output_class = "datatable") {
   
   if(!(all(site %in% c("psite", "asite", "esite"))) & length(site) != 0){
     cat("\n")
@@ -502,10 +514,31 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
   for (n in names) {
     cat(sprintf("processing %s\n", n))
     dt <- data[[n]]
-    suboff <- offset[sample == n, .(length,corrected_offset_from_3)]
+    
+    if(class(dt)[1] == "GRanges"){
+      dt <- as.data.table(dt)[, c("width", "strand") := NULL
+                              ][, seqnames := as.character(seqnames)]
+      setnames(dt, c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
+    }
+    
+    suboff <- offset[sample == n]
+    
+    # check position of P-sites wrt reads extremities
+    suboff_rm <- suboff[corrected_offset_from_5 < 3 | (length - corrected_offset_from_3) < 4]
+    
+    if(nrow(suboff_rm) != 0){
+      cat(sprintf("P-site is too close to read extremities for read length(s): %s;
+All reads of such length(s) (%s %% of total amount) will be removed\n",
+                  paste(suboff_rm$length, collapse = ", "),  sum(suboff_rm$total_percentage)))
+    }
+
+    dt <- dt[!(length %in% c(suboff_rm$length))]
+    suboff <- suboff[!(length %in% c(suboff_rm$length))
+                     ][, .(length, corrected_offset_from_3)]
     
     cat("1. adding p-site position\n")
-    dt[suboff,  on = 'length', psite := i.corrected_offset_from_3]
+    dt <- merge.data.table(dt, suboff, by = "length")
+    setnames(dt, "corrected_offset_from_3", "psite")
     dt[, psite := end3 - psite]
     setcolorder(dt,c("transcript", "end5", "psite", "end3", "length", "cds_start", "cds_stop"))
     dt[, psite_from_start := psite - cds_start
@@ -540,7 +573,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
     
     setorder(dt, transcript, end5, end3)
     
-    if (granges == T | granges == TRUE) {
+    if(output_class == "granges"){
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
                                                     ignore.strand = TRUE,
@@ -555,7 +588,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
     data[[n]] <- dt
   }
   
-  if (granges == T | granges == TRUE) {
+  if(output_class == "granges"){
     data <- GenomicRanges::GRangesList(data)
   }
   

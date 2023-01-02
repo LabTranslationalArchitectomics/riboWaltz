@@ -3,26 +3,28 @@
 #' This function generates read length distributions, displayed as bar plots.
 #' Multiple samples can be handled in several ways.
 #'
-#' @param data List of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}}, \code{\link{length_filter}} or
-#'   \code{\link{psite_info}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{bamtolist}}, \code{\link{bedtolist}},
+#'   \code{\link{length_filter}} or \code{\link{psite_info}}.
 #' @param sample Either character string or character string vector specifying
-#'   the name of the sample(s) of interest. A named list of two or more
+#'   the name of the sample(s) of interest. A named list of one or more
 #'   character strings and/or character string vectors can be provided. In this
-#'   case, each element of the list should include the name of the replicate(s)
-#'   of the samples of interest. The name assigned to the elements of the
-#'   list are displayed in the plot. Multiple replicates specified in character
-#'   string vectors are handled according to \code{multisample}.
-#' @param multisamples Either "separated" or "average". It specifies how to
-#'   handle multiple samples and replicates. If "saparated", one bar plot for
-#'   each sample included in \code{sample} is returned as an independent ggplot
-#'   object. If "average" i) one bar plot is returned if \code{sample} is a
-#'   character string vector or ii) one barplot is built for each element of
-#'   \code{sample} when it is a list. If "average", the bar plots display for
-#'   each length the mean signal and the corresponding standard error
-#'   computed among the replicates. In this case a single ggplot object is
-#'   returned, where multiple bar plots are organized and displayed according to
-#'   \code{plot_style}. Default is "separated".
+#'   case i) each list element should include the name of the replicate(s)
+#'   related to the sample of interest and ii) the name assigned to the elements
+#'   of the list are displayed in the plot. Multiple replicates specified in
+#'   character string vectors are handled according to \code{multisample}.
+#' @param multisamples Either "separated", "average" or "sum". It specifies how
+#'   to handle multiple samples and replicates. If "saparated", one metaprofile
+#'   for each sample included in \code{sample} is returned as an independent
+#'   ggplot object. If \code{sample} is a list, it is unlisted, coerced to
+#'   character string and handled accordingly. If "average" or "sum" i) one
+#'   metaprofiles is returned if \code{sample} is a character string vector or
+#'   ii) one metaprofiles is built for each element of \code{sample} when it is
+#'   a list. If "average", the metaprofiles display for each nucleotide the mean
+#'   signal and the corresponding standard error computed among the replicates.
+#'   In this case a single ggplot object is returned, where multiple bar plots
+#'   are organized and displayed according to \code{plot_style}. Default is
+#'   "separated".
 #' @param plot_style Either "split", "dodged" or "mirrored". It specifies how to
 #'   organize and display multiple bar plots. If "split", the bar plots are
 #'   placed one next to the other, in independent boxes. If "dodged", all bar
@@ -60,6 +62,16 @@
 rlength_distr <- function(data, sample, multisamples = "separated",
                           plot_style = "split", transcripts = NULL, cl = 100,
                           colour = NULL) {
+  
+  if(class(data[[1]])[1] == "GRanges"){
+    data_tmp <- list()
+    for(i in names(data)){
+      data_tmp[[i]] <- as.data.table(data[[i]])[, c("width", "strand") := NULL
+                                                ][, seqnames := as.character(seqnames)]
+      setnames(data_tmp[[i]], c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
+    }
+    data <- data_tmp
+  }
   
   check_sample <- setdiff(unlist(sample), names(data))
   if(length(check_sample) != 0){

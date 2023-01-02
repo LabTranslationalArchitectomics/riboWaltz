@@ -3,8 +3,9 @@
 #' This function provides multiple options for remove duplicated reads: when two
 #' or more reads are marked as duplicates, all of them are discarded but one.
 #'
-#' @param data List of data tables from \code{\link{bamtolist}},
-#'   \code{\link{bedtolist}} or \code{\link{length_filter}}.
+#' @param data Either list of data tables or GRangesList object from
+#'   \code{\link{bamtolist}}, \code{\link{bedtolist}} or
+#'   \code{\link{length_filter}}.
 #' @param sample Character string or character string vector specifying the name
 #'   of the sample(s) to process. Default is NULL i.e. all samples are
 #'   processed.
@@ -28,11 +29,9 @@
 #'   is automatically created. If NULL (the default), the information are
 #'   written in \emph{"duplicates_filtering.txt"}, saved in the working
 #'   directory. This parameter is considered only if \code{txt} is TRUE.
-#' @param granges Logical value whether to return a GRangesList object. Default
-#'   is FALSE i.e. a list of data tables is returned instead (the required input
-#'   for \code{\link{length_filter}}, \code{\link{psite}},
-#'   \code{\link{psite_info}}, \code{\link{rends_heat}} and
-#'   \code{\link{rlength_distr}}).
+#' @param output_class Either "datatable" or "granges". It specifies the format
+#'   of the output i.e. a list of data tables or a GRangesList object. Default
+#'   is "datatable".
 #' @return A list of data tables or a GRangesList object.
 #' @examples
 #' #generate an \emph{ad hoc} dataset:
@@ -59,7 +58,7 @@
 #' @import data.table
 #' @export
 duplicates_filter <- function(data, sample = NULL, extremity = "both",
-                              keep = "shortest", granges = FALSE,
+                              keep = "shortest", output_class = "datatable",
                               txt = FALSE, txt_file = NULL){
   
   check_sample <- setdiff(unlist(sample), names(data))
@@ -102,48 +101,58 @@ duplicates_filter <- function(data, sample = NULL, extremity = "both",
     
     cat("sample\tinitial_reads\tfinal_reads\tpercentage_kept\tpercentage_removed\n", file = txt_file)
   }
-
-  for(samp in sample){
-    cat(sprintf("processing %s\n", samp))
+  
+  for(samp in names(data)){
+    
     dt <- data[[samp]]
     
-    nreads <- nrow(dt)
-    cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 3)))
-    
-    if (txt == T | txt == TRUE) {
-      cat(sprintf("%s\t", samp), file = txt_file, append = TRUE)
-      cat(sprintf("%i\t", nreads), file = txt_file, append = TRUE)
-    }
-    
-    if(!is.null(extremity)){
-      if(extremity == "both") {
-        dt <- unique(dt, by = c("transcript" ,"end5", "end3"))
-      } else {
-        if(keep == "longest"){
-          dt <- dt[order(transcript, end5, -end3)]
-        }
-        if(extremity == "5end") {
-          dt <- unique(dt, by = c("transcript", "end5"))
-        } else {
-          dt <- unique(dt, by = c("transcript", "end3"))
-        }
+    if(samp %in% sample){
+      cat(sprintf("processing %s\n", samp))
+      
+      if(class(dt)[1] == "GRanges"){
+        dt <- as.data.table(dt)[, c("width", "strand") := NULL
+                                ][, seqnames := as.character(seqnames)]
+        setnames(dt, c("seqnames", "start", "end"), c("transcript", "end5", "end3"))
       }
-    } 
-    
-    dt <- dt[order(transcript, end5, end3)]
-    
-    cat(sprintf("%s M  (%s %%) reads removed\n", 
-                format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 3), 
-                format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 3) ))
-    cat(sprintf("reads kept: %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 3)))
-    
-    if (txt == T | txt == TRUE) {
-      cat(sprintf("%i\t", nrow(dt)), file = txt_file, append = TRUE)
-      cat(sprintf("%.2f\t", round((nrow(dt) / nreads) * 100, 2)), file = txt_file, append = TRUE)
-      cat(sprintf("%.2f\n", round(((nreads - nrow(dt)) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+      
+      nreads <- nrow(dt)
+      cat(sprintf("reads: %s M\n", format(round((nreads / 1000000), 2), nsmall = 3)))
+      
+      if (txt == T | txt == TRUE) {
+        cat(sprintf("%s\t", samp), file = txt_file, append = TRUE)
+        cat(sprintf("%i\t", nreads), file = txt_file, append = TRUE)
+      }
+      
+      if(!is.null(extremity)){
+        if(extremity == "both") {
+          dt <- unique(dt, by = c("transcript" ,"end5", "end3"))
+        } else {
+          if(keep == "longest"){
+            dt <- dt[order(transcript, end5, -end3)]
+          }
+          if(extremity == "5end") {
+            dt <- unique(dt, by = c("transcript", "end5"))
+          } else {
+            dt <- unique(dt, by = c("transcript", "end3"))
+          }
+        }
+      } 
+      
+      dt <- dt[order(transcript, end5, end3)]
+      
+      cat(sprintf("%s M  (%s %%) reads removed\n", 
+                  format(round((nreads - nrow(dt))/ 1000000, 2), nsmall = 3), 
+                  format(round(((nreads - nrow(dt))/nreads) * 100, 2), nsmall = 3) ))
+      cat(sprintf("reads kept: %s M\n\n", format(round((nrow(dt) / 1000000), 2), nsmall = 3)))
+      
+      if (txt == T | txt == TRUE) {
+        cat(sprintf("%i\t", nrow(dt)), file = txt_file, append = TRUE)
+        cat(sprintf("%.2f\t", round((nrow(dt) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+        cat(sprintf("%.2f\n", round(((nreads - nrow(dt)) / nreads) * 100, 2)), file = txt_file, append = TRUE)
+      }
     }
     
-    if (granges == T || granges == TRUE) {
+    if(output_class == "granges"){
       dt <- GenomicRanges::makeGRangesFromDataFrame(dt,
                                                     keep.extra.columns = TRUE,
                                                     ignore.strand = TRUE,
@@ -158,15 +167,12 @@ duplicates_filter <- function(data, sample = NULL, extremity = "both",
     data[[samp]] <- dt
   }
   
-  if (granges == T || granges == TRUE) {
+  if(output_class == "granges"){
     data <- GenomicRanges::GRangesList(data)
   }
   
   return(data)
 }
-
-
-
 
 
 

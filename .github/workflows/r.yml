@@ -1,0 +1,70 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: R
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:          
+  build:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+       matrix:
+        config:
+          - {os: ubuntu-latest,   r: '4.0.3'}
+          - {os: windows-latest,   r: '4.0.3'}
+          - {os: macos-11,   r: '4.2.0'}
+    
+    steps:
+      - uses: actions/checkout@v2      
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-pandoc@v1
+      
+      - name: Cache R packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+       
+      - name: install latex
+        if: runner.os == 'Linux'
+        run: sudo apt-get install texlive-latex-base
+       
+      - name: check R
+        if: runner.os == 'Linux'
+        run: |
+          R --version
+        
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: rcmdcheck
+      - uses: r-lib/actions/check-r-package@v2
+      - name: Set up R  ${{ matrix.config.r }}
+        uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
+        with:
+          r-version:  ${{ matrix.config.r }}
+      - name: Query dependencies
+        run: |
+          install.packages(c('remotes', 'BiocManager'), INSTALL_opts="--no-multiarch")
+          options(repos = c(getOption("repos"), BiocManager::repositories()))
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)          
+        shell: Rscript {0}
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck","pandoc", "rlang", "vctrs", "processx"), INSTALL_opts="--no-multiarch")
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+      - name: Check
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-multiarch"), error_on = "error")
+        shell: Rscript {0}
