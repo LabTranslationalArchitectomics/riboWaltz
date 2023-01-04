@@ -2,9 +2,16 @@
 % Please edit documentation in R/cds_coverage.R
 \name{cds_coverage}
 \alias{cds_coverage}
-\title{Number of in-frame P-sites per coding sequence.}
+\title{Number of in-frame P-sites per coding sequence or transcript.}
 \usage{
-cds_coverage(data, annotation, start_nts = 0, stop_nts = 0)
+cds_coverage(
+  data,
+  annotation,
+  start_nts = 0,
+  stop_nts = 0,
+  in_frame = TRUE,
+  whole_transcript = FALSE
+)
 }
 \arguments{
 \item{data}{Either list of data tables or GRangesList object from
@@ -14,23 +21,36 @@ cds_coverage(data, annotation, start_nts = 0, stop_nts = 0)
 
 \item{start_nts}{Positive integer specifying the number of nucleotides at the
 beginning of the coding sequences to be excluded from the analisys. Default
-is 0.}
+is 0. This parameter is considered only if \code{whole_transcript} is
+FALSE.}
 
 \item{stop_nts}{Positive integer specifying the number of nucleotides at the
-end of the coding sequences to be excluded from the analisys. Default is 0.}
+end of the coding sequences to be excluded from the analisys. Default is 0.
+This parameter is considered only if \code{whole_transcript} is FALSE.}
+
+\item{in_frame}{Logical value whether to consider only in-frame P-sites when
+computing the coverage. Default is TRUE. This parameter is considered only
+if \code{whole_transcript} is FALSE.}
+
+\item{whole_transcript}{Logical value whether to compute the coverage based
+on P-sites falling in any region of the transcript, i.e. CDS and UTRs.
+Default is FALSE.}
 }
 \value{
 A data table.
 }
 \description{
 This function generates a data table that for each transcript contains at
-least i) its name; ii) the length of its coding sequence; iii) the number of
-in-frame P-sites falling in its annotated coding sequence (if any) for all
-samples. A chosen number of nucleotides at the beginning and/or at the end of
-the CDSs can be excluded for restricting the analysis to a portion of the
-original coding sequence. In this case the output data table includes an
-additional column reporting the length of the selected region. Please note:
-transcripts without annotated CDS are automatically discarded.
+least i) its name; ii) its length or the length of its annotated coding
+sequence (if any); iii) the number of P-sites falling in its annotated coding
+sequence or in the whole transcript for all samples. When the coverage is
+computed for coding sequences and not whole transcripts, a chosen number of
+nucleotides at the beginning and/or at the end of the CDSs can be excluded
+for restricting the analysis to a portion of the original coding sequence. In
+this case the output data table includes an additional column reporting the
+length of the selected region. Moreover, either all P-sites or only in-frame
+P-sites can be considered. Finally, transcripts without annotated CDS are
+automatically discarded.
 }
 \examples{
 ## data(reads_list)
@@ -40,11 +60,15 @@ transcripts without annotated CDS are automatically discarded.
 ## psite_offset <- psite(reads_list, flanking = 6, extremity = "auto")
 ## reads_psite_list <- psite_info(reads_list, psite_offset)
 ##
-## ## Compute the number of in-frame P-sites per whole coding sequence.
+## ## Compute the number of in-frame P-sites per whole coding sequences.
 ## psite_cds <- cds_coverage(reads_psite_list, mm81cdna)
 ## 
-## ## Compute the number of in-frame P-sites per the coding sequence exluding
+## ## Compute the number of in-frame P-sites per coding sequences exluding
 ## ## the first 15 nucleotides and the last 10 nucleotides.
 ## psite_cds <- cds_coverage(reads_psite_list, mm81cdna,
 ##                           start_nts = 15, stop_nts = 10)
+## 
+## ## Compute the number of P-sites per transcripts.
+## psite_cds <- cds_coverage(reads_psite_list, mm81cdna,
+##                           whole_transcript = TRUE)
 }

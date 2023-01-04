@@ -327,7 +327,7 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
  
 ------------------------------------------------------------------------
    
-## Codon and CDS coverage
+## Codon and CDS/transcript coverage
 
  __riboWaltz__ includes two functions, `codon_coverage` and `cds_coverage`, providing quantitative information based on P-sites positions. 
   
@@ -348,13 +348,13 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
   |  ENSMUST00000000001.4  |  102  |  105  |  -13  |  -367  |  5utr  |  2  |
   |  ENSMUST00000000001.4  |  105  |  108  |  -12  |  -366  |  5utr  |  2  |
 
-### CDS coverage 
+### CDS and transcript coverage 
   
- `cds_coverage` computes the number of in-frame P-sites mapping on annotated coding sequences. Such data can be used as starting point for downstream quantitative analyses (e.g. differential analyses) based on in-frame ribosome protected fragments.
+ `cds_coverage` computes the number of P-sites mapping on annotated coding sequences or whole transcripts. Such data can be used as starting point for downstream quantitative analyses (e.g. differential analyses) based on ribosome protected fragments. By default, only in-frame P-sites falling in annotated coding sequences are considered and no nucleotides at the beginning or at the end of the CDSs are excluded for restricting the analysis to a portion of the original coding sequences. These settings can be modifyed through the parameters *in_frame*, *start_nts* and *start_nts*. Moreover, the parameter *whole_transcript* specifies if whole transcripts should be considered instead of the annotated coding sequence. The basic command
   
 	cds_coverage_example <- cds_coverage(reads_psite_list, mm81cdna)
 	
- `cds_coverage` returns a data table containing, for each transcript: i) its name; ii) its length; iii) the number of in-frame P-sites mapping on its annotated coding region for all samples:
+ returns a data table containing, for each transcript: i) its name; ii) the length of its annotated coding sequence (if any); iii) the number of P-sites falling in its annotated coding sequence for all samples:
   
   |  transcript  |  length  |  Samp1  |
   |:------:|:-----:|:------:|
