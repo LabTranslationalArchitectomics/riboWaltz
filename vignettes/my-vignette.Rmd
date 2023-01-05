@@ -165,7 +165,7 @@ Then, one or multiple BED files produced by `bamtobed` are read, converted into 
   reads_list <- bedtolist(bedfolder = "path/to/BED/files", annotation = annotation_dt)
 ```
 
-## Filtering steps
+## Filtering options
 
 __riboWaltz__ provides two functions aimed at filtering the reads by removing duplicated reads (`duplicates_filter`) and/or selecting specific read lengths (`length_filter`). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some examples based on the following _ad hoc_ dataset (note: row IDs were stored in an additional column to keep track of retained and removed lines): 
 
