@@ -34,7 +34,7 @@
 #'   or logarithmic gradients (see \code{log_colour}). Default is "black".
 #' @param log_colour Logical value whether to use a logarithmic colour scale
 #'   (strongly suggested in case of large signal variations). Default is FALSE.
-#' @return A list containing a ggplot2 object ("plot") and the data table with
+#' @return A list containing a ggplot object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
 #' data(reads_list)

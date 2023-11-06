@@ -16,14 +16,14 @@
 #'   case i) each list element should include the name of the replicate(s)
 #'   related to the sample of interest and ii) the name assigned to the elements
 #'   of the list are displayed in the plot. Multiple replicates specified in
-#'   character string vectors are handled according to \code{multisample}.
+#'   character string vectors are handled according to \code{multisamples}.
 #' @param multisamples Either "separated", "average" or "sum". It specifies how
 #'   to handle multiple samples and replicates. If "saparated", one metaprofile
 #'   for each sample included in \code{sample} is returned as an independent
 #'   ggplot object. If \code{sample} is a list, it is unlisted, coerced to
 #'   character string and handled accordingly. If "average" or "sum" i) one
-#'   metaprofiles is returned if \code{sample} is a character string vector or
-#'   ii) one metaprofiles is built for each element of \code{sample} when it is
+#'   metaprofile is returned if \code{sample} is a character string vector or
+#'   ii) one metaprofile is built for each element of \code{sample} when it is
 #'   a list. If "average", the metaprofiles display for each nucleotide the mean
 #'   signal and the corresponding standard error computed among the replicates.
 #'   If "sum", the metaprofiles display for each nucleotide the sum of the
@@ -79,7 +79,7 @@
 #'   example, specifying "sample.length_range" the title reports both the name
 #'   of the sample(s) and the read length(s). Default is NULL i.e. no title is
 #'   displayed.
-#' @return A list containing one or more ggplot2 object(s) and the data table
+#' @return A list containing one or more ggplot object(s) and the data table
 #'   with the associated data ("dt").
 #' @examples
 #' ## data(reads_list)
@@ -176,7 +176,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     cat("\n")
     stop("at least one sample name must be spcified\n\n")
   }
-  
+  #no
   if(multisamples == "separated" & is.list(sample)) {
     cat("\n")
     warning("parameter multisamples is set to \"separated\" but a list of samples is provided:\nparameter sample will be unlisted and coerced to character string\n", call. = FALSE)
@@ -194,7 +194,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
       }
     }
   }
-  
+  #cambiato
   if(is.list(sample) & length(sample) > 2 & plot_style == "mirrored") {
     cat("\n")
     warning("parameter sample is a list of dimension > 2.\nparameter plot_style set to default \"split\"\n", call. = FALSE)
@@ -211,19 +211,19 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     warning("parameter multisamples must be either  \"separated\", \"average\" or \"sum\"\nset to default \"separated\"\n", call. = FALSE)
     multisamples <- "separated"
   }
-  
+  #cambiato
   if(multisamples != "separated" & 
      !(plot_style %in% c("mirrored", "overlaid", "split"))){
     cat("\n")
     warning("parameter plot_style must be either \"split\", \"mirrored\" or \"overlaid\"\nset to default \"split\"\n", call. = FALSE)
     plot_style <- "split"
   }
-  
+  #cambiato
   if(multisamples %in% c("average", "sum") & ((is.list(sample) & length(sample) == 1) |
                                   (is.character(sample) & length(sample) > 1))){
     plot_style <- "overlaid"
   } 
-  
+  #eliminato?
   if(multisamples %in% c("average", "sum") & ((is.character(sample) & length(sample) == 1) |
                                               (is.list(sample) & length(as.character(unlist(sample))) == 1))){
     cat("\n")
@@ -243,7 +243,7 @@ metaprofile_psite <- function(data, annotation, sample, multisamples = "separate
     c_transcripts <- intersect(l_transcripts, transcripts)
     ntr <- length(c_transcripts)
   }
-  
+  #new, creata una lista in ogni caso
   if(is.character(sample) | (is.list(sample) & length(sample) == 1)){
     if(is.list(sample) & length(sample) == 1){
       samp_name <- names(sample)
@@ -634,7 +634,7 @@ f_title_plot <- function(plot_title_v, multisamples, sample_l, data, samp, ntr,
 #'   nucleotide, to the sum of the number of P-sites (defined by their leftmost
 #'   position) mapping on that position for all transcripts in one or multiple
 #'   replicates.
-#' @return A list containing a ggplot2 object ("plot") and the data table
+#' @return A list containing a ggplot object ("plot") and the data table
 #'   with the associated data ("dt").
 #' @examples
 #' ## data(reads_list)

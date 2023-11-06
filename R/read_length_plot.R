@@ -13,22 +13,22 @@
 #'   related to the sample of interest and ii) the name assigned to the elements
 #'   of the list are displayed in the plot. Multiple replicates are handled
 #'   according to \code{multisample}.
-#' @param multisamples Either "separated", "average". It specifies how to handle
+#' @param multisamples Either "separated" or "average". It specifies how to handle
 #'   multiple samples and replicates. If "saparated", one bar plot for each
 #'   sample included in \code{sample} is returned as an independent ggplot
 #'   object. If \code{sample} is a list, it is unlisted, coerced to character
-#'   string and handled accordingly. If "average" or "sum" i) one barplot is
-#'   returned if \code{sample} is a character string vector or ii) one bar plot
-#'   is built for each element of \code{sample} when it is a list. If "average",
-#'   the bar plot display for each nucleotide the mean signal and the
-#'   corresponding standard error computed among the replicates. In this case a
-#'   single ggplot object is returned, where multiple bar plots are organized
-#'   and displayed according to \code{plot_style}. Default is "separated".
+#'   string and handled accordingly. If "average" i) one barplot is returned if
+#'   \code{sample} is a character string vector or ii) one bar plot is built for
+#'   each element of \code{sample} when it is a list. If "average", the bar plot
+#'   displays for each length the mean signal and the corresponding standard
+#'   error computed among the replicates. In this case a single ggplot object is
+#'   returned, where multiple bar plots are organized and displayed according to
+#'   \code{plot_style}. Default is "separated".
 #' @param plot_style Either "split", "dodged" or "mirrored". It specifies how to
 #'   organize and display multiple bar plots. If "split", the bar plots are
 #'   placed one next to the other, in independent boxes. If "dodged", all bar
 #'   plots are included in one box, with each bar side by side with the others.
-#'   If "mirrored" \code{sample} must be a list of exactly two elements and the
+#'   If "mirrored", \code{sample} must be a list of exactly two elements and the
 #'   two bar plots are mirrored along the x axis. Default is "split".
 #' @param transcripts Character string vector listing the name of transcripts to
 #'   be included in the analysis. Default is NULL i.e. all transcripts are used.
@@ -43,7 +43,7 @@
 #'   elements and \code{multisamples} is set to "average", a colour for
 #'   each element of the list is required. If this parameter is not specified
 #'   the R default palette is employed. Default is NULL.
-#' @return List containing one or more ggplot2 object(s) and the data table with
+#' @return List containing one or more ggplot object(s) and the data table with
 #'   the associated data ("dt").
 #' @examples
 #' data(reads_list)

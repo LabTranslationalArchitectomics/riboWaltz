@@ -26,7 +26,7 @@
 #'   distribution from a random fragmentation of RNA and can be used as a
 #'   baseline to verify the expected enrichment of ribosome (P-site) signal in
 #'   CDSs.
-#' @return A list containing a ggplot2 object ("plot") and the data table with
+#' @return A list containing a ggplot object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
 #' ## data(reads_list)

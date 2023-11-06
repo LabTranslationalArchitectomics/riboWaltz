@@ -130,7 +130,7 @@ Bugs and errors can be reported at the [issues](https://github.com/LabTranslatio
 
 ### Note 1
 
-__riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
+__riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against sequences of genome assemblies i.e. standard chromosome sequences, thus requiring the outputs to be translated in transcript coordinates.
 
 The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see the section "Output in transcript coordinates" of its manual), is an example of tool providing such a feature.
 
@@ -295,7 +295,7 @@ head(reads_psite_list[["Samp1"]])
 ```{r, echo = FALSE, eval = TRUE}
 head(reads_psite_list[["Samp1"]])
 ```
-Optionally, additional columns reporting the three nucleotides covered by the P-site, the A-site and the E-site are attached. This feature requires transcript or chromosome nucleotide sequences in FASTA format. Alternatively, a BSGenome data package can be used for sequence retrieval. Nucleotide sequences of a genome assembly and BSGenome data package must be coupled with a GTF/GFF file or a TxDb object providing genomic annotations. For further details please refer to the documentation of `psite_info` running ?psite_info.
+Optionally, additional columns reporting the three nucleotides covered by the P-site, the A-site and the E-site are attached. This feature requires transcript or genome assembly (chromosome) nucleotide sequences in FASTA format. Alternatively, a BSGenome data package can be used for sequence retrieval. Nucleotide sequences of genome assemblies (chromosome sequences) and BSGenome data packages must be coupled with a GTF/GFF file or a TxDb object providing genomic annotations. For further details please refer to the documentation of `psite_info` running ?psite_info.
 
 Nucleotide sequences covered by the P-site, A-site or the E-site are required for performing further analyses such as to compute the number of in-frame P-sites, the percentage of P-sites falling in the three transcript regions, verify the trinucleotide periodicity of the reads along the coding sequence and generate metaplots, as discussed in the next sections.
 
@@ -415,7 +415,7 @@ knitr::include_graphics("example_length_dist_zoom.png")
     example_length_dist_split <-  rlength_distr(comparison_list,
                                                 sample = sample_list,
                                                 cl = 99, multisamples = "average",
-                                                plot_style = "split",
+                                                plot_style = "faceted",
                                                 colour = c("dodgerblue", "gray70"))
     example_length_dist_split[["plot"]]
     ```
@@ -466,7 +466,7 @@ knitr::include_graphics("example_length_dist_zoom.png")
     example_length_dist_split_rep <-  rlength_distr(comparison_list,
                                                     sample = sample_list,
                                                     cl = 99, multisamples = "average",
-                                                    plot_style = "split",
+                                                    plot_style = "faceted",
                                                     colour = c("dodgerblue", "gray70"))
     example_length_dist_split_rep[["plot"]]
     ```

@@ -107,9 +107,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 			
 #### Conda
 
- __riboWaltz__ is also available through [Conda](https://anaconda.org/bioconda/ribowaltz) and can be installed into the current environment by: 
-
-	conda install -c bioconda ribowaltz
+ __riboWaltz__ is also available through Conda and can be installed into the current environment by following [these instructions](https://bioconda.github.io/recipes/ribowaltz/README.html).
 
 
 

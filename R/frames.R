@@ -23,7 +23,7 @@
 #'   "auto", the title of the plot reports the region specified by \code{region}
 #'   (if any) and the considered read length(s). Default is NULL i.e. no title
 #'   is plotted.
-#' @return A list containing a ggplot2 object ("plot") and the data table with
+#' @return A list containing a ggplot object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
 #' ## data(reads_list)
@@ -252,7 +252,7 @@ frame_psite <- function(data, sample = NULL, transcripts = NULL, region = "all",
 #'   white, tiles corresponding to the highest signal are of the specified
 #'   colour and the progression between these two colours follows a linear
 #'   gradient. Default is dark blue.
-#' @return A list containing a ggplot2 object ("plot") and the data table with
+#' @return A list containing a ggplot object ("plot") and the data table with
 #'   the associated data ("dt").
 #' @examples
 #' ## data(reads_list)
