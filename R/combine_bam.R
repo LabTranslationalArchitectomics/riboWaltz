@@ -70,9 +70,9 @@
 #'   usually due to many indels which in turn are caused by loose thresholds
 #'   used in the alignment process. High numbers of consecutive deletions
 #'   (nucleotides present in the reference sequence but not in the read) may be
-#'   an indication of reads mapping on exon-exon junctions. Despite this
+#'   an indication of reads mapping on exon-exon junctions. Since this
 #'   eventuality is not in accordance with alignments based on transcript
-#'   coordinates, stretches  of deletions can be included by errors or
+#'   coordinates, stretches of deletions can be included by errors or
 #'   inaccurate transcript annotation and should be discarded. In fact,
 #'   \strong{riboWaltz} deliberately identifies the length of the reference
 #'   sequences covered by the reads with the reads length, referring to it as
