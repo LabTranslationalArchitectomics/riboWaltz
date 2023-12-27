@@ -1,3 +1,6 @@
+
+[![R](https://github.com/LabTranslationalArchitectomics/riboWaltz/actions/workflows/r.yml/badge.svg)](https://github.com/LabTranslationalArchitectomics/riboWaltz/actions/workflows/r.yml)
+
 ![riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/ribowaltz.png)
 
 # __riboWaltz__
