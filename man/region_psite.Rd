@@ -37,7 +37,7 @@ Default is NULL i.e. sample names in \code{sample} are used.}
 for the 5' UTR, CDS and 3' UTR bars, respectively. Default is a grayscale.}
 }
 \value{
-A list containing a ggplot2 object ("plot") and the data table with
+A list containing a ggplot object ("plot") and the data table with
   the associated data ("dt").
 }
 \description{

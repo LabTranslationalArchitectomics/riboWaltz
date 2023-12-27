@@ -50,20 +50,21 @@ codon usage indexes should be based on ribosome P-sites ("psite"), A-sites
 
 \item{fastapath}{Character string specifying the FASTA file used in the
 alignment step, including its path, name and extension. This file can
-contain reference nucleotide sequences either of a genome assembly or of
-all the transcripts (see \code{Details} and \code{fasta_genome}). Please
-make sure the sequences derive from the same release of the annotation file
-used in the \code{\link{create_annotation}} function. Note: either
-\code{fastapath} or \code{bsgenome} is required to compute the frequency in
-sequences of each codon, used as normalization factors, even if \code{data}
-includes one or more columns among \emph{p_site_codon}, \emph{a_site_codon}
-and \emph{e_site_codon}. Default is NULL.}
+contain reference nucleotide sequences either of genome asseblies
+(chromosome sequences) or of transcripts (see \code{Details} and
+\code{fasta_genome}). Please make sure the sequences derive from the same
+release of the annotation file used in the \code{\link{create_annotation}}
+function. Note: either \code{fastapath} or \code{bsgenome} is required to
+compute the frequency of each codon along sequences, used as normalization
+factors, even if \code{data} includes one or more columns among
+\emph{p_site_codon}, \emph{a_site_codon} and \emph{e_site_codon}. Default
+is NULL.}
 
 \item{fasta_genome}{Logical value whether the FASTA file specified by
-\code{fastapath} contains nucleotide sequences of a genome assembly. If
-TRUE (the default), an annotation object is required (see \code{gtfpath}
-and \code{txdb}). FALSE implies nucleotide sequences of transcripts are
-provided instead.}
+\code{fastapath} contains nucleotide sequences of genome asseblies
+(chromosome sequences). If TRUE (the default), an annotation object is
+required (see \code{gtfpath} and \code{txdb}). FALSE implies nucleotide
+sequences of transcripts are provided instead.}
 
 \item{refseq_sep}{Character specifying the separator between reference
 sequences' name and additional information to discard, stored in the
@@ -82,7 +83,7 @@ package). This parameter must be coupled with an annotation object (see
 \code{gtfpath} and \code{txdb}). Please make sure the sequences included in
 the specified BSgenome data pakage are in agreement with the sequences used
 in the alignment step. Note: either \code{fastapath} or \code{bsgenome} is
-required to compute the frequency in sequences of each codon, used as
+required to compute the frequency of each codon along sequences, used as
 normalization factors, even if \code{data} includes one or more columns
 among \emph{p_site_codon}, \emph{a_site_codon} and \emph{e_site_codon}.
 Default is NULL.}
@@ -91,8 +92,9 @@ Default is NULL.}
 including its path, name and extension. Please make sure the GTF file and
 the sequences specified by \code{fastapath} or \code{bsgenome} derive from
 the same release. Note that either \code{gtfpath} or \code{txdb} is
-required if and only if nucleotide sequences of a genome assembly are
-provided (see \code{fastapath} or \code{bsgenome}). Default is NULL.}
+required if and only if nucleotide sequences of genome assemblies
+(chromosome sequences) are provided (see \code{fastapath} or
+\code{bsgenome}). Default is NULL.}
 
 \item{txdb}{Character string specifying the TxDb annotation package to be
 loaded. If not already present in the system, it is automatically installed
@@ -102,8 +104,8 @@ through the biocLite.R script (check
 annotation package and the sequences specified by \code{fastapath} or
 \code{bsgenome} derive from the same release. Note that either
 \code{gtfpath} or \code{txdb} is required if and only if nucleotide
-sequences of a genome assembly are provided (see \code{fastapath} or
-\code{bsgenome}). Default is NULL.}
+sequences of genome assemblies (chromosome sequences) are provided (see
+\code{fastapath} or \code{bsgenome}). Default is NULL.}
 
 \item{dataSource}{Optional character string describing the origin of the GTF
 data file. This parameter is considered only if \code{gtfpath} is
@@ -153,13 +155,13 @@ sequences are used instead. This parameter is considered only if
 \code{label_scatter} is TRUE.}
 }
 \value{
-A list containing ggplot2 objects and a data table with the
+A list containing ggplot objects and a data table with the
   associated data ("dt"). If only one sample name is specified in
-  \code{sample}, one ggplot2 object is returned (a bar plot named "plot"). If
-  two sample names are specified in \code{sample}, three ggplot2 objects are
+  \code{sample}, one ggplot object is returned (a bar plot named "plot"). If
+  two sample names are specified in \code{sample}, three ggplot objects are
   returned (two bar plots named "plot_NameSample1" and
   "plot_NameSample2" and a scatter plot named "plot_comparison"). If
-  \code{codon_values} is specified, two ggplot2 objects are returned (one bar
+  \code{codon_values} is specified, two ggplot objects are returned (one bar
   plots named "plot" and a scatter plot named "plot_comparison"). Please
   note: before plotting, the 64 values are scaled to make them ranging
   between 0 and 1. If \code{frequency_normalization} is TRUE, the data table
@@ -183,17 +185,17 @@ Pearson correlation coefficient.
   transcript coordinates. This choice is due to the main purpose of RiboSeq
   assays to study translational events through the isolation and sequencing
   of ribosome protected fragments. Most reads from RiboSeq are supposed to
-  map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM
-  based on transcript coordinates can be generated in two ways: i) aligning
-  directly against transcript sequences; ii) aligning against standard
-  chromosome sequences, requiring the outputs to be translated in transcript
-  coordinates. The first option can be easily handled by many aligners (e.g.
-  Bowtie), given a reference FASTA file where each sequence represents a
-  transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The
-  second procedure is based on reference FASTA files where each sequence
-  represents a chromosome, usually coupled with comprehensive gene annotation
-  files (GTF or GFF). The STAR aligner, with its option --quantMode
-  TranscriptomeSAM (see Chapter 6 of its
+  map on mRNAs and not on introns and intergenic regions. BAM based on
+  transcript coordinates can be generated in two ways: i) aligning directly
+  against transcript sequences; ii) aligning against sequences of genome
+  assemblies i.e. standard chromosome sequences, thus requiring the outputs
+  to be translated in transcript coordinates. The first option can be easily
+  handled by many aligners (e.g. Bowtie), given a reference FASTA file where
+  each sequence represents a transcript, from the beginning of the 5' UTR to
+  the end of the 3' UTR. The second procedure is based on reference FASTA
+  files where each sequence represents a chromosome, usually coupled with
+  comprehensive gene annotation files (GTF or GFF). The STAR aligner, with
+  its option --quantMode TranscriptomeSAM (see Chapter 6 of its
   \href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
    is an example of tool providing such a feature.
 }

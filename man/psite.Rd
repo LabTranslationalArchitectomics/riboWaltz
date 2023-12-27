@@ -55,10 +55,9 @@ generating occupancy metaprofiles for to a sub-range of read lengths i.e.
 for the cl% of read lengths associated to the highest signals. Default is
 99. This parameter is considered only if \code{plot} is TRUE.}
 
-\item{txt}{Logical value whether to write in a txt file reporting the
-extremity used for the correction step and the best offset for each sample.
-Similar information are displayed by default in the console. Default is
-FALSE.}
+\item{txt}{Logical value whether to write in a txt file the extremity used
+for the correction step and the best offset for each sample. Similar
+information are displayed by default in the console. Default is FALSE.}
 
 \item{txt_file}{Character string specifying the path, name and extension
 (e.g. "PATH/NAME.extension") of the plain text file where the extremity

@@ -53,7 +53,7 @@ colour and the progression between these two colours follows a linear
 gradient. Default is dark blue.}
 }
 \value{
-A list containing a ggplot2 object ("plot") and the data table with
+A list containing a ggplot object ("plot") and the data table with
   the associated data ("dt").
 }
 \description{

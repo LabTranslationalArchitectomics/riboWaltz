@@ -33,15 +33,15 @@ character strings and/or character string vectors can be provided. In this
 case i) each list element should include the name of the replicate(s)
 related to the sample of interest and ii) the name assigned to the elements
 of the list are displayed in the plot. Multiple replicates specified in
-character string vectors are handled according to \code{multisample}.}
+character string vectors are handled according to \code{multisamples}.}
 
 \item{multisamples}{Either "separated", "average" or "sum". It specifies how
 to handle multiple samples and replicates. If "saparated", one metaprofile
 for each sample included in \code{sample} is returned as an independent
 ggplot object. If \code{sample} is a list, it is unlisted, coerced to
 character string and handled accordingly. If "average" or "sum" i) one
-metaprofiles is returned if \code{sample} is a character string vector or
-ii) one metaprofiles is built for each element of \code{sample} when it is
+metaprofile is returned if \code{sample} is a character string vector or
+ii) one metaprofile is built for each element of \code{sample} when it is
 a list. If "average", the metaprofiles display for each nucleotide the mean
 signal and the corresponding standard error computed among the replicates.
 If "sum", the metaprofiles display for each nucleotide the sum of the
@@ -109,7 +109,7 @@ of the sample(s) and the read length(s). Default is NULL i.e. no title is
 displayed.}
 }
 \value{
-A list containing one or more ggplot2 object(s) and the data table
+A list containing one or more ggplot object(s) and the data table
   with the associated data ("dt").
 }
 \description{

@@ -79,7 +79,7 @@ read length(s) employed for generating the metaprofiles. Default is NULL
 i.e. no title is displayed.}
 }
 \value{
-A list containing a ggplot2 object ("plot") and the data table
+A list containing a ggplot object ("plot") and the data table
   with the associated data ("dt").
 }
 \description{
