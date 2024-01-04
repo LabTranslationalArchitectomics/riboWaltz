@@ -466,7 +466,7 @@ Multiple samples and replicates can be handled and visualized according to diffe
 			example_length_dist[["plot_Samp2"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_1.png" width="300" />
-	src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_2.png" width="300" />
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_2.png" width="300" />
 	</p>
 
 	* According to *plot_style = "facet"* the two distributions are arranged in two independent boxes.
@@ -549,7 +549,7 @@ Multiple samples and replicates can be handled and visualized according to diffe
 			example_length_dist[["plot_S2"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_1.png" width="300" />
-	src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_2.png" width="300" />
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_2.png" width="300" />
 	</p>
 
 	* Three samples, two with multiple replicates and one with no replicates, *plot_style = "dodge"*.
