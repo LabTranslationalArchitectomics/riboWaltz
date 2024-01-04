@@ -414,15 +414,15 @@ The output of all the functions generating plots is a list of at least three ele
 For a comprehensive description of the functions, we first build a set of 5 data tables by extracting random reads from the original reads_list example dataset. These data tables will be used as fake samples and replicates to show how parameters *sample*, *multisamples* and "plot_style* work. Their size is smaller than the original dataset (5000 reads) to ensure enough variability when "replicates" are averaged.
 
 	for(i in 2:6){
-		samp_name <- paste0("Samp", i)
-		set.seed(i)
-		reads_list[[samp_name]] <- reads_list[["Samp1"]][sample(.N, 5000)]
+	   samp_name <- paste0("Samp", i)
+	   set.seed(i)
+	   reads_list[[samp_name]] <- reads_list[["Samp1"]][sample(.N, 5000)]
 	}
 
 We also generate the corresponding reads_psite_list by computing the offset for each dataset:
 
-		psite_offset <- psite(reads_list, flanking = 6, extremity = "3end")
-		reads_psite_list <- psite_info(reads_list, psite_offset)
+	psite_offset <- psite(reads_list, flanking = 6, extremity = "3end")
+	reads_psite_list <- psite_info(reads_list, psite_offset)
 		
 
 ### Overview of the data
@@ -433,8 +433,8 @@ Before the identification of the P-sites, ribosome profiling data can be explore
   
 The first preliminary plot, provided by `rlength_distr`, shows the distribution of reads lengths for one or multiple samples. It can be exploited for i) identifying distinct populations of read lengths, associated with different ribosome conformations and ii) exploring the contribution of each length to the final P-site determination. Here an example with one sample and no replicates and the default parameters:
  
-    example_length_dist <- rlength_distr(reads_list, sample = "Samp1",
-										 colour = "#333f50")
+    example_length_dist <- rlength_distr(reads_list, sample = "Samp1", 
+					     colour = "#333f50")
     example_length_dist[["plot_Samp1"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_basic.png" width="300" />
