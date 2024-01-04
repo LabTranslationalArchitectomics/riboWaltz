@@ -443,7 +443,7 @@ The first preliminary plot, provided by `rlength_distr`, shows the distribution 
 Note that a wide range of read lengths might result in squeezed distributions which can be avoided by specifing either *length_range* or *cl*. Using the latter option and setting *cl = 0.99*, the distribution shown above for a confidence level of 99% appears as follow:
 
     example_length_dist <- rlength_distr(reads_list, sample = "Samp1",
-										 cl = 99, colour = "#333f50")
+					     cl = 99, colour = "#333f50")
     example_length_dist[["plot_Samp1"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_basic_zoom.png" width="300" />
@@ -458,24 +458,27 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	* Due to the default *plot_style = "split"* two bar plots are stored in two distinct ggplot2 objects.
 
 			example_length_dist <- rlength_distr(reads_list,
-							  sample = input_samples,
-							  multisamples = "independent",
-							  plot_style = "split",
-							  cl = 99, colour = c("#333f50", "#39827c"))
+							       sample = input_samples,
+							       multisamples = "independent",
+							       plot_style = "split",
+							       cl = 99, colour = c("#333f50", "#39827c"))
 			example_length_dist[["plot_Samp1"]]
 			example_length_dist[["plot_Samp2"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_1.png" width="300" />
+	</p>
+	
+	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_2.png" width="300" />
 	</p>
 
 	* According to *plot_style = "facet"* the two distributions are arranged in two independent boxes.
 
 			example_length_dist <- rlength_distr(reads_list,
-							  sample = input_samples,
-							  multisamples = "independent",
-							  plot_style = "facet",
-							  cl = 99, colour = c("#333f50", "#39827c"))
+							       sample = input_samples,
+							       multisamples = "independent",
+							       plot_style = "facet",
+							       cl = 99, colour = c("#333f50", "#39827c"))
 							  
 			example_length_dist[["plot"]]
 	<p align="center">
@@ -485,10 +488,10 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	* According to *plot_style = "dodge"* the two distributions are arranged in the same box and, for each length, samples are placed side by side. 
 
 			example_length_dist <- rlength_distr(reads_list,
-							  sample = input_samples,
-							  multisamples = "independent",
-							  plot_style = "dodge",
-							  cl = 99, colour = c("#333f50", "#39827c"))
+							       sample = input_samples,
+							       multisamples = "independent",
+							       plot_style = "dodge",
+							       cl = 99, colour = c("#333f50", "#39827c"))
 							  
 			example_length_dist[["plot"]]
 	<p align="center">
@@ -498,10 +501,10 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	* According to *plot_style = "mirror"* the two distributions are mirrored along the x axis.
 
 			example_length_dist <- rlength_distr(reads_list,
-							  sample = input_samples,
-							  multisamples = "independent",
-							  plot_style = "mirror",
-							  cl = 99, colour = c("#333f50", "#39827c"))
+							       sample = input_samples,
+							       multisamples = "independent",
+							       plot_style = "mirror",
+							       cl = 99, colour = c("#333f50", "#39827c"))
 							  
 			example_length_dist[["plot"]]
 	<p align="center">
@@ -512,6 +515,7 @@ Multiple samples and replicates can be handled and visualized according to diffe
 2. One sample with multiple replicates can be visualised in two different ways, always setting *multisamples = "average"*.
 
 	* Building a vector with the name of the replicates which is then passed to parameter *sample*. In this case, the name of the sample is automatically set to "Average".
+	
 			input_samples <- c("Samp1", "Samp2")
 			example_length_dist <- rlength_distr(reads_list,
 							  sample = input_samples,
@@ -524,6 +528,7 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	</p>
 
 	* Building a list of one element with the name of the replicates which is then passed to parameter *sample*. In this case, the name of the sample corresponds to the name of the element of the list.
+	
 			input_samples <- list("S1" = c("Samp1", "Samp2"))
 			example_length_dist <- rlength_distr(reads_list,
 							  sample = input_samples,
@@ -537,6 +542,7 @@ Multiple samples and replicates can be handled and visualized according to diffe
 
 3. Finally, we can compare two or more samples with or without replicates by combining the previous examples. In this case a list must be passed to *sample* and *multisamples* is set to "average" by default. A couple of examples:
 	* Two samples with multiple replicates, *plot_style = "split"*.
+	
 			input_samples <- list("S1" = c("Samp1", "Samp2"),
 								  "S2" = c("Samp3", "Samp4", "Samp5"))
 			example_length_dist <- rlength_distr(reads_list,
@@ -549,10 +555,14 @@ Multiple samples and replicates can be handled and visualized according to diffe
 			example_length_dist[["plot_S2"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_1.png" width="300" />
+	</p>
+	
+	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_2.png" width="300" />
 	</p>
 
 	* Three samples, two with multiple replicates and one with no replicates, *plot_style = "dodge"*.
+	
 			input_samples <- list("S1" = c("Samp1", "Samp2"),
 								  "S2" = c("Samp3", "Samp4", "Samp5"),
 								  "S3" = c("Samp6"))
@@ -568,6 +578,7 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	</p>
 
 	* Two samples, one with multiple replicates and one with no replicates, *plot_style = "mirror"*.
+	
 			input_samples <- list("S1" = c("Samp1", "Samp2"),
 								  "S3" = c("Samp6"))
 			example_length_dist <- rlength_distr(reads_list,
@@ -599,15 +610,15 @@ Multiple samples and replicates can be handled and visualized according to diffe
  Ribosome profiling data should define the CDS of transcripts as the region with the highest percentage of reads. To confirm this property the function `region_psite` computes the percentage of P-sites falling in the three annotated transcript regions (5' UTR, CDS and 3' UTR). To verify the accumulation of reads on the CDS the resulting plot includes an additional set of bars called "RNAs" displaying the expected read distribution from a random fragmentation of RNA. These additional bars report the cumulative nucleotide length of the 5' UTRs, CDSs and 3' UTRs of the transcripts included in the analysis expressed as percentages. Here an example based on multiple samples and replicates with the default parameters, revealing the expected P-site accumulation on the CDS: 
 
 	input_samples <- list("S1" = c("Samp1", "Samp2"),
-                      "S2" = c("Samp3", "Samp4", "Samp5"),
-                      "S3" = c("Samp6"))
+                          "S2" = c("Samp3", "Samp4", "Samp5"),
+                          "S3" = c("Samp6"))
 
 	example_psite_per_region <- region_psite(reads_psite_list, mm81cdna,
-									 sample = input_samples,
-									 multisamples = "average",
-									 plot_style = "stack",
-                                     cl = 85,
-									 colour = c("#333f50", "gray70", "#39827c"))
+						 sample = input_samples,
+						 multisamples = "average",
+						 plot_style = "stack",
+						 cl = 85,
+						 colour = c("#333f50", "gray70", "#39827c"))
 	example_psite_per_region[["plot"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region1.png" width="350" />
@@ -616,11 +627,11 @@ Multiple samples and replicates can be handled and visualized according to diffe
 A different visualization which also displays the standard error resulting from averaging the replicates for each sample and transcript region is provided by *plot_style="dodge"*.
 
 	example_psite_per_region <- region_psite(reads_psite_list, mm81cdna,
-									 sample = input_samples,
-									 multisamples = "average"
-									 plot_style = "dodge"
-                                     cl = 85,
-									 colour = c("#333f50", "gray70", "#39827c"))
+						 sample = input_samples,
+						 multisamples = "average",
+						 plot_style = "dodge",
+						 cl = 85,
+						 colour = c("#333f50", "gray70", "#39827c"))
 	example_psite_per_region[["plot"]]
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region2.png" width="375" />
@@ -633,15 +644,15 @@ A different visualization which also displays the standard error resulting from 
 1. Frame of the P-site for the three transcript regions and stratified by read length.
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
-						  "S2" = c("Samp3", "Samp4", "Samp5"),
-						  "S3" = c("Samp6"))
+				       "S2" = c("Samp3", "Samp4", "Samp5"),
+					   "S3" = c("Samp6"))
 					  
 		example_frames_stratified <- frame_psite_length(reads_psite_list, mm81cdna,
-                                   sample = input_samples,
-                                   multisamples = "average",
-                                   plot_style = "facet",
-                                   region = "all",
-                                   cl = 85, colour = "#333f50")
+                                                        sample = input_samples,
+                                                        multisamples = "average",
+                                                        plot_style = "facet",
+                                                        region = "all",
+                                                        cl = 85, colour = "#333f50")
 		example_frames_stratified[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames_stratified.png" width="375" />
@@ -650,14 +661,14 @@ A different visualization which also displays the standard error resulting from 
 2. Frame of the P-site for the CDS, not stratified by read length.
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
-						  "S2" = c("Samp3", "Samp4", "Samp5"))
+				       "S2" = c("Samp3", "Samp4", "Samp5"))
 						  
 		example_frames <- frame_psite(reads_psite_list, mm81cdna,
-                                   sample = input_samples,
-                                   multisamples = "average",
-                                   plot_style = "facet",
-                                   region = "cds",
-                                   colour = c("#333f50", "#39827c"))
+                                      sample = input_samples,
+                                      multisamples = "average",
+                                      plot_style = "facet",
+                                      region = "cds",
+                                      colour = c("#333f50", "#39827c"))
 		example_frames[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames1.png" width="375" />
@@ -666,14 +677,14 @@ A different visualization which also displays the standard error resulting from 
 3. Frame of the P-site for the three transcript regions, not stratified by read length.
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
-						  "S2" = c("Samp3", "Samp4", "Samp5"))
+				       "S2" = c("Samp3", "Samp4", "Samp5"))
 						  
 		example_frames <- frame_psite(reads_psite_list, mm81cdna,
-                                   sample = input_samples,
-                                   multisamples = "average",
-                                   plot_style = "mirror",
-                                   region = "all",
-                                   colour = c("#333f50", "#39827c"))
+                                      sample = input_samples,
+                                      multisamples = "average",
+                                      plot_style = "mirror",
+                                      region = "all",
+                                      colour = c("#333f50", "#39827c"))
 		example_frames[["plot"]]
 	<p align="center">
 	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames2.png" width="575" />
@@ -686,10 +697,10 @@ A different visualization which also displays the standard error resulting from 
 	input_samples <- list("S1" = c("Samp1", "Samp2"))
  
 	example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
-											 sample = input_samples,
-											 multisamples = "average",
-	                                         utr5l = 20, cdsl = 40, utr3l = 20,
-											 colour = "#333f50")
+						 sample = input_samples,
+						 multisamples = "average",
+						 utr5l = 20, cdsl = 40, utr3l = 20,
+						 colour = "#333f50")
     example_metaprofile[["plot_S1"]]
     
 ![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile1.png)
@@ -698,40 +709,40 @@ A different visualization which also displays the standard error resulting from 
 As already illustrated for the other functions, when dealing with multiple samples and replicates it is possible to generate either as many ggplot2 objects as the number of samples (*plot_style="split"*) or single plots with different arrangements of the metaprofiles: 
 
 	input_samples <- list("S1" = c("Samp1", "Samp2"),
-						  "S2" = c("Samp3", "Samp4", "Samp5"))
+			      "S2" = c("Samp3", "Samp4", "Samp5"))
 
 1. *plot_style="facet"*
 
 		example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         plot_style = "facet",
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         colour = c("#333f50", "#39827c"))
+                                                 sample = input_samples,
+                                                 multisamples = "average",
+                                                 plot_style = "facet",
+                                                 utr5l = 20, cdsl = 40, utr3l = 20,
+                                                 colour = c("#333f50", "#39827c"))
 		example_metaprofile[["plot"]]
 		
-		![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile2.png)
+	![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile2.png)
 
 2. *plot_style="overlap"*        
 
 		example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         plot_style = "overlap",
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         colour = c("#333f50", "#39827c"))
+                                                 sample = input_samples,
+                                                 multisamples = "average",
+                                                 plot_style = "overlap",
+                                                 utr5l = 20, cdsl = 40, utr3l = 20,
+                                                 colour = c("#333f50", "#39827c"))
 		example_metaprofile[["plot"]]
 		
-		![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile3.png)
+	![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile3.png)
 
 3.  *plot_style="mirror"*    
 
 		example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         plot_style = "mirror",
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         colour = c("#333f50", "#39827c"))
+                                                 sample = input_samples,
+                                                 multisamples = "average",
+                                                 plot_style = "mirror",
+                                                 utr5l = 20, cdsl = 40, utr3l = 20,
+                                                 colour = c("#333f50", "#39827c"))
 		example_metaprofile[["plot"]]
 		
 	![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile4.png)
@@ -740,14 +751,14 @@ As already illustrated for the other functions, when dealing with multiple sampl
  Even though `metaprofile_psite` is the reference function to visualised meta-like data, its outputs migh appear too crowded to appreciate the results if too many samples are passed. For this reasons __riboWaltz__ proposes another approach to visualize the trinucleotide periodicity along the coding sequences: by running the function `metaheatmap_psite`, the abundance of P-sites along the CDS is represented by a continuous color rather than by the height of a line. Moreover, when multiple samples are provided the resulting heatmaps are arranged in one graphical output one below the other.
   
 	input_samples <- list("S1" = c("Samp1", "Samp2"),
-                      "S2" = c("Samp3", "Samp4", "Samp5"),
-                      "S3" = c("Samp6"))
+                          "S2" = c("Samp3", "Samp4", "Samp5"),
+                          "S3" = c("Samp6"))
 
 	example_metaheatmap <- metaheatmap_psite(reads_psite_list, mm81cdna,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         utr5l = 20, cdsl = 40, utr3l = 20,
-                                         colour = "#333f50")
+                                             sample = input_samples,
+                                             multisamples = "average",
+                                             utr5l = 20, cdsl = 40, utr3l = 20,
+                                             colour = "#333f50")
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
 </p>
@@ -762,27 +773,27 @@ As already illustrated for the other functions, when dealing with multiple sampl
 		input_samples <- list("S1" = c("Samp1", "Samp2"))
 					  
 		example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
-											sample = input_samples,
-											multisamples = "average",
-											plot_style = "facet",
-                                            fastapath = "path/to/transcriptome/FASTA/file",
-                                            fasta_genome = FALSE,
-                                            frequency_normalization = FALSE) 
+							 sample = input_samples,
+							 multisamples = "average",
+							 plot_style = "facet",
+							 fastapath = "path/to/transcriptome/FASTA/file",
+							 fasta_genome = FALSE,
+							 frequency_normalization = FALSE) 
 		example_cu_barplot[["plot_S1"]]
 	![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot1.png)
 	
 2. Codon usage indexes for two samples, multiple replicates, not normalized for the frequency of each codon. When more than one sample is specified and *plot_style="facet"*, the codons are arranged in alphabetical order, with the exception that the start codon and the three stop codons are placed at the beginning and at the end of the plot, respectively.
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
-							  "S2" = c("Samp3", "Samp4", "Samp5"))
+				       "S2" = c("Samp3", "Samp4", "Samp5"))
 					  
 		example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
-											sample = input_samples,
-											multisamples = "average",
-											plot_style = "facet",
-                                            fastapath = "path/to/transcriptome/FASTA/file",
-                                            fasta_genome = FALSE,
-                                            frequency_normalization = FALSE) 
+							 sample = input_samples,
+							 multisamples = "average",
+							 plot_style = "facet",
+							 fastapath = "path/to/transcriptome/FASTA/file",
+							 fasta_genome = FALSE,
+							 frequency_normalization = FALSE) 
 		example_cu_barplot[["plot"]]
 	![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot2.png)
   
@@ -792,13 +803,13 @@ As already illustrated for the other functions, when dealing with multiple sampl
 		input_samples <- list("S1" = c("Samp1", "Samp2"))
 					  
 		example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
-											sample = input_samples,
-											multisamples = "average",
-											plot_style = "facet",
-                                            fastapath = "path/to/transcriptome/FASTA/file",
-                                            fasta_genome = FALSE,
-                                            frequency_normalization = TRUE,
-											include_stop_codons = FALSE) 
+							 sample = input_samples,
+							 multisamples = "average",
+							 plot_style = "facet",
+							 fastapath = "path/to/transcriptome/FASTA/file",
+							 fasta_genome = FALSE,
+							 frequency_normalization = TRUE,
+							 include_stop_codons = FALSE) 
 		example_cu_barplot[["plot_S1"]]
 	![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot3.png)  
   
@@ -806,14 +817,15 @@ As already illustrated for the other functions, when dealing with multiple sampl
 `codon_usage_psite` can be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from multiple samples or multiple populations of reads (e.g. with different length). The parameter *contrast_sample* specifies the sample(s) (if any) to be considered when comparing the codon usage indexes between:
  * two samples in *sample*;
  * one sample and 64 triplet-specific values provided by the user (see parameter *codon_values*).
+
 When *contrast_sample* is specified and sets of codon usage indexes are compared, `codon_usage_psite` automatically generates a scatter plot where each dot represents a codon, optionally labelled with the corresponding triplet or amino acid. The plot includes the regression line based on the coordinates of the dots and the Pearson correlation coefficient. In both cases a specified number of dots can be labeled by the the corresponding triplet or amino acid symbol (see parameters *label_scatter*, *label_number* and *label_aminoacid*). Using the usual list of samples
 
-input_samples <- list("S1" = c("Samp1", "Samp2"),
+	input_samples <- list("S1" = c("Samp1", "Samp2"),
 					  "S2" = c("Samp3", "Samp4", "Samp5"))
 
 we first investigate if, and to which extent, the normalized codon usage indexes of sample S1 differs from the normalized codon usage indexes of sample S2.
 
-example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
 										sample = input_samples,
 										contrast_sample = c("S1", "S2"),
                                         fastapath = "path/to/transcriptome/FASTA/file",
@@ -839,7 +851,7 @@ We then compare the empirical codon indexes associated with sample S1, not norma
   
 Here the resulting plot:
   
-example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
 										sample = input_samples,
 										contrast_sample = "S1",
 										codon_values = cub_mouse,
