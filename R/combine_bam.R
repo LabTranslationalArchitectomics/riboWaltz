@@ -42,6 +42,7 @@
 #' @param output_class Either "datatable" or "granges". It specifies the format
 #'   of the output i.e. a list of data tables or a GRangesList object. Default
 #'   is "datatable".
+#' @return A list of data tables or a GRangesList object.
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
@@ -92,7 +93,6 @@
 #'   variants, associated gene/transcript/protein names (usually pipe-separated)
 #'   might indeed be stored in the FASTA file used for the alignment and
 #'   automatically transferred in the BAM.
-#' @return A list of data tables or a GRangesList object.
 #' @examples 
 #' ## ## Let's suppose there are two BAM files ("Samp1.bam" and "Samp2.bam") in
 #' ## ## "path/to/BAM/files". We want to acquire them and assign to the 

@@ -3,3 +3,5 @@
 ^README\.Rmd$
 ^\.travis\.yml$
 ^ReferenceManual\.pdf$
+^doc$
+^Meta$

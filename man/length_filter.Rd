@@ -31,7 +31,7 @@ kept. It ensures the removal of all reads with low or no periodicity;
 "custom": only read lengths specified by the user are kept (see
 \code{length_range}). Default is "periodicity".}
 
-\item{periodicity_threshold}{Integer in [10, 100]. Only read lengths
+\item{periodicity_threshold}{Integer in \link{10, 100}. Only read lengths
 satisfying this threshold (i.e. a higher percentage of read extremities
 falls in one of the three reading frames along the CDS) are kept. This
 parameter is considered only if \code{length_filter_mode} is set to

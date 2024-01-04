@@ -7,77 +7,127 @@
 rlength_distr(
   data,
   sample,
-  multisamples = "separated",
+  multisamples = "average",
   plot_style = "split",
+  scale_factors = "auto",
   transcripts = NULL,
+  length_range = NULL,
   cl = 100,
   colour = NULL
 )
 }
 \arguments{
 \item{data}{Either list of data tables or GRangesList object from
-  \code{\link{bamtolist}}, \code{\link{bedtolist}},
+\code{\link{bamtolist}}, \code{\link{bedtolist}},
 \code{\link{length_filter}} or \code{\link{psite_info}}.}
 
-\item{sample}{Either character string or character string vector specifying
-the name of the sample(s) of interest. A named list of one or more
-character strings and/or character string vectors can be provided. In this
-case i) each list element should include the name of the replicate(s)
-related to the sample of interest and ii) the name assigned to the elements
-of the list are displayed in the plot. Multiple replicates are handled
-according to \code{multisample}.}
+\item{sample}{Either character string, character string vector or named list
+of character string(s)/character string vector(s) specifying the name of
+the sample(s) and replicate(s) of interest. If a list is provided, each
+element of the list is considered as an independent sample associated with
+one ore multiple replicates. Multiple samples and replicates are handled
+and visualised according to \code{multisamples} and \code{plot_style}.}
 
-\item{multisamples}{Either "separated", "average". It specifies how to handle
-multiple samples and replicates. If "saparated", one bar plot for each
-sample included in \code{sample} is returned as an independent ggplot
-object. If \code{sample} is a list, it is unlisted, coerced to character
-string and handled accordingly. If "average" or "sum" i) one barplot is
-returned if \code{sample} is a character string vector or ii) one bar plot
-is built for each element of \code{sample} when it is a list. If "average",
-the bar plot display for each nucleotide the mean signal and the
-corresponding standard error computed among the replicates. In this case a
-single ggplot object is returned, where multiple bar plots are organized
-and displayed according to \code{plot_style}. Default is "separated".}
+\item{multisamples}{Either "average" or "independent". It specifies how to
+handle multiple samples and replicates stored in \code{sample}:
+\itemize{
+\item if \code{sample} is a character string vector and \code{multisamples} is
+set to "average" the elements of the vector are considered as replicates
+of one sample and a single bar plot is returned.
+\item if \code{sample} is a character string vector and \code{multisamples} is
+set to "independent", each element of the vector is analysed independently
+of the others. The number of plots returned and their organization is
+specified by \code{plot_style}.
+\item if \code{sample} is a list, \code{multisamples} must be set to "average".
+Each element of the list is analysed independently of the others, its
+replicates averaged and its name reported in the plot. The number of plots
+returned and their organization is specified by \code{plot_style}.
+Note: when this parameter is set to "average" the bar plot associated with
+each sample displays the length-specific mean signal computed across the
+replicates and the corresponding standard error is also reported. Default
+is "average".
+}}
 
-\item{plot_style}{Either "split", "dodged" or "mirrored". It specifies how to
-organize and display multiple bar plots. If "split", the bar plots are
-placed one next to the other, in independent boxes. If "dodged", all bar
-plots are included in one box, with each bar side by side with the others.
-If "mirrored" \code{sample} must be a list of exactly two elements and the
-two bar plots are mirrored along the x axis. Default is "split".}
+\item{plot_style}{Either "split", "facet", "dodge" or "mirror". It specifies
+how to organize and display multiple bar plots:
+\itemize{
+\item "split": one bar plot for each sample is returned as an independent
+ggplot object;
+\item "facet": the bar plots are placed one next to the other, in
+independent boxes;
+\item "dodge": all bar plots are displayed in one box and, for each length,
+samples are placed side by side.
+\item "mirror": \code{sample} must be either a character string vector or
+a list of exactly two elements and the resulting bar plots are mirrored
+along the x axis.
+Default is "split".
+}}
+
+\item{scale_factors}{Either "auto", a named numeric vector or "none". It
+specifies how read length distributions should be scaled before merging
+multiple samples (if any):
+\itemize{
+\item "auto": each distribution is scaled so that the sum of all bars is 100.
+\item named numeric vector: \code{scale_factors} must be the same length of
+unlisted \code{sample} and each scale factor must be named after the
+corresponding string in unlisted \code{sample}. No specific order is
+required. Each distribution is multiplied by the matching scale factor.
+\item "none": no scaling is applied.
+Default is "auto".
+}}
 
 \item{transcripts}{Character string vector listing the name of transcripts to
-be included in the analysis. Default is NULL i.e. all transcripts are used.}
+be included in the analysis. Default is NULL, i.e. all transcripts are
+used.}
 
-\item{cl}{Integer value in [1,100] specifying a confidence level for
-restricting the plot to a sub-range of read lengths. The new range is
-associated to the most abundant populations of reads accounting for the cl%
-of the sample. If multiple sample names are provided one range of read
-lengths is computed, such that at least the cl% of all sample are
+\item{length_range}{Integer or integer vector for restricting the plot to a
+chosen range of read lengths. Default is NULL, i.e. all read lengths are
+used. If specified, this parameter prevails over \code{cl}.}
+
+\item{cl}{Integer value in \link{1,100} specifying a confidence level for
+restricting the plot to an automatically-defined range of read lengths. The
+new range is computed according to the most frequent read lengths, which
+accounts for the cl\% of the sample and is defined by discarding the
+(100-cl)\% of read lengths falling in the tails of the read lengths
+distribution. If multiple samples are analysed, a single range of read
+lengths is computed such that at least the cl\% of all samples is
 represented. Default is 100.}
 
 \item{colour}{Character string or character string vector specifying the
-colour of the bar plot(s). If \code{sample} is a list of multiple
-elements and \code{multisamples} is set to "average", a colour for
-each element of the list is required. If this parameter is not specified
-the R default palette is employed. Default is NULL.}
+colour of the bar plot(s). If \code{plot_style} is set to either "dodge" or
+"mirror", a colour for each sample is required. Default is NULL, i.e. the
+default R colour palette is used.}
 }
 \value{
-List containing one or more ggplot2 object(s) and the data table with
-  the associated data ("dt").
+List containing: one or more ggplot object(s) and the data table with
+the corresponding x- and y-axis values ("plot_dt"); an additional data
+table with raw and scaled number of reads per length in each sample
+("count_dt").
 }
 \description{
 This function generates read length distributions, displayed as bar plots.
-Multiple samples can be handled in several ways.
+Multiple samples and replicates can be handled..
 }
 \examples{
 data(reads_list)
 
-## Generate the length distribution for all read lengths:
-lendist_whole <- rlength_distr(reads_list, sample = "Samp1", cl = 100)
-lendist_whole[["plot_Samp1"]]
+## Generate fake samples and replicates
+for(i in 2:6){
+  samp_name <- paste0("Samp", i)
+  set.seed(i)
+  reads_list[[samp_name]] <- reads_list[["Samp1"]][sample(.N, 5000)]
+}
+
+## Define the list of samples and replicate to use as input
+input_samples <- list("S1" = c("Samp1", "Samp2"),
+                      "S2" = c("Samp3", "Samp4", "Samp5"),
+                      "S3" = c("Samp6"))
 
 ## Generate the length distribution for a sub-range of read lengths:
-lendist_sub95 <- rlength_distr(reads_list, sample = "Samp1", cl = 95)
-lendist_sub95[["plot_Samp1"]]
+example_length_dist <- rlength_distr(reads_list,
+                                     sample = input_samples,
+                                     multisamples = "average",
+                                     plot_style = "facet",
+                                     cl = 99,
+                                     colour = c("#333f50", "#39827c", "gray70"))
 }

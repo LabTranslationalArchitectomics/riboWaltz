@@ -6,22 +6,22 @@
 \title{Reads information data table}
 \format{
 A list of data tables with 1 object (named \emph{Samp1}) of 100,062
-  rows and 6 variables:
+rows and 6 variables:
 \describe{
-  \item{transcript}{Name of the transcript (ENST ID and version, dot
-  separated)}
-  \item{end5}{Position of the 5' end of the read with respect to the first
-  nucleotide of the transcript, in nucleotides}
-  \item{end3}{Position of the 3' end of the read with respect to the first
-  nucleotide of the transcript, in nucleotides}
-  \item{length}{Length of the read, in nucleotides (intended as the width of
-  the reference sequence region covered by the RNA fragment. For further
-  information about this choice please refer to section \code{Details} of
-  function \code{\link{bamtolist}})}
-  \item{cds_start}{Leftmost position of the annotated CDS with respect to the
-  first nucleotide of the transcript, in nucleotides}
-  \item{cds_stop}{Rightmost position of the annotated CDS with respect to the
-  first nucleotide of the transcript, in nucleotides}
+\item{transcript}{Name of the transcript (ENST ID and version, dot
+separated)}
+\item{end5}{Position of the 5' end of the read with respect to the first
+nucleotide of the transcript, in nucleotides}
+\item{end3}{Position of the 3' end of the read with respect to the first
+nucleotide of the transcript, in nucleotides}
+\item{length}{Length of the read, in nucleotides (intended as the width of
+the reference sequence region covered by the RNA fragment. For further
+information about this choice please refer to section \code{Details} of
+function \code{\link{bamtolist}})}
+\item{cds_start}{Leftmost position of the annotated CDS with respect to the
+first nucleotide of the transcript, in nucleotides}
+\item{cds_stop}{Rightmost position of the annotated CDS with respect to the
+first nucleotide of the transcript, in nucleotides}
 }
 }
 \usage{

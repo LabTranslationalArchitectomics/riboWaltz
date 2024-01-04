@@ -54,11 +54,11 @@ region for all samples.
 }
 \details{
 The sequence of every transcript is divided in triplets starting
-  from the annotated translation initiation site (if any) and proceeding
-  towards the UTRs extremities, possibly discarding the exceeding 1 or 2
-  nucleotides at the extremities of the transcript. Please note: transcripts
-  not associated to any annotated 5' UTR, CDS and 3'UTR and transcripts whose
-  coding sequence length is not divisible by 3 are automatically discarded.
+from the annotated translation initiation site (if any) and proceeding
+towards the UTRs extremities, possibly discarding the exceeding 1 or 2
+nucleotides at the extremities of the transcript. Please note: transcripts
+not associated to any annotated 5' UTR, CDS and 3'UTR and transcripts whose
+coding sequence length is not divisible by 3 are automatically discarded.
 }
 \examples{
 ## data(reads_list)

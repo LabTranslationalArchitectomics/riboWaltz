@@ -7,12 +7,12 @@
 \format{
 A data table with 25,892 rows and 5 variables:
 \describe{
-  \item{transcript}{Name of the transcript (ENST ID and version, dot
-  separated)}
-  \item{l_tr}{Length of the transcript, in nucleotides}
-  \item{l_utr5}{Length of the annotated 5' UTR (if any), in nucleotides}
-  \item{l_cds}{Length of the annotated CDS (if any), in nucleotides}
-  \item{l_utr3}{Length of the annotated 3' UTR (if any), in nucleotides}
+\item{transcript}{Name of the transcript (ENST ID and version, dot
+separated)}
+\item{l_tr}{Length of the transcript, in nucleotides}
+\item{l_utr5}{Length of the annotated 5' UTR (if any), in nucleotides}
+\item{l_cds}{Length of the annotated CDS (if any), in nucleotides}
+\item{l_utr3}{Length of the annotated 3' UTR (if any), in nucleotides}
 }
 }
 \usage{

@@ -39,10 +39,9 @@
 #'   generating occupancy metaprofiles for to a sub-range of read lengths i.e.
 #'   for the cl% of read lengths associated to the highest signals. Default is
 #'   99. This parameter is considered only if \code{plot} is TRUE.
-#' @param txt Logical value whether to write in a txt file reporting the
-#'   extremity used for the correction step and the best offset for each sample.
-#'   Similar information are displayed by default in the console. Default is
-#'   FALSE.
+#' @param txt Logical value whether to write in a txt file the extremity used
+#'   for the correction step and the best offset for each sample. Similar
+#'   information are displayed by default in the console. Default is FALSE.
 #' @param txt_file Character string specifying the path, name and extension
 #'   (e.g. "PATH/NAME.extension") of the plain text file where the extremity
 #'   used for the correction step and the best offset for each sample shuold be
@@ -50,6 +49,7 @@
 #'   created. If NULL (the default), the information are written in
 #'   \emph{"best_offset.txt"} and saved in the working directory. This parameter
 #'   is considered only if \code{txt} is TRUE.
+#' @return A data table.
 #' @details The P-site offset (PO) is defined as the distance between the
 #'   extremities of a read and the first nucleotide of the P-site itself. The
 #'   function processes all samples separately starting from reads mapping on
@@ -72,7 +72,6 @@
 #'   the reference codon is the closest to the most frequent temporary POs. For
 #'   further details please refer to the \strong{riboWaltz} article (available
 #'   \href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169}{here}).
-#' @return A data table.
 #' @examples
 #' data(reads_list)
 #'
@@ -100,7 +99,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     }
     options(warn=0)
     
-    cat("sample\texremity\toffset(nts)\n", file = txt_file)
+    cat("sample\textremity\toffset(nts)\n", file = txt_file)
   }
 
   names <- names(data)
@@ -162,11 +161,11 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     best_from3_tab <- offset_temp[!is.na(offset_from_5), list(perc = sum(percentage)), by = offset_from_3
                                   ][perc == max(perc)]
     
-    if(extremity == "auto" &
+    if((extremity == "auto" &
        ((best_from3_tab[, perc] > best_from5_tab[, perc] &
          as.numeric(best_from3_tab[, offset_from_3]) <= minlen - 2) |
         (best_from3_tab[, perc] <= best_from5_tab[, perc] &
-         as.numeric(best_from5_tab[, offset_from_5]) > minlen - 1)) |
+         as.numeric(best_from5_tab[, offset_from_5]) > minlen - 1))) |
        extremity == "3end"){
       best_offset <- as.numeric(best_from3_tab[, offset_from_3])
       line_plot <- "3end"
@@ -175,11 +174,11 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
       offset_temp[is.na(corrected_offset_from_3), corrected_offset_from_3 := best_offset
                   ][, corrected_offset_from_5 := -corrected_offset_from_3 + length - 1]
     } else {
-      if(extremity == "auto" &
+      if((extremity == "auto" &
          ((best_from3_tab[, perc] <= best_from5_tab[, perc] &
            as.numeric(best_from5_tab[, offset_from_5]) <= minlen - 1) |
           (best_from3_tab[, perc] > best_from5_tab[, perc] &
-           as.numeric(best_from3_tab[, offset_from_3]) > minlen - 2)) |
+           as.numeric(best_from3_tab[, offset_from_3]) > minlen - 2))) |
          extremity == "5end"){
         best_offset <- as.numeric(best_from5_tab[, offset_from_5])
         line_plot <- "5end"
@@ -316,19 +315,19 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #'   nucleotides covered by the ribosome P-site ("psite"), A-site ("asite") and
 #'   E-site ("esite") should be added. Note: either \code{fastapath} or
 #'   \code{bsgenome} is required for this purpose. Default is NULL.
-#' @param fastapath Character string specifying the FASTA file used in the
-#'   alignment step, including its path, name and extension. This file can
-#'   contain reference nucleotide sequences either of a genome assembly or of
-#'   all the transcripts (see \code{Details} and \code{fasta_genome}). Please
-#'   make sure the sequences derive from the same release of the annotation file
-#'   used in the \code{\link{create_annotation}} function. Note: either
-#'   \code{fastapath} or \code{bsgenome} is required to generate additional
-#'   column(s) specified by \code{site}. Default is NULL.
+#' @param fastapath fastapath Character string specifying the FASTA file used in
+#'   the alignment step, including its path, name and extension. This file can
+#'   contain reference nucleotide sequences either of genome asseblies
+#'   (chromosome sequences) or of transcripts (see \code{Details} and
+#'   \code{fasta_genome}). Please make sure the sequences derive from the same
+#'   release of the annotation file used in the \code{\link{create_annotation}}
+#'   function. Note: either \code{fastapath} or \code{bsgenome} is required to
+#'   generate additional column(s) specified by \code{site}. Default is NULL.
 #' @param fasta_genome Logical value whether the FASTA file specified by
-#'   \code{fastapath} contains nucleotide sequences of a genome assembly. If
-#'   TRUE (the default), an annotation object is required (see \code{gtfpath}
-#'   and \code{txdb}). FALSE implies the nucleotide sequences of all the
-#'   transcripts is provided instead.
+#'   \code{fastapath} contains nucleotide sequences of genome asseblies
+#'   (chromosome sequences). If TRUE (the default), an annotation object is
+#'   required (see \code{gtfpath} and \code{txdb}). FALSE implies nucleotide
+#'   sequences of transcripts are provided instead.
 #' @param refseq_sep Character specifying the separator between reference
 #'   sequences' name and additional information to discard, stored in the
 #'   headers of the FASTA file specified by \code{fastapath} (if any). It might
@@ -351,18 +350,19 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #'   including its path, name and extension. Please make sure the GTF file and
 #'   the sequences specified by \code{fastapath} or \code{bsgenome} derive from
 #'   the same release. Note that either \code{gtfpath} or \code{txdb} is
-#'   required if and only if nucleotide sequences of a genome assembly are
-#'   provided (see \code{fastapath} or \code{bsgenome}). Default is NULL.
+#'   required if and only if nucleotide sequences of genome assemblies
+#'   (chromosome sequences) are provided (see \code{fastapath} or
+#'   \code{bsgenome}). Default is NULL.
 #' @param txdb Character string specifying the TxDb annotation package to be
 #'   loaded. If not already present in the system, it is automatically installed
 #'   through the biocLite.R script (check
 #'   \href{http://bioconductor.org/packages/release/BiocViews.html#___TxDb}{here}
-#'   the list of available TxDb annotation packages). Please make sure the TxDb
+#'    the list of available TxDb annotation packages). Please make sure the TxDb
 #'   annotation package and the sequences specified by \code{fastapath} or
 #'   \code{bsgenome} derive from the same release. Note that either
 #'   \code{gtfpath} or \code{txdb} is required if and only if nucleotide
-#'   sequences of a genome assembly are provided (see \code{fastapath} or
-#'   \code{bsgenome}). Default is NULL.
+#'   sequences of genome assemblies (chromosome sequences) are provided (see
+#'   \code{fastapath} or \code{bsgenome}). Default is NULL.
 #' @param dataSource Optional character string describing the origin of the GTF
 #'   data file. This parameter is considered only if \code{gtfpath} is
 #'   specified. For more information about this parameter please refer to the
@@ -378,24 +378,24 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
 #' @param output_class Either "datatable" or "granges". It specifies the format
 #'   of the output i.e. a list of data tables or a GRangesList object. Default
 #'   is "datatable".
+#' @return A list of data tables or a GRangesList object.
 #' @details \strong{riboWaltz} only works for read alignments based on
 #'   transcript coordinates. This choice is due to the main purpose of RiboSeq
 #'   assays to study translational events through the isolation and sequencing
 #'   of ribosome protected fragments. Most reads from RiboSeq are supposed to
-#'   map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM
-#'   based on transcript coordinates can be generated in two ways: i) aligning
-#'   directly against transcript sequences; ii) aligning against standard
-#'   chromosome sequences, requiring the outputs to be translated in transcript
-#'   coordinates. The first option can be easily handled by many aligners (e.g.
-#'   Bowtie), given a reference FASTA file where each sequence represents a
-#'   transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The
-#'   second procedure is based on reference FASTA files where each sequence
-#'   represents a chromosome, usually coupled with comprehensive gene annotation
-#'   files (GTF or GFF). The STAR aligner, with its option --quantMode
-#'   TranscriptomeSAM (see Chapter 6 of its
+#'   map on mRNAs and not on introns and intergenic regions. BAM based on
+#'   transcript coordinates can be generated in two ways: i) aligning directly
+#'   against transcript sequences; ii) aligning against sequences of genome
+#'   assemblies i.e. standard chromosome sequences, thus requiring the outputs
+#'   to be translated in transcript coordinates. The first option can be easily
+#'   handled by many aligners (e.g. Bowtie), given a reference FASTA file where
+#'   each sequence represents a transcript, from the beginning of the 5' UTR to
+#'   the end of the 3' UTR. The second procedure is based on reference FASTA
+#'   files where each sequence represents a chromosome, usually coupled with
+#'   comprehensive gene annotation files (GTF or GFF). The STAR aligner, with
+#'   its option --quantMode TranscriptomeSAM (see Chapter 6 of its
 #'   \href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
 #'    is an example of tool providing such a feature.
-#' @return A list of data tables or a GRangesList object.
 #' @examples
 #' data(reads_list)
 #' data(psite_offset)

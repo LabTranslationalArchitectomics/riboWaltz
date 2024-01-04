@@ -1,3 +1,6 @@
+
+[![R](https://github.com/LabTranslationalArchitectomics/riboWaltz/actions/workflows/r.yml/badge.svg)](https://github.com/LabTranslationalArchitectomics/riboWaltz/actions/workflows/r.yml)
+
 ![riboWaltz](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/ribowaltz.png)
 
 # __riboWaltz__
@@ -21,7 +24,7 @@
 		+ [Note 1](https://github.com/LabTranslationalArchitectomics/riboWaltz#note-1)
 		+ [Note 2](https://github.com/LabTranslationalArchitectomics/riboWaltz#note-2)
 	- [Acquiring input files](https://github.com/LabTranslationalArchitectomics/riboWaltz#acquiring-input-files)
-	- [Filtering otions](https://github.com/LabTranslationalArchitectomics/riboWaltz#filtering-steps)
+	- [Filtering options](https://github.com/LabTranslationalArchitectomics/riboWaltz#filtering-options)
 		+ [Removal of duplicated reads](https://github.com/LabTranslationalArchitectomics/riboWaltz#removal-of-duplicated-reads)
 		+ [Selection of read lengths](https://github.com/LabTranslationalArchitectomics/riboWaltz#selection-of-read-lengths)
 	- [Annotation data table](https://github.com/LabTranslationalArchitectomics/riboWaltz#annotation-data-table)
@@ -30,8 +33,14 @@
 	- [Codon coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#codon-coverage)
 	- [CDS and transcript coverage](https://github.com/LabTranslationalArchitectomics/riboWaltz#cds-and-transcript-coverage)
 * [Graphical outputs](https://github.com/LabTranslationalArchitectomics/riboWaltz#graphical-outputs)
-	- [Note](https://github.com/LabTranslationalArchitectomics/riboWaltz#note)
+	- [Introduction](https://github.com/LabTranslationalArchitectomics/riboWaltz#introduction)
+		+ [Samples and replicates](https://github.com/LabTranslationalArchitectomics/riboWaltz#samples-and-replicates)
+		+ [Frequent parameters](https://github.com/LabTranslationalArchitectomics/riboWaltz#frequent-parameters)
+		+ [List of outputs](https://github.com/LabTranslationalArchitectomics/riboWaltz#list-of-outputs)
+		+ [Example dataset](https://github.com/LabTranslationalArchitectomics/riboWaltz#example-dataset)
 	- [Overview of the data](https://github.com/LabTranslationalArchitectomics/riboWaltz#overview-of-the-data)
+		+ [Read length distribution](https://github.com/LabTranslationalArchitectomics/riboWaltz#read-length-distribution)
+		+ [Read extremity localization](https://github.com/LabTranslationalArchitectomics/riboWaltz#read-extremity-localization)
 	- [P-sites per region](https://github.com/LabTranslationalArchitectomics/riboWaltz#p-sites-per-region)
 	- [Trinucleotide periodicity](https://github.com/LabTranslationalArchitectomics/riboWaltz#trinucleotide-periodicity)
 	- [Metaplots](https://github.com/LabTranslationalArchitectomics/riboWaltz#metaplots)
@@ -107,9 +116,7 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 			
 #### Conda
 
- __riboWaltz__ is also available through [Conda](https://anaconda.org/bioconda/ribowaltz) and can be installed into the current environment by: 
-
-	conda install -c bioconda ribowaltz
+ __riboWaltz__ is also available through Conda and can be installed into the current environment by following [these instructions](https://bioconda.github.io/recipes/ribowaltz/README.html).
 
 
 
@@ -147,13 +154,13 @@ Lauria F, Tebaldi T, Bernabò P, Groen EJN, Gillingwater TH, Viero G.
 
 #### Note 1
 
- __riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Most reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated in two ways: i) aligning directly against transcript sequences; ii) aligning against standard chromosome sequences, requiring the outputs to be translated in transcript coordinates.
+ __riboWaltz__ currently works for read alignments based on transcript coordinates. This choice is due to the main purpose of RiboSeq assays to study translational events through the isolation and sequencing of ribosome protected fragments. Reads from RiboSeq are supposed to map on mRNAs and not on introns and intergenic regions. BAM based on transcript coordinates can be generated alinging the reads i) directly against transcript sequences or ii) against standard chromosome sequences and forcing the outputs to be translated in transcript coordinates.
 
  The first option can be easily handled by many aligners (e.g. Bowtie), given a reference FASTA file where each sequence represents a transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The second procedure is based on reference FASTA files where each sequence represents a chromosome, usually coupled with comprehensive gene annotation files (GTF or GFF). The STAR aligner with its option *-quantMode TranscriptomeSAM* (see the section "Output in transcript coordinates" of its manual), is an example of tool providing such a feature.
  
 ##### Note 2
 
-Multiple functions described below can accept and return both list of data tables and GRangesList objects. For convenience, all example datasets included in the package and the whole ReadMe are based on and refers to data tables.
+Multiple functions described below can accept and return both list of data tables and GRangesList objects. For convenience, all example datasets included in the package, as well as the whole ReadMe, are based on and refer to data tables.
 
 ### Acquiring input files
 
@@ -182,7 +189,7 @@ Multiple functions described below can accept and return both list of data table
 
     reads_list <- bedtolist(bedfolder = "path/to/BED/files", annotation = annotation_dt)
 
-### Filtering steps
+### Filtering options
 
  __riboWaltz__ provides two functions aimed at filtering the reads by removing duplicated reads (`duplicates_filter`) and/or selecting specific read lengths (`length_filter`). These functions can be run in any order and generate sub-datasets that can be then used as input for all downstream analyses. Both functions are briefly illustrated below, together with some examples based on the following _ad hoc_ dataset (note: row IDs were stored in an additional column to keep track of retained and removed lines):
 
@@ -201,7 +208,7 @@ Multiple functions described below can accept and return both list of data table
 
 Ribosome profiling data are usually affected by duplicated reads. Duplicates may be either representative of meaningful biological information on ribosome stalling or generated by PCR amplification during library preparation. Thus, it is unclear whether removing read duplicates improves or decreases the accuracy of the dataset and duplicates removal is a matter of a long-running debate. For the users who are interested in computationally remove the duplicates __riboWaltz__ provides `duplicates_filter`. This function includes two parameters (*extremity* and *start*) for defining which reads should be considered duplicates and which ones must be kept.
 
-1. Reads are duplicates if they map on the same transcript and share both the 5' estremity and the 3' extremity.
+1. Reads are duplicates if they map on the same transcript and share both the 5' extremity and the 3' extremity.
 
 		filtered_list <- duplicates_filter(data = example_reads_list,
 						    extremity = "both")
@@ -215,7 +222,7 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 	|  5  |  ENSMUST00000000001.4  |  94  |  123  |  30  |  142  |  1206  |
 	|  6  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
 
-2. Reads are duplicates if they map on the same transcript and only share the 5' estremity. Among duplicated reads we keep the shortes one.
+2. Reads are duplicates if they map on the same transcript and only share the 5' extremity. Among duplicated reads we keep the shortes one.
 
 		filtered_list <- duplicates_filter(data = example_reads_list,
 						    extremity = "5end",
@@ -228,7 +235,7 @@ Ribosome profiling data are usually affected by duplicated reads. Duplicates may
 	|  4  |  ENSMUST00000000001.4  |  94  |  122  |  29  |  142  |  1206  |
 	|  6  |  ENSMUST00000000001.4  |  95  |  123  |  29  |  142  |  1206  |
     
-3. Reads are duplicates if they map on the same transcript and only share the 3' estremity. Among duplicated reads we keep the longest one.
+3. Reads are duplicates if they map on the same transcript and only share the 3' extremity. Among duplicated reads we keep the longest one.
 
 		filtered_list <- duplicates_filter(data = example_reads_list,
 						    extremity = "3end",
@@ -281,7 +288,7 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
  
 ### P-site offset
 
- The P-site offsets (POs) are computed by the function `psite` starting from a list of data tables generated by `bamtolist`, `bedtolist` or `length_filter`. The PO is defined as the distance between the extremities of a read and the first nucleotide of the P-site itself. `psite` processes all samples separately starting from reads mapping on the reference codon (either the start codon or the second to last codon, specified by *start*) of any annotated coding sequences. Read lengths-specific POs are inferred in two steps. First, reads mapping on the reference codon are grouped according to their length, each group corresponding to a bin. Reads whose extremities are too close to the reference codon are discarded (see the *flanking* parameter). For each bin temporary 5' and 3' POs are defined as the distances between the first nucleotide of the reference codon and the nucleotide corresponding to the global maximum found in the profiles of the 5' and the 3' end at the left and at the right of the reference codon, respectively. After the identification of the P-site for all reads aligning on the reference codon, the POs corresponding to each length are assigned to each read of the dataset. Second, the most frequent temporary POs associated to the optimal extremity (see the *extremity* parameter) and the predominant bins are exploited as reference values for correcting the temporary POs of smaller bins. Briefly, the correction step defines for each length bin a new PO based on the local maximum, whose distance from the reference codon is the closest to the most frequent temporary POs. For further details please refer to the __riboWaltz__ article, available [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169).
+ The P-site offsets (POs) are computed by the function `psite` starting from a list of data tables generated by `bamtolist`, `bedtolist` or `length_filter`. The PO is defined as the distance between the extremities of a read and the first nucleotide of the P-site itself. `psite` processes all samples separately starting from reads mapping on the reference codon (either the start codon or the second to last codon, specified by *start*) of any annotated coding sequences. Read lengths-specific POs are inferred in two steps. First, reads mapping on the reference codon are grouped according to their length, each group corresponding to a bin. Reads whose extremities are too close to the reference codon are discarded (see the *flanking* parameter). For each bin temporary 5' and 3' POs are defined as the distances between the first nucleotide of the reference codon and the nucleotide corresponding to the global maximum found in the profiles of the 5' and the 3' end at the left and at the right of the reference codon, respectively. After the identification of the P-site for all reads aligning on the reference codon, the POs corresponding to each length are assigned to each read of the dataset. Second, the most frequent temporary POs associated with the optimal extremity (see the *extremity* parameter) and the predominant bins are exploited as reference values for correcting the temporary POs of smaller bins. Briefly, the correction step defines for each length bin a new PO based on the local maximum, whose distance from the reference codon is the closest to the most frequent temporary POs. For further details please refer to the __riboWaltz__ article, available [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169).
  
  For each sample `psite` prints on the screen the extremity chosen for the computation of the P-site offsets and the value upon which the correction is based. The offsets computed by `psite` are stored in a data table. Note: a non-filtered list of data tables is used as input in the following examples. If a filtered list was generated by either removing duplicated reads or discarding specific read lengths, it must be used for *all* downstream analyses, starting from the computation of the P-site offsets.
 
@@ -298,7 +305,7 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
   |  23  |  1.112  |  0.974  |  T  |  6  |  16  |  12  |  10  |  Samp1  |
   |  24  |  1.892  |  1.722  |  T  |  7  |  16  |  7  |  16  |  Samp1  |
     
- Optionally, ribosome occupancy profiles based on the 5' and 3' extremity of reads mapping on the reference codon is generated for all samples and read lengths (see the *plot* parameter). Examples for reads of 28 and 31 nucleotides are showed below. Optimal offsets (dotted black lines) and inferred offsets before and after the correction step are reported as dashed and continuous vertical lines, respectively. The regions around the reference codon defined by the *flanking* parameter are shaded.
+ Optionally, ribosome occupancy profiles based on the 5' and 3' extremity of reads mapping on the reference codon is generated for all samples and read lengths (see the *plot* parameter). Examples for reads of 28 and 31 nucleotides are shown below. Optimal offsets (dotted black lines) and inferred offsets before and after the correction step are reported as dashed and continuous vertical lines, respectively. The regions around the reference codon defined by the *flanking* parameter are shaded.
 
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/meta_psite_length28.png" width="750" />
@@ -309,7 +316,7 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
 
     reads_psite_list <- psite_info(reads_list, psite_offset)
 	
- `psite_info` attaches to each data table four columns reporting i) the P-site position with respect to the 1st nucleotide of the transcript, ii) the P-site position with respect to the start and the stop codon of the annotated coding sequence (if any) and iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: for transcripts not associated to any annotated CDS the position of the P-site with respect to the start and the stop codon is set to NA. Here an example:
+ `psite_info` attaches to each data table four columns reporting i) the P-site position with respect to the 1st nucleotide of the transcript, ii) the P-site position with respect to the start and the stop codon of the annotated coding sequence (if any) and iii) the region of the transcript (5' UTR, CDS, 3' UTR) that includes the P-site. Please note: for transcripts not associated with any annotated CDS the position of the P-site with respect to the start and the stop codon is set to NA. Here an example:
   
   |  transcript  |  end5  |  psite  |  end3 |  length  |  cds_start  |  cds_stop  |  psite_from_start  |  psite_from_stop  |  psite_region  |
   |:------:|:-----:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
@@ -321,7 +328,7 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
   |  ENSMUST00000000001.4  |  142  |  154  |  170  |  29  |  142  |  1206  |  12  |  -1052  |  cds  |
 
   
- Optionally, additional columns reporting the three nucleotides covered by the P-site, the A-site and the E-site are attached. This feature requires transcript or chromosome nucleotide sequences in FASTA format. Alternatively, a BSGenome data package can be used for sequence retrieval. Nucleotide sequences of a genome assembly and BSGenome data package must be coupled with a GTF/GFF file or a TxDb object providing genomic annotations. For further details please refer to the documentation of `psite_info` running ?psite_info.
+Optionally, additional columns reporting the three nucleotides covered by the P-site, the A-site and the E-site are attached. This feature requires transcript or genome assembly (chromosome) nucleotide sequences in FASTA format. Alternatively, a BSGenome data package can be used for sequence retrieval. Nucleotide sequences of genome assemblies (chromosome sequences) and BSGenome data packages must be coupled with a GTF/GFF file or a TxDb object providing genomic annotations. For further details please refer to the documentation of `psite_info` running ?psite_info.
   
  Nucleotide sequences covered by the P-site, A-site or the E-site are required for performing further analyses such as to compute the number of in-frame P-sites, the percentage of P-sites falling in the three transcript regions, verify the trinucleotide periodicity of the reads along the coding sequence and generate metaplots, as discussed in the next sections.
  
@@ -369,228 +376,378 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
   
 ## Graphical outputs
 
-### Note
+The following sections describe all the functions in __riboWaltz__ generating graphical outputs by illustrating their parameters, syntax and graphical output. For further examples and additional details about parameters and data structures please refer to the documentation of the single functions (by running ?name_function) or to the __riboWaltz__ reference manual ([here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf)).
 
- All functions in __riboWaltz__ generating graphical outputs return a list of at least two elements: a ggplot2 object named *plot* and a data table with the associated data, named *dt*. The following sections describe all these functions by illustrating their syntax and graphical output. For further examples and additional details about parameters and data structures please refer to the documentation of the single functions (by running ?name_function) or to the __riboWaltz__ reference manual ([here](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/ReferenceManual.pdf)).
+### Introduction
+
+#### Samples and replicates
+
+All the functions in __riboWaltz__ generating graphical outputs can handle one or multiple replicates for each sample of interest. Thus, it is possible to compare plots based on population of reads from either a variety of biological conditions or subsets of the same dataset. Two parameters are required to specify samples andreplicates and how to handle them:
+ * *sample* can be either a character string, a character string vector or a named list of character string(s)/character string vector(s). It specifies the name of the sample(s) and replicate(s) of interest. If a list is provided, each element of the list is considered as an independent sample associated with one ore multiple replicates.
+ * *multisamples* can be set to either "average" or "independent". It specifies how to handle multiple samples and replicates stored in *sample*:
+   + if *sample* is a character string vector and *multisamples* is set to "average" the elements of the vector are considered as replicates of one sample and a single plot is returned;
+   + if *sample* is a character string vector and *multisamples* is set to "independent", each element of the vector is analysed independently of the others;
+   + if *sample* is a list, *multisamples* must be set to "average". Each element of the list is analysed independently of the others, its replicates averaged and its name reported in the plot.
+  
+When users provide multiple replicates, and *multisamples* is set to "average", each sample's associated plot displays the mean values along with standard errors computed by averaging the replicates.
+
+If the input includes more the one sample, the number of plots returned and their organization is specified by *plot_style*. This parameter offers different graphical options tailored to the specific function being considered (see the examples in the next sections). In all functions *plot_style="split"* generates one distinct ggplot2 object for each sample.
+  
+#### Frequent parameters
+ 
+Additional parameters are shared across all the functions generating graphical outputs to restrict the analysis and visualization to subpopulations of transcripts and/or reads:
+ * *transcripts*: a character string vector listing the name of transcripts to be included in the analysis;
+ * *length_range*: an integer or integer vector for restricting the analysis to a chosen range of read lengths;
+ * *cl*: an integer value in [1,100] specifying a confidence level to automatically compute a range of read length based of interest. The range is based on the most frequent read lengths which accounts for the cl% of the whole sample. It is defined by discarding the (100-cl)% of read lengths falling in the tails of the read length distribution. If multiple samples are provided, a single range of read lengths is generated such that at least the cl% of all samples is represented. Note that if *length_range* is specified, it prevails over *cl*.
+ 
+'rlength_distr', 'rends_heat', 'metaprofile_psite' and 'metaheatmap_psite' include the parameter *scale_factors*. The user can provide a scale factor for each sample/replicate to take into account the library size and make all replicates (if any) comparable before merging them. In this case *scale_factors* must be of the same length of the unlisted parameter *sample* and each scale factor must be named after the corresponding string. *scale_factors* can be set to "auto" to use the default scaling approaches, which are tailored to the specific function under consideration.
+   
+#### List of outputs
+  
+The output of all the functions generating plots is a list of at least three elements: 
+ * one or multiple ggplot2 objects named either *plot* or *plot_name_of_sample* tailored to the specific combination of input parameters. Note: multiple ggplot2 objects are returned if and only if *plot_style="split"* i.e., a distinct plot for each sample is generated;
+ * one data table with the x- and y-axis values corresponding to the plot(s), named *plot_dt*; If multiple replicates are averaged, *plot_dt* reports the mean values and the standard error displayed in the plot.
+ * one data table with raw and normalized/scaled values before averaging the replicates (if any) for each sample, named *count_dt*.
+ 
+#### Example dataset
+
+For a comprehensive description of the functions, we first build a set of 5 data tables by extracting random reads from the original reads_list example dataset. These data tables will be used as fake samples and replicates to show how parameters *sample*, *multisamples* and "plot_style* work. Their size is smaller than the original dataset (5000 reads) to ensure enough variability when "replicates" are averaged.
+
+	for(i in 2:6){
+		samp_name <- paste0("Samp", i)
+		set.seed(i)
+		reads_list[[samp_name]] <- reads_list[["Samp1"]][sample(.N, 5000)]
+	}
+
+We also generate the corresponding reads_psite_list by computing the offset for each dataset:
+
+		psite_offset <- psite(reads_list, flanking = 6, extremity = "3end")
+		reads_psite_list <- psite_info(reads_list, psite_offset)
+		
 
 ### Overview of the data
 
- Two preliminary plots can be generated before the identification of the P-sites.
+Before the identification of the P-sites, ribosome profiling data can be explored by two preliminary plots, generated by `rlength_distr` and `rends_heat`.
+
+#### Read length distribution
   
- The first preliminary plot, provided by `rlength_distr`, shows the distribution of reads lengths for a specified sample. It can be exploited for i) identifying multiple populations of read length, associated to different ribosome conformations and ii) exploring the contribution of each length bin to the final P-site determination. Here an example with the default parameters:
+The first preliminary plot, provided by `rlength_distr`, shows the distribution of reads lengths for one or multiple samples. It can be exploited for i) identifying distinct populations of read lengths, associated with different ribosome conformations and ii) exploring the contribution of each length to the final P-site determination. Here an example with one sample and no replicates and the default parameters:
  
-    example_length_dist <- rlength_distr(reads_list, sample = "Samp1")
+    example_length_dist <- rlength_distr(reads_list, sample = "Samp1",
+										 colour = "#333f50")
     example_length_dist[["plot_Samp1"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist.png" width="275" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_basic.png" width="300" />
 </p>
 
- Note that wide ranges of read lengths might result in squeezed distributions. To restrict the plot to a sub-range of read lengths  `rlength_distr` provides the *cl* parameter. It specifies a confidence level that automatically select the most abundant populations of reads discarding from the plot the (100-cl)% of read lengths associated to the lowest signals. The distribution showed above for a confidence level of 99% appears as follow:
+Note that a wide range of read lengths might result in squeezed distributions which can be avoided by specifing either *length_range* or *cl*. Using the latter option and setting *cl = 0.99*, the distribution shown above for a confidence level of 99% appears as follow:
 
-    example_length_dist_zoom <- rlength_distr(reads_list, sample = "Samp1", cl = 99)
-    example_length_dist_zoom[["plot_Samp1"]]
+    example_length_dist <- rlength_distr(reads_list, sample = "Samp1",
+										 cl = 99, colour = "#333f50")
+    example_length_dist[["plot_Samp1"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_zoom.png" width="275" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_basic_zoom.png" width="300" />
 </p>
 
- It is possible to use `rlength_distr` to merge sample replicates and to visualize and compare multiple samples thank to the parameters *multisamples* and *plot_style*: `rlength_distr` can generate a collection of bar plot using reads from either a variety of biological conditions or subsets of the same dataset. Here some examples:
+Multiple samples and replicates can be handled and visualized according to different combinations of parameters *sample*, *multisamples* and *plot_style*.
 
-1. visualize the distribution of reads lengths merging the replicates of the same sample. Here we build a "second replicate" of our dataset by extracting random reads from *Samp1*: 
-  
-		reads_list[["Samp2"]] <- reads_list[["Samp1"]][sample(.N, 1000)]
+1. We start with some examples to compare the read length distribution of distinct samples with no replicates. Here we use two samples, but a higher number of dataset is allowed (except for *plot_style = "mirror"*). Before generating the plot, we build a vector with the name of the samples to be compared which is then passed to parameter *sample* in combination with *multisamples = "independent"*:
 
-	Now we can merge the two "replicates" and visualize the mean signal and the corresponding standard error (very small, due to the procedure employed for the generation of the second "replicate") for each length. By passing *sample* as a named list, we ensure that the name of its element is used as title for the plot: 
-  
-		example_length_dist_rep <- rlength_distr(reads_list,
-							  sample = list("Samp_avg" = c("Samp1", "Samp2")),
-							  cl = 99, multisamples = "average",
-							  colour = "gray70")
-		example_length_dist_rep[["plot"]]
+		input_samples <- c("Samp1", "Samp2")
+
+	* Due to the default *plot_style = "split"* two bar plots are stored in two distinct ggplot2 objects.
+
+			example_length_dist <- rlength_distr(reads_list,
+							  sample = input_samples,
+							  multisamples = "independent",
+							  plot_style = "split",
+							  cl = 99, colour = c("#333f50", "#39827c"))
+			example_length_dist[["plot_Samp1"]]
+			example_length_dist[["plot_Samp2"]]
 	<p align="center">
-	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep.png" width="275" />
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_1.png" width="300" />
+	src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_1_2.png" width="300" />
 	</p>
 
-2. compare the distribution of reads lengths for multiple samples. We first build a second sample that contains only the reads of *Samp1* mapping on the start codon, generating a list of data tables with the reads of interest: 
- 
-		comparison_list <- list()
-		comparison_list[["start_codon"]] <- reads_list[["Samp1"]][end5 <= cds_start & end3 >= cds_start]
-		comparison_list[["whole_sample"]] <- reads_list[["Samp1"]]
+	* According to *plot_style = "facet"* the two distributions are arranged in two independent boxes.
 
-	Then we define a named list containing the character strings specifying the name of the sample(s) of interest.
-
-		sample_list <- list("Only_start" = c("start_codon"),
-				     "All" = c("whole_sample"))
-				   
-	We can now visualize the two distributions in the same ggplot object in several ways, according to *plot_style*:
-  
-		example_length_dist_split <-  rlength_distr(comparison_list,
-							     sample = sample_list,
-							     multisamples = "average",
-							     plot_style = "split",
-							     colour = c("dodgerblue", "gray70"))
-		example_length_dist_split[["plot"]]
+			example_length_dist <- rlength_distr(reads_list,
+							  sample = input_samples,
+							  multisamples = "independent",
+							  plot_style = "facet",
+							  cl = 99, colour = c("#333f50", "#39827c"))
+							  
+			example_length_dist[["plot"]]
 	<p align="center">
-	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_split.png" width="500" />
-	</p>
-	
-	Note that *multisamples* is still set to "average". This is required to ensure that the element of the list will be handled as groups of samples. Otherwise, if *multisamples* set to "separated", *sample* is unlisted, coerced to character string and each sample will be returned as an individual ggplot object.
-  
-	Other possible visualizations of two or more samples:
-		
-		example_length_dist_dodged <-  rlength_distr(comparison_list,
-							      sample = sample_list, cl = 99,
-							      multisamples = "average",
-							      plot_style = "dodged",
-							      colour = c("dodgerblue", "gray70"))
-		example_length_dist_dodged[["plot"]]
-	<p align="center">
-	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_dodged.png" width="450" />
-	</p>
-	
-	Other possible visualizations of two or more samples:
-
-		example_length_dist_mirrored <-  rlength_distr(comparison_list,
-							        sample = sample_list,
-							        cl = 99, multisamples = "average",
-							        plot_style = "mirrored",
-							        colour = c("dodgerblue", "gray70"))
-		example_length_dist_mirrored[["plot"]]
-	<p align="center">
-	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_mirrored.png" width="450" />
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_2.png" width="450" />
 	</p>
 
-3. a combination of example 1 and 2: multiple samples and replicates.
+	* According to *plot_style = "dodge"* the two distributions are arranged in the same box and, for each length, samples are placed side by side. 
 
-		comparison_list <- list()
-		comparison_list[["start_codon"]] <- reads_list[["Samp1"]][end5 <= cds_start & end3 >= cds_start]
-		comparison_list[["whole_sample1"]] <- reads_list[["Samp1"]]
-		comparison_list[["whole_sample2"]] <- reads_list[["Samp2"]]
-
-		sample_list <- list("Only_start" = c("start_codon"),
-						      "All" = c("whole_sample1", "whole_sample2"))
-
-	Also in this case *plot_style* can be set to "split" (as in the following example), "dodged" and "mirrored".
-  
-		example_length_dist_split_rep <- rlength_distr(comparison_list,
-								sample = sample_list,
-								cl = 99, multisamples = "average",
-								plot_style = "split",
-								colour = c("dodgerblue", "gray70"))
-		example_length_dist_split_rep[["plot"]]
+			example_length_dist <- rlength_distr(reads_list,
+							  sample = input_samples,
+							  multisamples = "independent",
+							  plot_style = "dodge",
+							  cl = 99, colour = c("#333f50", "#39827c"))
+							  
+			example_length_dist[["plot"]]
 	<p align="center">
-	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_split_rep.png" width="500" />
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_3.png" width="400" />
+	</p>
+
+	* According to *plot_style = "mirror"* the two distributions are mirrored along the x axis.
+
+			example_length_dist <- rlength_distr(reads_list,
+							  sample = input_samples,
+							  multisamples = "independent",
+							  plot_style = "mirror",
+							  cl = 99, colour = c("#333f50", "#39827c"))
+							  
+			example_length_dist[["plot"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_4.png" width="330" />
 	</p>
 
 
+2. One sample with multiple replicates can be visualised in two different ways, always setting *multisamples = "average"*.
 
- The second preliminary plot, provided by `rends_heat`, consists of four metaheatmaps. It displays the abundance of the 5' and 3' extremity of reads mapping on and around the start and the stop codon of annotated CDSs, stratified by their length. As for the previous plot, it is possible to restrict the graphical output to a sub-range of read lengths by specifying the *cl* parameter:
+	* Building a vector with the name of the replicates which is then passed to parameter *sample*. In this case, the name of the sample is automatically set to "Average".
+			input_samples <- c("Samp1", "Samp2")
+			example_length_dist <- rlength_distr(reads_list,
+							  sample = input_samples,
+							  multisamples = "average",
+							  cl = 99, colour = "#333f50")
+							  
+			example_length_dist[["plot_Average"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep1_1.png" width="300" />
+	</p>
+
+	* Building a list of one element with the name of the replicates which is then passed to parameter *sample*. In this case, the name of the sample corresponds to the name of the element of the list.
+			input_samples <- list("S1" = c("Samp1", "Samp2"))
+			example_length_dist <- rlength_distr(reads_list,
+							  sample = input_samples,
+							  multisamples = "average",
+							  cl = 99, colour = c"#333f50")
+							  
+			example_length_dist[["plot_S1"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep1_2.png" width="300" />
+	</p>
+
+3. Finally, we can compare two or more samples with or without replicates by combining the previous examples. In this case a list must be passed to *sample* and *multisamples* is set to "average" by default. A couple of examples:
+	* Two samples with multiple replicates, *plot_style = "split"*.
+			input_samples <- list("S1" = c("Samp1", "Samp2"),
+								  "S2" = c("Samp3", "Samp4", "Samp5"))
+			example_length_dist <- rlength_distr(reads_list,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         plot_style = "split",
+                                         cl = 99, colour = c("#333f50", "#39827c"))
+							  
+			example_length_dist[["plot_S1"]]
+			example_length_dist[["plot_S2"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_1.png" width="300" />
+	src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_1_2.png" width="300" />
+	</p>
+
+	* Three samples, two with multiple replicates and one with no replicates, *plot_style = "dodge"*.
+			input_samples <- list("S1" = c("Samp1", "Samp2"),
+								  "S2" = c("Samp3", "Samp4", "Samp5"),
+								  "S3" = c("Samp6"))
+			example_length_dist <- rlength_distr(reads_list,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         plot_style = "dodge",
+                                         cl = 99, colour = c("#333f50", "#39827c", "gray70"))
+							  
+			example_length_dist[["plot"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_2.png" width="400" />
+	</p>
+
+	* Two samples, one with multiple replicates and one with no replicates, *plot_style = "mirror"*.
+			input_samples <- list("S1" = c("Samp1", "Samp2"),
+								  "S3" = c("Samp6"))
+			example_length_dist <- rlength_distr(reads_list,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         plot_style = "mirror",
+                                         cl = 99, colour = c("#333f50", "gray70"))
+							  
+			example_length_dist[["plot"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_length_dist_rep2_3.png" width="330" />
+	</p>
+
+#### Read extremity localization
+
+ The second preliminary plot is provided by `rends_heat`. It consists of four metaheatmaps which displays the abundance of the 5' and 3' extremity of reads mapping on and close to the start and the stop codon of annotated CDSs, stratified by their length. As for the previous plot, it is possible to restrict the graphical output to a sub-range of read lengths by specifying the *cl* parameter:
 
     example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 85,
-                                       utr5l = 25, cdsl = 40, utr3l = 25)
-    example_ends_heatmap[["plot"]]
+                                       utr5l = 25, cdsl = 40, utr3l = 25, colour = "#333f50")
+    example_ends_heatmap[["plot_Samp1"]]
 ![example_ends_heatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_ends_heatmap.png)
 
- This plot is particularly useful for manually detect the optimal read extremity to correct temporary P-site offsets (see the *extremity* parameter of function `psite`). In our example the signals coming from the 5' and the 3' extremity of reads mapping around the translation initiation site (TIS) show a clear difference. The distance between 5' ends and TIS varies according to read length (shorter the read, lower the distance) while the distance between 3' ends and TIS is almost constant. This property points to the more stable 3' end as the optimal extremity. In agreement with this conclusion, the 3' end is also automatically identified as the optimal extremity by the function `psite` run on the example dataset with the default options (see section *__P-site offset__* above).
+ This plot is particularly useful to visually detect the optimal read extremity and use this information to correct the temporary P-site offsets (see the *extremity* parameter of function `psite`). In our example the signal coming from the 5' and the 3' read extremities surrounding the translation initiation site (TIS) show a clear pattern difference. The distance between the 5' ends and the TIS varies according to the read length (shorter the read, lower the distance) while the distance between the 3' ends and the TIS is almost constant. This observation points to the more stable 3' end as the optimal extremity. In agreement with this conclusion, the 3' end is also automatically identified as the optimal extremity by the function `psite` run on the example dataset with the default options (see section *__P-site offset__*).
+ 
+ As for the other functions in this section, multiple samples and replicates can be specified trough parameters *sample* and *multisamples*. However, *plot_style* can only be set to either "split" or "facet" and the standard error resulting from averaging the replicates is not displayed.
   
 ### P-sites per region
 
- Ribosome profiling data should highlight the CDS of transcripts as the region with the higher percentage of reads. To verify this property the function `region_psite` computes the percentage of P-sites falling in the three annotated transcript regions (5' UTR, CDS and 3' UTR). The bar plot of the resulting values includes a bar called "RNAs" displaying the expected read distribution from a random fragmentation of RNA. It reports the percentage of regions length for the transcripts included in the analysis, based on the cumulative nucleotide length of 5' UTRs, CDSs and 3' UTRs. Here an example with the default parameters, where the expected P-site enrichment on the CDS emerges: 
+ Ribosome profiling data should define the CDS of transcripts as the region with the highest percentage of reads. To confirm this property the function `region_psite` computes the percentage of P-sites falling in the three annotated transcript regions (5' UTR, CDS and 3' UTR). To verify the accumulation of reads on the CDS the resulting plot includes an additional set of bars called "RNAs" displaying the expected read distribution from a random fragmentation of RNA. These additional bars report the cumulative nucleotide length of the 5' UTRs, CDSs and 3' UTRs of the transcripts included in the analysis expressed as percentages. Here an example based on multiple samples and replicates with the default parameters, revealing the expected P-site accumulation on the CDS: 
 
-	example_psite_region <- region_psite(reads_psite_list, mm81cdna, sample = "Samp1")
-	example_psite_region[["plot"]]
+	input_samples <- list("S1" = c("Samp1", "Samp2"),
+                      "S2" = c("Samp3", "Samp4", "Samp5"),
+                      "S3" = c("Samp6"))
+
+	example_psite_per_region <- region_psite(reads_psite_list, mm81cdna,
+									 sample = input_samples,
+									 multisamples = "average",
+									 plot_style = "stack",
+                                     cl = 85,
+									 colour = c("#333f50", "gray70", "#39827c"))
+	example_psite_per_region[["plot"]]
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region.png" width="260" />
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region1.png" width="350" />
+</p>
+
+A different visualization which also displays the standard error resulting from averaging the replicates for each sample and transcript region is provided by *plot_style="dodge"*.
+
+	example_psite_per_region <- region_psite(reads_psite_list, mm81cdna,
+									 sample = input_samples,
+									 multisamples = "average"
+									 plot_style = "dodge"
+                                     cl = 85,
+									 colour = c("#333f50", "gray70", "#39827c"))
+	example_psite_per_region[["plot"]]
+<p align="center">
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_psite_per_region2.png" width="375" />
 </p>
 
 ### Trinucleotide periodicity
 
- A fundamental characteristic of ribosome profiling data is the trinucleotide periodicity of ribosome footprints along coding sequences. Functions `frame_psite_length` and `frame_psite` show if, and to which extent, the identified P-sites results in codon periodicity on the CDS. Both functions compute the percentage of P-sites falling in the three possible translation reading frames for 5’ UTRs, CDSs and 3’ UTRs with one difference: `frame_psite_length` analyses all read lengths separately and generates a heatmap for each transcript region, while `frame_psite` processes all reads at once, returning three bar plots. Here the outputs for the example dataset:
+ A fundamental characteristic of ribosome profiling data is the trinucleotide periodicity of ribosome footprints along the coding sequences. The two functions `frame_psite_length` and `frame_psite` show if, and to which extent, the identified P-sites results in codon periodicity on the CDSs. Both functions compute the percentage of P-sites falling in the three possible translation reading frames for the 5’ UTRs, CDSs and 3’ UTRs. One detail distinguishes one function from the other: `frame_psite_length` analyses all read lengths independently while `frame_psite` processes all reads at once. Here the outputs for different combinations of *sample*, *multisamples* and *plot_style* and a subset of read lengths (*cl=0.85*). All plots show the expected accumulation of P-sites in the first frame on the coding sequence but not the UTRs.
 
-    example_frames_stratified <- frame_psite_length(reads_psite_list, sample = "Samp1",
-                                                    region = "all", cl = 90)
-    example_frames_stratified[["plot"]]
-<p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames_stratified.png" width="450" />
-</p>
+1. Frame of the P-site for the three transcript regions and stratified by read length.
 
-    example_frames <- frame_psite(reads_psite_list, sample = "Samp1", region = "all")
-    example_frames[["plot"]]
-<p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames.png" width="450" />
-</p>
+		input_samples <- list("S1" = c("Samp1", "Samp2"),
+						  "S2" = c("Samp3", "Samp4", "Samp5"),
+						  "S3" = c("Samp6"))
+					  
+		example_frames_stratified <- frame_psite_length(reads_psite_list, mm81cdna,
+                                   sample = input_samples,
+                                   multisamples = "average",
+                                   plot_style = "facet",
+                                   region = "all",
+                                   cl = 85, colour = "#333f50")
+		example_frames_stratified[["plot"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames_stratified.png" width="375" />
+	</p>
 
- Both plots show an enrichment of P-sites in the first frame on the coding sequence but not the UTRs, as expected for ribosome protected fragments from protein coding mRNAs.
+2. Frame of the P-site for the CDS, not stratified by read length.
+
+		input_samples <- list("S1" = c("Samp1", "Samp2"),
+						  "S2" = c("Samp3", "Samp4", "Samp5"))
+						  
+		example_frames <- frame_psite(reads_psite_list, mm81cdna,
+                                   sample = input_samples,
+                                   multisamples = "average",
+                                   plot_style = "facet",
+                                   region = "cds",
+                                   colour = c("#333f50", "#39827c"))
+		example_frames[["plot"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames1.png" width="375" />
+	</p>
+
+3. Frame of the P-site for the three transcript regions, not stratified by read length.
+
+		input_samples <- list("S1" = c("Samp1", "Samp2"),
+						  "S2" = c("Samp3", "Samp4", "Samp5"))
+						  
+		example_frames <- frame_psite(reads_psite_list, mm81cdna,
+                                   sample = input_samples,
+                                   multisamples = "average",
+                                   plot_style = "mirror",
+                                   region = "all",
+                                   colour = c("#333f50", "#39827c"))
+		example_frames[["plot"]]
+	<p align="center">
+	<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_frames2.png" width="575" />
+	</p>
 
 ### Metaplots
 
- A visual representation of the trinucleotide periodicity along coding sequences is provided by the function `metaprofile_psite`. It generates metaprofiles (the merge of single, transcript-specific profiles) based on P-sites mapping around the start and the stop codon of annotated CDSs. Multiple replicates can be combined in a single plot by providing scale factors from any normalization chosen by the user. Metaprofiles can be based on the whole dataset (as in the example below), on subsets of transcripts or on single RNAs.
-
-    example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+ A visual representation of the trinucleotide periodicity along the coding sequences is provided by the function `metaprofile_psite`. It generates metaprofiles by collapsing transcript-specific profiles based on the P-sites mapping on and close to the start and the stop codon of annotated CDSs. Here an example with one sample and two replicates. Note that when "multisamples" is set to "average" the plot displays the nucleotide-specific mean signal computed across the replicates as a line and the corresponding standard error as a shadow surrounding the average value.
+ 
+	input_samples <- list("S1" = c("Samp1", "Samp2"))
+ 
+	example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
+											 sample = input_samples,
+											 multisamples = "average",
 	                                         utr5l = 20, cdsl = 40, utr3l = 20,
-	                                         plot_title = "sample.transcript")
-    example_metaprofile[["plot_Samp1"]]
-![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile.png)
+											 colour = "#333f50")
+    example_metaprofile[["plot_S1"]]
+    
+![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile1.png)
 
-  `metaprofile_psite` provides the *length_range* parameter which allows to select sub-populations of read according to their lengths. Here an example using reads of 28 nucleotides, the most frequent read length in the example dataset:
+  
+As already illustrated for the other functions, when dealing with multiple samples and replicates it is possible to generate either as many ggplot2 objects as the number of samples (*plot_style="split"*) or single plots with different arrangements of the metaprofiles: 
 
-    example_metaprofile_28 <- metaprofile_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-						    length_range = 28,
-						    utr5l = 20, cdsl = 40, utr3l = 20,
-						    plot_title = "sample.transcript.length_range")
-    example_metaprofile_28[["plot_Samp1"]]
-![example_metaprofile_28](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_28.png)
+	input_samples <- list("S1" = c("Samp1", "Samp2"),
+						  "S2" = c("Samp3", "Samp4", "Samp5"))
 
- It is also possible to use `metaprofile_psite` to merge sample replicates and to visualize and compare multiple samples thank to the parameters *multisamples* and *plot_style*: for the same set of transcripts, `metaprofile_psite` can generate a collection of metaprofiles using reads from either a variety of biological conditions or subsets of the same dataset. Note that multiple replicates can be handled as already illustrated for `rlength_distr`.
+1. *plot_style="facet"*
 
- Here an example: let's suppose we want to investigate if, and to which extent, trinucleotide periodicity of reads of 28 nucleotides differs from trinucleotide periodicity based on all read lengths. As first step we create a list of data tables with the reads of interest:
+		example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         plot_style = "facet",
+                                         utr5l = 20, cdsl = 40, utr3l = 20,
+                                         colour = c("#333f50", "#39827c"))
+		example_metaprofile[["plot"]]
+		
+		![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile2.png)
 
-    comparison_list <- list()
-    comparison_list[["subsample_28nt"]] <- reads_psite_list[["Samp1"]][length == 28]
-    comparison_list[["whole_sample"]] <- reads_psite_list[["Samp1"]]
+2. *plot_style="overlap"*        
 
- Then we define a list containing either character strings specifying the name of the sample(s) of interest (as in this example) or character string vectors specifying the name of their replicates (see parameter *sample*).
+		example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         plot_style = "overlap",
+                                         utr5l = 20, cdsl = 40, utr3l = 20,
+                                         colour = c("#333f50", "#39827c"))
+		example_metaprofile[["plot"]]
+		
+		![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile3.png)
 
-    sample_list <- list("Only_28" = c("subsample_28nt"),
-                        "All" = c("whole_sample"))
+3.  *plot_style="mirror"*    
 
- We can now run `metaprofile_psite` setting *multisamples* to "average" and visualize the metaprofiles in three different ways, according to *plot_style*:
-
-	example_metaprofile_split <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-						       multisamples = "average", plot_style = "split",
-						       utr5l = 20, cdsl = 40, utr3l = 20,
-						       frequency = TRUE, plot_title = "transcript",
-						       colour = c("aquamarine4", "gray70"))
-	example_metaprofile_split[["plot"]]
-![example_metaprofile_split](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_split.png)
-
-
-	example_metaprofile_overlaid <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-							  multisamples = "average", plot_style = "overlaid",
-							  utr5l = 20, cdsl = 40, utr3l = 20,
-							  frequency = TRUE, plot_title = "transcript",
-							  colour = c("aquamarine4", "gray70"))
-	example_metaprofile_overlaid[["plot"]]
-![example_metaprofile_overlaid](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_overlaid.png)
-
-	example_metaprofile_mirrored <- metaprofile_psite(comparison_list, mm81cdna, sample = sample_list,
-							  multisamples = "average", plot_style = "mirrored",
-							  utr5l = 20, cdsl = 40, utr3l = 20,
-							  frequency = TRUE, plot_title = "transcript",
-							  colour = c("aquamarine4", "gray70"))
-	example_metaprofile_mirrored[["plot"]]
-![example_metaprofile_mirrored](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile_mirrored.png)
-
+		example_metaprofile <- metaprofile_psite(reads_psite_list, mm81cdna,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         plot_style = "mirror",
+                                         utr5l = 20, cdsl = 40, utr3l = 20,
+                                         colour = c("#333f50", "#39827c"))
+		example_metaprofile[["plot"]]
+		
+	![example_metaprofile](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaprofile4.png)
 
  
- Another way to visualize the trinucleotide periodicity along coding sequences is to generate a metahaetmap by `metaheatmap_psite`. In this case the abundance of P-sites is represented by a continuous color scale. If multiple samples are provided (i.e. multiple sets of reads, that can only be specified by objects of type list in *sample*), the resulting heatmaps are arranged in one graphical output. 
+ Even though `metaprofile_psite` is the reference function to visualised meta-like data, its outputs migh appear too crowded to appreciate the results if too many samples are passed. For this reasons __riboWaltz__ proposes another approach to visualize the trinucleotide periodicity along the coding sequences: by running the function `metaheatmap_psite`, the abundance of P-sites along the CDS is represented by a continuous color rather than by the height of a line. Moreover, when multiple samples are provided the resulting heatmaps are arranged in one graphical output one below the other.
   
- *NOTE*: the function `metaheatmap_psite` is deprecated. The original purpose of this function was the comparison of multiple samples in the same plot, while for single samples `metaprofile_psite` was supposed to be the reference function. However, `metaprofile_psite` has gradually been updated and can now handle multiple samples and replicates. Moreover, in plots returned by `metaprofile_psite`, variations in the signal along the transcripts are proportional to the height of a line rather than to the color of tiles and can be better appreciated.
-  
- Using the sample list generated in the previous example, `metaheatmap_psite` returns:
+	input_samples <- list("S1" = c("Samp1", "Samp2"),
+                      "S2" = c("Samp3", "Samp4", "Samp5"),
+                      "S3" = c("Samp6"))
 
-    example_metaheatmap <- metaheatmap_psite(comparison_list, mm81cdna, sample = sample_list,
-                                             utr5l = 20, cdsl = 40, utr3l = 20, log_colour = F, 
-					         plot_title = "Comparison metaheatmap")
+	example_metaheatmap <- metaheatmap_psite(reads_psite_list, mm81cdna,
+                                         sample = input_samples,
+                                         multisamples = "average",
+                                         utr5l = 20, cdsl = 40, utr3l = 20,
+                                         colour = "#333f50")
     example_metaheatmap[["plot"]]
 ![example_metaheatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_metaheatmap.png)
 </p>
@@ -598,51 +755,103 @@ To handle read lengths, __riboWaltz__ provides multiple options included in func
 
 ### Codon usage
 
- To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequence codon by codon optionally normalized for the frequency in sequences of each codon. If one sample name is specified `codon_usage_psite` returns a bar plot of the resulting codon usage indexes, highlighting the start and stop codons and labelling each bar with the corresponding amino acid. The graphical representation of the empirical codon usage based on the example dataset is showed below. Please note: due to its size, the FASTA file containing the transcripts sequences used by the author is not included in the package.
-  
-	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
+ To understand what codons display higher or lower ribosome density, the function `codon_usage_psite` provides the user with the analysis of the empirical codon usage. It is defined as the frequency of in-frame P-sites along the coding sequences codon by codon and optionally normalized for the frequency of each codon in the sequences of interest. Whith the default parameters, `codon_usage_psite` returns one or multiple bar plots of the resulting codon usage indexes, highlighting the start and stop codons and labelling each bar with the corresponding triplet and amino acid. The empirical codon usage based multiple samples with replicates is shown below. Please note: due to its size, the FASTA file containing the transcripts sequences used by the authors is not included in the package.
+
+1. Codon usage indexes for one sample, multiple replicates, not normalized for the frequency of each codon. When one sample is specified and *plot_style="facet"*, the codons are arranged in increasing order according to codon usage indexes.
+
+		input_samples <- list("S1" = c("Samp1", "Samp2"))
+					  
+		example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+											sample = input_samples,
+											multisamples = "average",
+											plot_style = "facet",
                                             fastapath = "path/to/transcriptome/FASTA/file",
                                             fasta_genome = FALSE,
                                             frequency_normalization = FALSE) 
-	example_cu_barplot[["plot"]]
-![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot.png)
-  
-  
- `codon_usage_psite` can also be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from multiple samples or multiple populations of reads (e.g. with different length). Specifying two sample names, `codon_usage_psite` returns two bar plots (one for each sample) and compares the two sets of codon usage indexes returning a scatter plot. Each dot of the scatter plot represents a codon, optionally labelled with the corresponding triplet or amino acid. The relationship between the two sets of values (as results of a linear regression) and the Pearson correlation coefficient are displayed.
-  
- Here an example: let's suppose we want to investigate if, and to which extent, codon usage indexes based on reads of 28 nucleotides differs from codon usage indexes based on all reads. Using the sample list generated in the previous examples, we can run `codon_usage_psite`:
+		example_cu_barplot[["plot_S1"]]
+	![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot1.png)
+	
+2. Codon usage indexes for two samples, multiple replicates, not normalized for the frequency of each codon. When more than one sample is specified and *plot_style="facet"*, the codons are arranged in alphabetical order, with the exception that the start codon and the three stop codons are placed at the beginning and at the end of the plot, respectively.
 
-	example_cu_scatter_2samples <- codon_usage_psite(comparison_list, mm81cdna, 
-						         sample = c("All", "Only_28"),
-						         fastapath = "path/to/transcriptome/FASTA/file",
-						         frequency_normalization = FALSE)
-	example_cu_scatter_2samples[["plot_comparison"]]
-<p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_2samples.png" width="300" />
-</p>
+		input_samples <- list("S1" = c("Samp1", "Samp2"),
+							  "S2" = c("Samp3", "Samp4", "Samp5"))
+					  
+		example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+											sample = input_samples,
+											multisamples = "average",
+											plot_style = "facet",
+                                            fastapath = "path/to/transcriptome/FASTA/file",
+                                            fasta_genome = FALSE,
+                                            frequency_normalization = FALSE) 
+		example_cu_barplot[["plot"]]
+	![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot2.png)
+  
+  
+3. Codon usage indexes for one sample, multiple replicates, normalized for the frequency of each codon. Note that when *frequency_normalization=TRUE* the low frequency of the three stop codons often leads to codon usage indexes higher for these triplets than for the others. To avoid potential biases in the interpretation of the data we can discard the stop codons from the plot by *include_stop_codons=FALSE*, as shown in the following example: 
+  
+		input_samples <- list("S1" = c("Samp1", "Samp2"))
+					  
+		example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+											sample = input_samples,
+											multisamples = "average",
+											plot_style = "facet",
+                                            fastapath = "path/to/transcriptome/FASTA/file",
+                                            fasta_genome = FALSE,
+                                            frequency_normalization = TRUE,
+											include_stop_codons = FALSE) 
+		example_cu_barplot[["plot_S1"]]
+	![example_cu_barplot](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_barplot3.png)  
+  
+ 
+`codon_usage_psite` can be exploited for investigating alterations of ribosome translocation at specific codons by comparing empirical codon usage from multiple samples or multiple populations of reads (e.g. with different length). The parameter *contrast_sample* specifies the sample(s) (if any) to be considered when comparing the codon usage indexes between:
+ * two samples in *sample*;
+ * one sample and 64 triplet-specific values provided by the user (see parameter *codon_values*).
+When *contrast_sample* is specified and sets of codon usage indexes are compared, `codon_usage_psite` automatically generates a scatter plot where each dot represents a codon, optionally labelled with the corresponding triplet or amino acid. The plot includes the regression line based on the coordinates of the dots and the Pearson correlation coefficient. In both cases a specified number of dots can be labeled by the the corresponding triplet or amino acid symbol (see parameters *label_scatter*, *label_number* and *label_aminoacid*). Using the usual list of samples
 
- `codon_usage_psite` also allows to compare codon usage indexes of a sample of interest with codon-specific values provided by the user (see parameter *codon_values*). In the following example empirical codon indexes for the example dataset are compared with codon usage bias values in mouse (downloaded from http://www.kazusa.or.jp/codon, based on the frequency of synonymous codons in coding DNA regions). The structure of the required input data table is as follows:
-  
-  |  codon  |  value  |
-  |:------:|:------:|
-  |  UUU  |  17.2  |
-  |  UCU  |  16.2  |
-  |  UAU  |  12.2  |
-  |  UGU  |  11.4  |
-  |  UUC  |  21.8  |
-  |  UCC  |  18.1  |
-  
- When *codon_values* is specified `codon_usage_psite` returns a scatter plot, as in the previuos example. In both cases labels for a specified number of dots, reporting the coresponding triplet or amino acid symbol, can be added (see parameters *label_scatter*, *label_number* and *label_aminoacid*):
-  
-	example_cu_scatter_cub <- codon_usage_psite(reads_psite_list, mm81cdna, sample = "Samp1",
-                                                fastapath = "path/to/transcriptome/FASTA/file",
-                                                fasta_genome = FALSE, codon_values = cub_mouse,
-                                                frequency_normalization = FALSE, 
-					            label_scatter = TRUE, label_number = 5)
-	example_cu_scatter_cub[["plot_comparison"]]
+input_samples <- list("S1" = c("Samp1", "Samp2"),
+					  "S2" = c("Samp3", "Samp4", "Samp5"))
+
+we first investigate if, and to which extent, the normalized codon usage indexes of sample S1 differs from the normalized codon usage indexes of sample S2.
+
+example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+										sample = input_samples,
+										contrast_sample = c("S1", "S2"),
+                                        fastapath = "path/to/transcriptome/FASTA/file",
+                                        fasta_genome = FALSE,
+                                        frequency_normalization = FALSE) 
+example_cu_barplot[["plot"]]
+
 <p align="center">
-<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatter_cub.png" width="300" />
-</p>
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatterplot1.png" width="350" />
+</p>	
+
+We then compare the empirical codon indexes associated with sample S1, not normalized, with the mouse codon usage bias values (downloaded from http://www.kazusa.or.jp/codon, based on the frequency of synonymous codons in coding DNA regions). The structure of the required data table passed to *codon_values* (here named "cub_mouse") is as follows:
+  
+|  codon  |  value  |
+|:------:|:------:|
+|  UUU  |  17.2  |
+|  UCU  |  16.2  |
+|  UAU  |  12.2  |
+|  UGU  |  11.4  |
+|  UUC  |  21.8  |
+|  UCC  |  18.1  |
+|  ...  |  ....  |
+  
+Here the resulting plot:
+  
+example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
+										sample = input_samples,
+										contrast_sample = "S1",
+										codon_values = cub_mouse,
+                                        fastapath = "path/to/transcriptome/FASTA/file",
+                                        fasta_genome = FALSE,
+                                        frequency_normalization = FALSE,
+										label_scatter = TRUE, label_number = 5) 
+example_cu_barplot[["plot"]]
+
+<p align="center">
+<img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatterplot2.png" width="350" />
+</p>  
 
 ------------------------------------------------------------------------
 

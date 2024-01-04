@@ -7,25 +7,25 @@
 \format{
 A data table with 31 rows and 9 variables:
 \describe{
-  \item{length}{Length of the read, in nucleotides (intended as the width of
-  the reference sequence region covered by the RNA fragment. For further
-  information about this choice please refer to section \code{Details} of
-  function \code{\link{bamtolist}})}
-  \item{total_percentage}{Percentage of reads of the considered length in the
-  whole dataset}
-  \item{start_percentage}{Percentage of reads of the considered length
-  aligning on the start codon (if any)}
-  \item{around_start}{A logical value whether at least one read of
-  the considered length aligns on the start codon (T = yes, F = no)}
-  \item{offset_from_5}{Temporary P-site offset from the 5' end of the read,
-  in nucleotides (before the correction step)}
-  \item{offset_from_3}{Temporary P-site offset from the 3' end of the read,
-  in nucleotides (before the correction step)}
-  \item{corrected_offset_from_5}{P-site offset from the 5' end of the read, in
-  nucleotides (after the correction step)}
-  \item{corrected_offset_from_3}{P-site offset from the 3' end of the read, in
-  nucleotides (after the correction step)}
-  \item{sample}{Name of the sample}
+\item{length}{Length of the read, in nucleotides (intended as the width of
+the reference sequence region covered by the RNA fragment. For further
+information about this choice please refer to section \code{Details} of
+function \code{\link{bamtolist}})}
+\item{total_percentage}{Percentage of reads of the considered length in the
+whole dataset}
+\item{start_percentage}{Percentage of reads of the considered length
+aligning on the start codon (if any)}
+\item{around_start}{A logical value whether at least one read of
+the considered length aligns on the start codon (T = yes, F = no)}
+\item{offset_from_5}{Temporary P-site offset from the 5' end of the read,
+in nucleotides (before the correction step)}
+\item{offset_from_3}{Temporary P-site offset from the 3' end of the read,
+in nucleotides (before the correction step)}
+\item{corrected_offset_from_5}{P-site offset from the 5' end of the read, in
+nucleotides (after the correction step)}
+\item{corrected_offset_from_3}{P-site offset from the 3' end of the read, in
+nucleotides (after the correction step)}
+\item{sample}{Name of the sample}
 }
 }
 \usage{

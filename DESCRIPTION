@@ -1,7 +1,7 @@
 Package: riboWaltz
 Type: Package
 Title: Optimization of ribosome P-site positioning in ribosome profiling data
-Version: 1.2.0
+Version: 2.0
 Authors@R: c(
     person("Fabio", "Lauria", email = "fabio.lauria@gmail.com", role = c("aut", "cre")),
     person("Toma", "Tebaldi", email = "toma.tebaldi@gmail.com", role = "aut"),
@@ -36,6 +36,7 @@ Imports:
 	IRanges (>= 2.12.0)
 biocViews:
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 Suggests:
     knitr,

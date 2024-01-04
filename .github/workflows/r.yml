@@ -22,7 +22,6 @@ jobs:
         config:
           - {os: ubuntu-latest, r: '4.0.3'}
           - {os: windows-latest, r: '4.0.3'}
-          - {os: macos-11, r: '4.2.0'}
     
     steps:
       - uses: actions/checkout@v2

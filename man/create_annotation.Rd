@@ -17,7 +17,7 @@ NULL.}
 loaded. If not already present in the system, it is automatically installed
 through the biocLite.R script (check
 \href{http://bioconductor.org/packages/release/BiocViews.html#___TxDb}{here}
- the list of available TxDb annotation packages). Please make sure the TxDb
+the list of available TxDb annotation packages). Please make sure the TxDb
 annotation package derives from the same release of the sequences used in
 the alignment step. Note that either \code{gtfpath} or \code{txdb} must be
 specified. Default is NULL.}

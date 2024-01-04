@@ -59,30 +59,30 @@ positions for transcripts without annotated CDS are set to 0.
 }
 \details{
 \strong{riboWaltz} only works for read alignments based on
-  transcript coordinates. This choice is due to the main purpose of RiboSeq
-  assays to study translational events through the isolation and sequencing
-  of ribosome protected fragments. Most reads from RiboSeq are supposed to
-  map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM
-  based on transcript coordinates can be generated in two ways: i) aligning
-  directly against transcript sequences; ii) aligning against standard
-  chromosome sequences, requiring the outputs to be translated in transcript
-  coordinates. The first option can be easily handled by many aligners (e.g.
-  Bowtie), given a reference FASTA file where each sequence represents a
-  transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The
-  second procedure is based on reference FASTA files where each sequence
-  represents a chromosome, usually coupled with comprehensive gene annotation
-  files (GTF or GFF). The STAR aligner, with its option --quantMode
-  TranscriptomeSAM (see Chapter 6 of its
-  \href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
-   is an example of tool providing such a feature.
-   
-  \code{refseq_sep} is intended to lighten the identifiers of the reference
-  sequences included in the final data table or to modify them to match those
-  in the annotation table. Many details about the reference sequence such as
-  their version (usually dot-separated), their length, name variants,
-  associated gene/transcript/protein names (usually pipe-separated) might
-  indeed be stored in the FASTA file used for the alignment and automatically
-  transferred in the BAM.
+transcript coordinates. This choice is due to the main purpose of RiboSeq
+assays to study translational events through the isolation and sequencing
+of ribosome protected fragments. Most reads from RiboSeq are supposed to
+map on mRNAs and not on introns and intergenic regions. Nevertheless, BAM
+based on transcript coordinates can be generated in two ways: i) aligning
+directly against transcript sequences; ii) aligning against standard
+chromosome sequences, requiring the outputs to be translated in transcript
+coordinates. The first option can be easily handled by many aligners (e.g.
+Bowtie), given a reference FASTA file where each sequence represents a
+transcript, from the beginning of the 5' UTR to the end of the 3' UTR. The
+second procedure is based on reference FASTA files where each sequence
+represents a chromosome, usually coupled with comprehensive gene annotation
+files (GTF or GFF). The STAR aligner, with its option --quantMode
+TranscriptomeSAM (see Chapter 6 of its
+\href{http://labshare.cshl.edu/shares/gingeraslab/www-data/dobin/STAR/STAR.posix/doc/STARmanual.pdf}{manual}),
+is an example of tool providing such a feature.
+
+\code{refseq_sep} is intended to lighten the identifiers of the reference
+sequences included in the final data table or to modify them to match those
+in the annotation table. Many details about the reference sequence such as
+their version (usually dot-separated), their length, name variants,
+associated gene/transcript/protein names (usually pipe-separated) might
+indeed be stored in the FASTA file used for the alignment and automatically
+transferred in the BAM.
 }
 \examples{
 ## path_bed <- "path/to/BED/files"

@@ -50,15 +50,14 @@ is TRUE.}
 specifies the file format storing the length-specific occupancy
 metaprofiles. It is considered only if \code{plot} is TRUE.}
 
-\item{cl}{Integer value in [1,100] specifying a confidence level for
+\item{cl}{Integer value in \link{1,100} specifying a confidence level for
 generating occupancy metaprofiles for to a sub-range of read lengths i.e.
-for the cl% of read lengths associated to the highest signals. Default is
+for the cl\% of read lengths associated to the highest signals. Default is
 99. This parameter is considered only if \code{plot} is TRUE.}
 
-\item{txt}{Logical value whether to write in a txt file reporting the
-extremity used for the correction step and the best offset for each sample.
-Similar information are displayed by default in the console. Default is
-FALSE.}
+\item{txt}{Logical value whether to write in a txt file the extremity used
+for the correction step and the best offset for each sample. Similar
+information are displayed by default in the console. Default is FALSE.}
 
 \item{txt_file}{Character string specifying the path, name and extension
 (e.g. "PATH/NAME.extension") of the plain text file where the extremity
@@ -84,27 +83,27 @@ P-site offsets computed through the process.
 }
 \details{
 The P-site offset (PO) is defined as the distance between the
-  extremities of a read and the first nucleotide of the P-site itself. The
-  function processes all samples separately starting from reads mapping on
-  the reference codon (either the start codon or the second to last codon,
-  see \code{start}) of any annotated coding sequences. Read lengths-specific
-  POs are inferred in two steps. First, reads mapping on the reference codon
-  are grouped according to their length, each group corresponding to a bin.
-  Reads whose extremities are too close to the reference codon are discarded
-  (see \code{flanking}). For each bin temporary 5' and 3' POs are defined as
-  the distances between the first nucleotide of the reference codon and the
-  nucleotide corresponding to the global maximum found in the profiles of the
-  5' and the 3' end at the left and at the right of the reference codon,
-  respectively. After the identification of the P-site for all reads aligning
-  on the reference codon, the POs corresponding to each length are assigned
-  to each read of the dataset. Second, the most frequent temporary POs
-  associated to the optimal extremity (see \code{extremity}) and the
-  predominant bins are exploited as reference values for correcting the
-  temporary POs of smaller bins. Briefly, the correction step defines for
-  each length bin a new PO based on the local maximum, whose distance from
-  the reference codon is the closest to the most frequent temporary POs. For
-  further details please refer to the \strong{riboWaltz} article (available
-  \href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169}{here}).
+extremities of a read and the first nucleotide of the P-site itself. The
+function processes all samples separately starting from reads mapping on
+the reference codon (either the start codon or the second to last codon,
+see \code{start}) of any annotated coding sequences. Read lengths-specific
+POs are inferred in two steps. First, reads mapping on the reference codon
+are grouped according to their length, each group corresponding to a bin.
+Reads whose extremities are too close to the reference codon are discarded
+(see \code{flanking}). For each bin temporary 5' and 3' POs are defined as
+the distances between the first nucleotide of the reference codon and the
+nucleotide corresponding to the global maximum found in the profiles of the
+5' and the 3' end at the left and at the right of the reference codon,
+respectively. After the identification of the P-site for all reads aligning
+on the reference codon, the POs corresponding to each length are assigned
+to each read of the dataset. Second, the most frequent temporary POs
+associated to the optimal extremity (see \code{extremity}) and the
+predominant bins are exploited as reference values for correcting the
+temporary POs of smaller bins. Briefly, the correction step defines for
+each length bin a new PO based on the local maximum, whose distance from
+the reference codon is the closest to the most frequent temporary POs. For
+further details please refer to the \strong{riboWaltz} article (available
+\href{https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006169}{here}).
 }
 \examples{
 data(reads_list)
