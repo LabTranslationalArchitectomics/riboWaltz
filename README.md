@@ -647,7 +647,7 @@ A different visualization which also displays the standard error resulting from 
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
 				       "S2" = c("Samp3", "Samp4", "Samp5"),
-				   "S3" = c("Samp6"))
+					   "S3" = c("Samp6"))
 					  
 		example_frames_stratified <- frame_psite_length(reads_psite_list, mm81cdna,
                                                         sample = input_samples,
@@ -823,7 +823,7 @@ As already illustrated for the other functions, when dealing with multiple sampl
 When *contrast_sample* is specified and sets of codon usage indexes are compared, `codon_usage_psite` automatically generates a scatter plot where each dot represents a codon, optionally labelled with the corresponding triplet or amino acid. The plot includes the regression line based on the coordinates of the dots and the Pearson correlation coefficient. In both cases a specified number of dots can be labeled by the the corresponding triplet or amino acid symbol (see parameters *label_scatter*, *label_number* and *label_aminoacid*). Using the usual list of samples
 
 	input_samples <- list("S1" = c("Samp1", "Samp2"),
-			       "S2" = c("Samp3", "Samp4", "Samp5"))
+			      "S2" = c("Samp3", "Samp4", "Samp5"))
 
 we first investigate if, and to which extent, the normalized codon usage indexes of sample S1 differs from the normalized codon usage indexes of sample S2.
 
@@ -833,7 +833,7 @@ we first investigate if, and to which extent, the normalized codon usage indexes
 						fastapath = "path/to/transcriptome/FASTA/file",
 						fasta_genome = FALSE,
 						frequency_normalization = FALSE) 
-example_cu_barplot[["plot"]]
+	example_cu_barplot[["plot"]]
 
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatterplot1.png" width="350" />
@@ -861,7 +861,7 @@ Here the resulting plot:
 						fasta_genome = FALSE,
 						frequency_normalization = FALSE,
 						label_scatter = TRUE, label_number = 5) 
-example_cu_barplot[["plot"]]
+	example_cu_barplot[["plot"]]
 
 <p align="center">
 <img src="https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_cu_scatterplot2.png" width="350" />
