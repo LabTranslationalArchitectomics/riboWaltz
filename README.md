@@ -518,9 +518,9 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	
 			input_samples <- c("Samp1", "Samp2")
 			example_length_dist <- rlength_distr(reads_list,
-							  sample = input_samples,
-							  multisamples = "average",
-							  cl = 99, colour = "#333f50")
+							       sample = input_samples,
+							       multisamples = "average",
+							       cl = 99, colour = "#333f50")
 							  
 			example_length_dist[["plot_Average"]]
 	<p align="center">
@@ -531,9 +531,9 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	
 			input_samples <- list("S1" = c("Samp1", "Samp2"))
 			example_length_dist <- rlength_distr(reads_list,
-							  sample = input_samples,
-							  multisamples = "average",
-							  cl = 99, colour = c"#333f50")
+							       sample = input_samples,
+							       multisamples = "average",
+							       cl = 99, colour = c"#333f50")
 							  
 			example_length_dist[["plot_S1"]]
 	<p align="center">
@@ -544,12 +544,12 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	* Two samples with multiple replicates, *plot_style = "split"*.
 	
 			input_samples <- list("S1" = c("Samp1", "Samp2"),
-								  "S2" = c("Samp3", "Samp4", "Samp5"))
+						"S2" = c("Samp3", "Samp4", "Samp5"))
 			example_length_dist <- rlength_distr(reads_list,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         plot_style = "split",
-                                         cl = 99, colour = c("#333f50", "#39827c"))
+                                                 sample = input_samples,
+                                                 multisamples = "average",
+                                                 plot_style = "split",
+                                                 cl = 99, colour = c("#333f50", "#39827c"))
 							  
 			example_length_dist[["plot_S1"]]
 			example_length_dist[["plot_S2"]]
@@ -564,13 +564,13 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	* Three samples, two with multiple replicates and one with no replicates, *plot_style = "dodge"*.
 	
 			input_samples <- list("S1" = c("Samp1", "Samp2"),
-								  "S2" = c("Samp3", "Samp4", "Samp5"),
-								  "S3" = c("Samp6"))
+						"S2" = c("Samp3", "Samp4", "Samp5"),
+						"S3" = c("Samp6"))
 			example_length_dist <- rlength_distr(reads_list,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         plot_style = "dodge",
-                                         cl = 99, colour = c("#333f50", "#39827c", "gray70"))
+                                                 sample = input_samples,
+                                                 multisamples = "average",
+                                                 plot_style = "dodge",
+                                                 cl = 99, colour = c("#333f50", "#39827c", "gray70"))
 							  
 			example_length_dist[["plot"]]
 	<p align="center">
@@ -580,12 +580,12 @@ Multiple samples and replicates can be handled and visualized according to diffe
 	* Two samples, one with multiple replicates and one with no replicates, *plot_style = "mirror"*.
 	
 			input_samples <- list("S1" = c("Samp1", "Samp2"),
-								  "S3" = c("Samp6"))
+						"S3" = c("Samp6"))
 			example_length_dist <- rlength_distr(reads_list,
-                                         sample = input_samples,
-                                         multisamples = "average",
-                                         plot_style = "mirror",
-                                         cl = 99, colour = c("#333f50", "gray70"))
+                                                 sample = input_samples,
+                                                 multisamples = "average",
+                                                 plot_style = "mirror",
+                                                 cl = 99, colour = c("#333f50", "gray70"))
 							  
 			example_length_dist[["plot"]]
 	<p align="center">
@@ -596,8 +596,10 @@ Multiple samples and replicates can be handled and visualized according to diffe
 
  The second preliminary plot is provided by `rends_heat`. It consists of four metaheatmaps which displays the abundance of the 5' and 3' extremity of reads mapping on and close to the start and the stop codon of annotated CDSs, stratified by their length. As for the previous plot, it is possible to restrict the graphical output to a sub-range of read lengths by specifying the *cl* parameter:
 
-    example_ends_heatmap <- rends_heat(reads_list, mm81cdna, sample = "Samp1", cl = 85,
-                                       utr5l = 25, cdsl = 40, utr3l = 25, colour = "#333f50")
+    example_ends_heatmap <- rends_heat(reads_list, mm81cdna,
+	                                   sample = "Samp1", cl = 85,
+									   utr5l = 25, cdsl = 40, utr3l = 25,
+									   colour = "#333f50")
     example_ends_heatmap[["plot_Samp1"]]
 ![example_ends_heatmap](https://github.com/LabTranslationalArchitectomics/riboWaltz/blob/master/vignettes/example_ends_heatmap.png)
 
@@ -645,7 +647,7 @@ A different visualization which also displays the standard error resulting from 
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
 				       "S2" = c("Samp3", "Samp4", "Samp5"),
-					   "S3" = c("Samp6"))
+				   "S3" = c("Samp6"))
 					  
 		example_frames_stratified <- frame_psite_length(reads_psite_list, mm81cdna,
                                                         sample = input_samples,
@@ -821,16 +823,16 @@ As already illustrated for the other functions, when dealing with multiple sampl
 When *contrast_sample* is specified and sets of codon usage indexes are compared, `codon_usage_psite` automatically generates a scatter plot where each dot represents a codon, optionally labelled with the corresponding triplet or amino acid. The plot includes the regression line based on the coordinates of the dots and the Pearson correlation coefficient. In both cases a specified number of dots can be labeled by the the corresponding triplet or amino acid symbol (see parameters *label_scatter*, *label_number* and *label_aminoacid*). Using the usual list of samples
 
 	input_samples <- list("S1" = c("Samp1", "Samp2"),
-					  "S2" = c("Samp3", "Samp4", "Samp5"))
+			       "S2" = c("Samp3", "Samp4", "Samp5"))
 
 we first investigate if, and to which extent, the normalized codon usage indexes of sample S1 differs from the normalized codon usage indexes of sample S2.
 
 	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
-										sample = input_samples,
-										contrast_sample = c("S1", "S2"),
-                                        fastapath = "path/to/transcriptome/FASTA/file",
-                                        fasta_genome = FALSE,
-                                        frequency_normalization = FALSE) 
+						sample = input_samples,
+						contrast_sample = c("S1", "S2"),
+						fastapath = "path/to/transcriptome/FASTA/file",
+						fasta_genome = FALSE,
+						frequency_normalization = FALSE) 
 example_cu_barplot[["plot"]]
 
 <p align="center">
@@ -852,13 +854,13 @@ We then compare the empirical codon indexes associated with sample S1, not norma
 Here the resulting plot:
   
 	example_cu_barplot <- codon_usage_psite(reads_psite_list, mm81cdna,
-										sample = input_samples,
-										contrast_sample = "S1",
-										codon_values = cub_mouse,
-                                        fastapath = "path/to/transcriptome/FASTA/file",
-                                        fasta_genome = FALSE,
-                                        frequency_normalization = FALSE,
-										label_scatter = TRUE, label_number = 5) 
+						sample = input_samples,
+						contrast_sample = "S1",
+						codon_values = cub_mouse,
+						fastapath = "path/to/transcriptome/FASTA/file",
+						fasta_genome = FALSE,
+						frequency_normalization = FALSE,
+						label_scatter = TRUE, label_number = 5) 
 example_cu_barplot[["plot"]]
 
 <p align="center">
