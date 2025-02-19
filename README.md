@@ -382,7 +382,7 @@ The following sections describe all the functions in __riboWaltz__ generating gr
 
 #### Samples and replicates
 
-All the functions in __riboWaltz__ generating graphical outputs can handle one or multiple replicates for each sample of interest. Thus, it is possible to compare plots based on population of reads from either a variety of biological conditions or subsets of the same dataset. Two parameters are required to specify samples andreplicates and how to handle them:
+All the functions in __riboWaltz__ generating graphical outputs can handle one or multiple replicates for each sample of interest. Thus, it is possible to compare plots based on population of reads from either a variety of biological conditions or subsets of the same dataset. Two parameters are required to specify samples and replicates and how to handle them:
  * *sample* can be either a character string, a character string vector or a named list of character string(s)/character string vector(s). It specifies the name of the sample(s) and replicate(s) of interest. If a list is provided, each element of the list is considered as an independent sample associated with one ore multiple replicates.
  * *multisamples* can be set to either "average" or "independent". It specifies how to handle multiple samples and replicates stored in *sample*:
    + if *sample* is a character string vector and *multisamples* is set to "average" the elements of the vector are considered as replicates of one sample and a single plot is returned;
@@ -400,7 +400,7 @@ Additional parameters are shared across all the functions generating graphical o
  * *length_range*: an integer or integer vector for restricting the analysis to a chosen range of read lengths;
  * *cl*: an integer value in [1,100] specifying a confidence level to automatically compute a range of read length based of interest. The range is based on the most frequent read lengths which accounts for the cl% of the whole sample. It is defined by discarding the (100-cl)% of read lengths falling in the tails of the read length distribution. If multiple samples are provided, a single range of read lengths is generated such that at least the cl% of all samples is represented. Note that if *length_range* is specified, it prevails over *cl*.
  
-'rlength_distr', 'rends_heat', 'metaprofile_psite' and 'metaheatmap_psite' include the parameter *scale_factors*. The user can provide a scale factor for each sample/replicate to take into account the library size and make all replicates (if any) comparable before merging them. In this case *scale_factors* must be of the same length of the unlisted parameter *sample* and each scale factor must be named after the corresponding string. *scale_factors* can be set to "auto" to use the default scaling approaches, which are tailored to the specific function under consideration.
+`rlength_distr`, `rends_heat`, `metaprofile_psite` and `metaheatmap_psite` include the parameter *scale_factors*. The user can provide a scale factor for each sample/replicate to take into account the library size and make all replicates (if any) comparable before merging them. In this case *scale_factors* must be of the same length of the unlisted parameter *sample* and each scale factor must be named after the corresponding string. *scale_factors* can be set to "auto" to use the default scaling approaches, which are tailored to the specific function under consideration.
    
 #### List of outputs
   
@@ -647,7 +647,7 @@ A different visualization which also displays the standard error resulting from 
 
 		input_samples <- list("S1" = c("Samp1", "Samp2"),
 				       "S2" = c("Samp3", "Samp4", "Samp5"),
-					   "S3" = c("Samp6"))
+					 "S3" = c("Samp6"))
 					  
 		example_frames_stratified <- frame_psite_length(reads_psite_list, mm81cdna,
                                                         sample = input_samples,
@@ -871,7 +871,7 @@ Here the resulting plot:
 
 ## Contacts
 
-fabio.lauria@ibf.cnr.it
+fabio-lauria@cnr.it
 
 toma.tebaldi@gmail.com
 

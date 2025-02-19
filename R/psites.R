@@ -134,7 +134,7 @@ psite <- function(data, flanking = 6, start = TRUE, extremity = "auto",
     offset_temp[, around_site := "T"
                 ][percentage == 0, around_site := "F"]
     tempoff <- function(v_dist){
-      ttable <- sort(table(v_dist), decreasing = T)
+      ttable <- sort(table(factor(v_dist, min(v_dist):max(v_dist))), decreasing = T)
       ttable_sr <- ttable[as.character(as.numeric(names(ttable))+1)]
       ttable_sl <- ttable[as.character(as.numeric(names(ttable))-1)]
       tsel <- rowSums(cbind(ttable > ttable_sr, ttable > ttable_sl), na.rm = T)
@@ -524,7 +524,7 @@ psite_info <- function(data, offset, site = NULL, fastapath = NULL,
     suboff <- offset[sample == n]
     
     # check position of P-sites wrt reads extremities
-    suboff_rm <- suboff[corrected_offset_from_5 < 3 | (length - corrected_offset_from_3) < 4]
+    suboff_rm <- suboff[corrected_offset_from_5 < 3 | corrected_offset_from_3 < 5]
     
     if(nrow(suboff_rm) != 0){
       cat(sprintf("P-site is too close to read extremities for read length(s): %s;
