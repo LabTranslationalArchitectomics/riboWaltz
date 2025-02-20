@@ -42,8 +42,7 @@ jobs:
        
       - name: check R
         if: runner.os == 'Linux'
-        run: |
-          R --version
+        run: R --version
 		  
 	  - name: Set up R
         uses: r-lib/actions/setup-r@v2
