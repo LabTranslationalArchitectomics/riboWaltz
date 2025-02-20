@@ -18,6 +18,6 @@ AutoAppendNewline: Yes
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
-PackageBuildArgs: --resave-data
-PackageCheckArgs: --as-cran
-PackageRoxygenize: rd,collate,namespace,vignette
+PackageBuildArgs: --resave-data --no-build-vignettes
+PackageCheckArgs: --as-cran --no-build-vignettes --ignore-vignettes
+PackageRoxygenize: rd,collate,namespace

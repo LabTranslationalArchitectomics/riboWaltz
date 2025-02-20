@@ -35,7 +35,7 @@ Imports:
 	ggrepel (>= 0.6.5),
 	IRanges (>= 2.12.0)
 biocViews:
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 Suggests:
