@@ -10,7 +10,9 @@ name: R
 
 on:
   push:
-    branches: [ master ]
+    branches:
+     - master
+     - updates_yml_file
   pull_request:
     branches: [ master ]
     
