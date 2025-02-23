@@ -52,7 +52,7 @@ jobs:
           
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, any::rlang, any::rmarkdown
+          extra-packages: any::rcmdcheck
           needs: check
           
       - uses: r-lib/actions/check-r-package@v2
@@ -65,11 +65,13 @@ jobs:
           options(repos = c(getOption("repos"), BiocManager::repositories()))
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)          
         shell: Rscript {0}
+		
       - name: Install dependencies
         run: |
-          install.packages(c("remotes", "rcmdcheck","pandoc", "rlang", "vctrs", "processx"), INSTALL_opts="--no-multiarch")
+          install.packages(c("remotes", "rcmdcheck","pandoc", "rlang", "vctrs", "processx", "rmarkdown"), INSTALL_opts="--no-multiarch")
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
+		
       - name: Check
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-multiarch"), error_on = "error")
         shell: Rscript {0}
