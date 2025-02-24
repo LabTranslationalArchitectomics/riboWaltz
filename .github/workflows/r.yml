@@ -22,7 +22,7 @@ jobs:
     strategy:
        matrix:
         config:
-          - {os: ubuntu 24, r: '4.0.3'}
+          - {os: ubuntu-latest, r: '4.0.3'}
           - {os: windows-latest, r: '4.0.3'}
     
     steps:
