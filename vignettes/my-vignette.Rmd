@@ -2,7 +2,7 @@
 title: "riboWaltz"
 
 author:
-  - Fabio Lauria (fabio.lauria@ibf.cnr.it)
+  - Fabio Lauria (fabio-lauria@cnr.it)
   - Toma Tebaldi (toma.tebaldi@gmail.com)
   - Gabriella Viero (gabriella.viero@cnr.it)
 
